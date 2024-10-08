@@ -1,8 +1,8 @@
 // App.js
-import React from "react";
+import GameIntroduction from "../GameIntroduction/GameIntroduction";
 
 const App = () => {
-  return <div>Hello World!</div>;
+  return <GameIntroduction />;
 };
 
 export default App;

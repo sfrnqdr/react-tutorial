@@ -1,62 +1,151 @@
-# Einführung
+# Funktionale Komponenten
 
-Was ist React und wie können wir es nutzen, um ein interaktives Tic-Tac-Toe-Spiel zu erstellen?
+## Leitfrage für dieses Teilmodul
 
-## Erläuterung mit Codebeispiel
+**Was sind funktionale Komponenten in React und wie verwenden wir sie, um die Bausteine unseres Tic-Tac-Toe-Spiels zu erstellen?**
 
-**Was ist React?**
+## Ausführliche Beantwortung und Erläuterung mit Codebeispiel
 
-React ist eine JavaScript-Bibliothek zur Erstellung von Benutzeroberflächen. Sie wurde von Facebook entwickelt und ermöglicht es Entwicklern, wiederverwendbare UI-Komponenten zu erstellen, die den Zustand und das Verhalten einer Anwendung effizient verwalten.
+### Was sind funktionale Komponenten?
 
-**Warum React für unser Tic-Tac-Toe-Spiel?**
+In React sind Komponenten die grundlegenden Bausteine einer Anwendung. Eine **funktionale Komponente** ist eine einfache JavaScript-Funktion, die ein React-Element zurückgibt. Sie nimmt optionale Eingaben, sogenannte **Props**, entgegen und gibt JSX zurück, das beschreibt, was auf der Benutzeroberfläche angezeigt werden soll.
 
-- **Komponentenbasiert**: React erlaubt es uns, die Benutzeroberfläche in kleinere, wiederverwendbare Teile zu zerlegen.
-- **Effizientes Rendering**: Durch das virtuelle DOM aktualisiert React nur die Teile der UI, die sich tatsächlich geändert haben.
-- **JSX**: Eine Syntaxerweiterung für JavaScript, die das Schreiben von HTML-ähnlichem Code innerhalb von JavaScript ermöglicht.
+### Warum funktionale Komponenten verwenden?
 
-**Unser Ziel**
+- **Einfachheit**: Sie sind leicht zu schreiben und zu verstehen.
+- **Performance**: Sie haben weniger Overhead als Klassenkomponenten.
+- **Hooks**: Moderne React-Features wie Hooks funktionieren nur mit funktionalen Komponenten.
 
-Wir werden Schritt für Schritt ein Tic-Tac-Toe-Spiel entwickeln, bei dem du die grundlegenden Konzepte von React erlernst und anwendest.
+### Erstellung einer funktionalen Komponente für unser Spiel
 
-**Codebeispiel**
+Beginnen wir damit, eine einfache `Square`-Komponente für unser Tic-Tac-Toe-Spiel zu erstellen. Diese Komponente repräsentiert ein einzelnes Feld auf dem Spielbrett.
 
-Als Einstieg hier eine einfache React-Komponente, die eine Begrüßungsnachricht anzeigt:
+Erstelle eine neue Datei `Square.jsx` im `src`-Verzeichnis:
 
 ```jsx
 import React from "react";
 
-const WelcomeMessage = () => {
-  return <h1>Willkommen zum Tic-Tac-Toe mit React!</h1>;
+const Square = () => {
+  return <button className="square">{/* Inhalt folgt später */}</button>;
 };
 
-export default WelcomeMessage;
+export default Square;
 ```
 
-In diesem Beispiel nutzen wir eine funktionale Komponente mit einer Arrow Function, um eine Überschrift anzuzeigen.
+**Erläuterung:**
+
+- **Import**: Wir importieren React, um JSX verwenden zu können.
+- **Definition**: `Square` ist eine Arrow Function, die eine React-Komponente darstellt.
+- **Rückgabe**: Die Komponente gibt ein `<button>`-Element mit der Klasse `square` zurück.
+- **Export**: Wir exportieren die Komponente, damit sie in anderen Dateien verwendet werden kann.
+
+### Einbindung in die Hauptanwendung
+
+Um die `Square`-Komponente zu verwenden, importieren wir sie in unsere `App.jsx`:
+
+```jsx
+import React from "react";
+import GameIntroduction from "./GameIntroduction";
+import Square from "./Square";
+
+const App = () => {
+  return (
+    <div>
+      <GameIntroduction />
+      <h1>Tic-Tac-Toe Spiel</h1>
+      <Square />
+    </div>
+  );
+};
+
+export default App;
+```
+
+Damit wird die `Square`-Komponente innerhalb unserer App angezeigt, direkt unter der Spiel-Einführung.
 
 ## Lernfragen zum Selbstüberprüfen
 
-1. **Was ist der Hauptzweck von React?**
+**Was ist eine funktionale Komponente in React?**
 
-   _Antwort_: React dient der Erstellung von dynamischen und interaktiven Benutzeroberflächen durch die Verwendung von wiederverwendbaren Komponenten.
+_Antwort_: Eine funktionale Komponente ist eine JavaScript-Funktion, die Props als Parameter entgegennimmt und JSX zurückgibt, um ein React-Element zu rendern.
 
-2. **Welche Vorteile bietet das komponentenbasierte Design von React?**
+**Welche Vorteile bieten funktionale Komponenten gegenüber Klassenkomponenten?**
 
-   _Antwort_: Es ermöglicht eine bessere Strukturierung des Codes, Wiederverwendbarkeit von UI-Elementen und einfachere Wartung der Anwendung.
+_Antwort_: Funktionale Komponenten sind einfacher, benötigen weniger Code, haben weniger Overhead und unterstützen Hooks, was die Handhabung von Zustand und Seiteneffekten erleichtert.
 
-## Hands-on: Selbst coden
+## Hands on: Selbst coden
 
-**Aufgabe**: Erstelle eine neue React-Komponente namens `GameIntroduction`, die eine kurze Einführung in das Spiel Tic-Tac-Toe enthält.
+**Aufgabe:** Erstelle eine `Board`-Komponente, die mehrere `Square`-Komponenten anzeigt, um eine Reihe des Tic-Tac-Toe-Bretts darzustellen.
 
-**Schritte**:
+### Schritte:
 
-1. Erstelle eine Datei `GameIntroduction.jsx`.
-2. Importiere React.
-3. Definiere die funktionale Komponente `GameIntroduction` mit einer Arrow Function.
-4. Lasse die Komponente einen Text mit einer Einführung in das Spiel zurückgeben.
-5. Exportiere die Komponente standardmäßig.
+1. **Erstelle die Datei `Board.jsx` im `src`-Verzeichnis.**
 
-## Ready-of-Done-Kriterien für die Anwendung
+   ```jsx
+   import React from "react";
+   import Square from "./Square";
 
-- Eine React-Komponente `GameIntroduction` ist erstellt und exportiert.
-- Die Komponente rendert ohne Fehler und zeigt eine Einführung in das Spiel an.
+   const Board = () => {
+     return (
+       <div className="board-row">
+         <Square />
+         <Square />
+         <Square />
+       </div>
+     );
+   };
+
+   export default Board;
+   ```
+
+2. **Aktualisiere `App.jsx`, um die `Board`-Komponente einzubinden.**
+
+   ```jsx
+   import React from "react";
+   import GameIntroduction from "./GameIntroduction";
+   import Board from "./Board";
+
+   const App = () => {
+     return (
+       <div>
+         <GameIntroduction />
+         <h1>Tic-Tac-Toe Spiel</h1>
+         <Board />
+       </div>
+     );
+   };
+
+   export default App;
+   ```
+
+3. **Füge CSS hinzu, um die Darstellung zu verbessern.**
+
+   In deiner CSS-Datei (`App.css` oder einer separaten CSS-Datei):
+
+   ```css
+   .board-row {
+     display: flex;
+   }
+
+   .square {
+     width: 60px;
+     height: 60px;
+     margin: 5px;
+     font-size: 24px;
+     text-align: center;
+   }
+   ```
+
+4. **Starte die Entwicklungsumgebung und überprüfe die Ausgabe.**
+
+   ```bash
+   yarn start
+   ```
+
+5. **Öffne die Anwendung im Browser** und stelle sicher, dass drei Quadrate nebeneinander angezeigt werden.
+
+## Ready or Done Kriterien für die Anwendung
+
+- Eine `Board`-Komponente ist erstellt und zeigt mehrere `Square`-Komponenten an.
+- Die `Square`-Komponenten werden korrekt und ohne Fehler gerendert.
+- Die Anwendung läuft ohne Fehler.
