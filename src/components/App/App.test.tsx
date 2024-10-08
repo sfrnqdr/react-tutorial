@@ -1,10 +1,17 @@
 // App.test.tsx
-import { test } from "vitest"; // 'test' ist global verfügbar, wenn 'globals: true' ist
-import { render } from "@testing-library/react";
+import { test } from "vitest";
+import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 test("Die Anwendung rendert ohne zu crashen", () => {
   render(<App />);
-  // Optional: Füge eine Assertion hinzu
-  // expect(screen.getByText('Willkommen')).toBeInTheDocument();
+});
+
+test("rendert GameIntroduction und Board Komponenten", () => {
+  render(<App />);
+  expect(screen.getByText("Einführung in Tic-Tac-Toe")).toBeInTheDocument();
+  expect(screen.getByText("Tic-Tac-Toe Spiel")).toBeInTheDocument();
+
+  const squares = screen.getAllByRole("button");
+  expect(squares).toHaveLength(3);
 });
