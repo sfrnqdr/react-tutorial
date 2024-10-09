@@ -28,3 +28,9 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
   fireEvent.click(cellElement);
   expect(cellElement).toHaveTextContent("O");
 });
+
+test("rendert die Zelle korrekt", () => {
+  render(<Cell value="X" onClick={() => {}} />);
+  const cellElement = screen.getByText("X");
+  expect(cellElement).toBeInTheDocument();
+});

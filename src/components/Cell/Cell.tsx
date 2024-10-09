@@ -1,15 +1,18 @@
 // src/Cell.tsx
+import React from "react";
+
 type CellProps = {
   value: string;
   onClick: () => void;
 };
 
-const Cell = ({ value, onClick }: CellProps) => {
+const Cell = React.memo(({ value, onClick }: CellProps) => {
+  console.log(`Rendering Cell with value: ${value}`);
   return (
     <div className="cell" role="button" onClick={onClick}>
       {value}
     </div>
   );
-};
+});
 
 export default Cell;
