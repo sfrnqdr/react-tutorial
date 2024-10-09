@@ -1,62 +1,94 @@
-# Einführung
+# Schritt 1: Willkommen zu React (App.tsx)
 
-Was ist React und wie können wir es nutzen, um ein interaktives Tic-Tac-Toe-Spiel zu erstellen?
+## Leitfrage
 
-## Erläuterung mit Codebeispiel
+**Wie funktioniert die grundlegende Struktur einer React-App, und wie können wir unsere Anwendung starten?**
 
-**Was ist React?**
+## Antwort
 
-React ist eine JavaScript-Bibliothek zur Erstellung von Benutzeroberflächen. Sie wurde von Facebook entwickelt und ermöglicht es Entwicklern, wiederverwendbare UI-Komponenten zu erstellen, die den Zustand und das Verhalten einer Anwendung effizient verwalten.
+Hey du! 👋 Willkommen zu unserem React-Tutorial für das Tic-Tac-Toe-Spiel. Bevor wir anfangen, das Spiel zu bauen, schauen wir uns an, wie eine React-App grundsätzlich aufgebaut ist.
 
-**Warum React für unser Tic-Tac-Toe-Spiel?**
+In React arbeiten wir mit Komponenten. Die Hauptkomponente unserer Anwendung ist die `App`-Komponente. Dort definieren wir, was auf dem Bildschirm angezeigt wird, wenn die App gestartet wird. Lass uns gemeinsam eine Begrüßungsnachricht einfügen und die App zum Laufen bringen! 🚀
 
-- **Komponentenbasiert**: React erlaubt es uns, die Benutzeroberfläche in kleinere, wiederverwendbare Teile zu zerlegen.
-- **Effizientes Rendering**: Durch das virtuelle DOM aktualisiert React nur die Teile der UI, die sich tatsächlich geändert haben.
-- **JSX**: Eine Syntaxerweiterung für JavaScript, die das Schreiben von HTML-ähnlichem Code innerhalb von JavaScript ermöglicht.
+## Codebeispiel
 
-**Unser Ziel**
-
-Wir werden Schritt für Schritt ein Tic-Tac-Toe-Spiel entwickeln, bei dem du die grundlegenden Konzepte von React erlernst und anwendest.
-
-**Codebeispiel**
-
-Als Einstieg hier eine einfache React-Komponente, die eine Begrüßungsnachricht anzeigt:
-
-```jsx
+```tsx
 import React from "react";
 
-const WelcomeMessage = () => {
-  return <h1>Willkommen zum Tic-Tac-Toe mit React!</h1>;
-};
+function App() {
+  return (
+    <div>
+      <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+    </div>
+  );
+}
 
-export default WelcomeMessage;
+export default App;
 ```
 
-In diesem Beispiel nutzen wir eine funktionale Komponente mit einer Arrow Function, um eine Überschrift anzuzeigen.
+## Hands-on Aufgaben zum Selbstprobieren
 
-## Lernfragen zum Selbstüberprüfen
+### Aufgabe: Begrüßungsnachricht anzeigen
 
-1. **Was ist der Hauptzweck von React?**
+**Anforderungen:**
 
-   _Antwort_: React dient der Erstellung von dynamischen und interaktiven Benutzeroberflächen durch die Verwendung von wiederverwendbaren Komponenten.
+1. **App.tsx bearbeiten:**
 
-2. **Welche Vorteile bietet das komponentenbasierte Design von React?**
+   - Öffne die Datei `App.tsx` in deinem Projektordner.
+   - Ersetze den bestehenden Code mit dem obigen Codebeispiel.
 
-   _Antwort_: Es ermöglicht eine bessere Strukturierung des Codes, Wiederverwendbarkeit von UI-Elementen und einfachere Wartung der Anwendung.
+2. **Abhängigkeiten installieren:**
 
-## Hands-on: Selbst coden
+   - Öffne dein Terminal oder deine Eingabeaufforderung.
+   - Navigiere in das Projektverzeichnis.
+   - Führe den folgenden Befehl aus, um alle nötigen Pakete zu installieren:
 
-**Aufgabe**: Erstelle eine neue React-Komponente namens `GameIntroduction`, die eine kurze Einführung in das Spiel Tic-Tac-Toe enthält.
+     ```bash
+     npm install
+     ```
 
-**Schritte**:
+3. **Anwendung starten:**
 
-1. Erstelle eine Datei `GameIntroduction.jsx`.
-2. Importiere React.
-3. Definiere die funktionale Komponente `GameIntroduction` mit einer Arrow Function.
-4. Lasse die Komponente einen Text mit einer Einführung in das Spiel zurückgeben.
-5. Exportiere die Komponente standardmäßig.
+   - Starte die Entwicklungsumgebung mit:
 
-## Ready-of-Done-Kriterien für die Anwendung
+     ```bash
+     npm run dev
+     ```
 
-- Eine React-Komponente `GameIntroduction` ist erstellt und exportiert.
-- Die Komponente rendert ohne Fehler und zeigt eine Einführung in das Spiel an.
+   - Öffne deinen Browser und rufe die angegebene lokale Adresse auf (z. B. `http://localhost:3000`).
+   - Du solltest die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** sehen.
+
+### Zugehöriger Vitest für TDD
+
+Um sicherzustellen, dass unsere Anwendung korrekt funktioniert, schreiben wir einen automatisierten Test.
+
+**Testdatei erstellen (`App.test.tsx`):**
+
+Erstelle eine neue Datei namens `App.test.tsx` im gleichen Verzeichnis wie `App.tsx` und füge folgenden Code ein:
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import App from "./App";
+
+test("zeigt die Begrüßungsnachricht an", () => {
+  render(<App />);
+  const greetingElement = screen.getByText(
+    /Willkommen zum Tic-Tac-Toe-Spiel!/i
+  );
+  expect(greetingElement).toBeInTheDocument();
+});
+```
+
+**Test ausführen:**
+
+- Führe im Terminal den folgenden Befehl aus:
+
+  ```bash
+  npm run test
+  ```
+
+- Der Test sollte erfolgreich durchlaufen und bestätigen, dass die Begrüßungsnachricht angezeigt wird. ✅
+
+---
+
+**Herzlichen Glückwunsch!** 🎊 Du hast deine erste React-Komponente erstellt und verstanden, wie die grundlegende Struktur einer React-App aussieht. Außerdem hast du gelernt, wie man die Anwendung startet und Tests ausführt.
