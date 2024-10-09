@@ -1,151 +1,94 @@
-# Funktionale Komponenten
+# Schritt 1: Willkommen zu React (App.tsx)
 
-## Leitfrage für dieses Teilmodul
+## Leitfrage
 
-**Was sind funktionale Komponenten in React und wie verwenden wir sie, um die Bausteine unseres Tic-Tac-Toe-Spiels zu erstellen?**
+**Wie funktioniert die grundlegende Struktur einer React-App, und wie können wir unsere Anwendung starten?**
 
-## Ausführliche Beantwortung und Erläuterung mit Codebeispiel
+## Antwort
 
-### Was sind funktionale Komponenten?
+Hey du! 👋 Willkommen zu unserem React-Tutorial für das Tic-Tac-Toe-Spiel. Bevor wir anfangen, das Spiel zu bauen, schauen wir uns an, wie eine React-App grundsätzlich aufgebaut ist.
 
-In React sind Komponenten die grundlegenden Bausteine einer Anwendung. Eine **funktionale Komponente** ist eine einfache JavaScript-Funktion, die ein React-Element zurückgibt. Sie nimmt optionale Eingaben, sogenannte **Props**, entgegen und gibt JSX zurück, das beschreibt, was auf der Benutzeroberfläche angezeigt werden soll.
+In React arbeiten wir mit Komponenten. Die Hauptkomponente unserer Anwendung ist die `App`-Komponente. Dort definieren wir, was auf dem Bildschirm angezeigt wird, wenn die App gestartet wird. Lass uns gemeinsam eine Begrüßungsnachricht einfügen und die App zum Laufen bringen! 🚀
 
-### Warum funktionale Komponenten verwenden?
+## Codebeispiel
 
-- **Einfachheit**: Sie sind leicht zu schreiben und zu verstehen.
-- **Performance**: Sie haben weniger Overhead als Klassenkomponenten.
-- **Hooks**: Moderne React-Features wie Hooks funktionieren nur mit funktionalen Komponenten.
-
-### Erstellung einer funktionalen Komponente für unser Spiel
-
-Beginnen wir damit, eine einfache `Square`-Komponente für unser Tic-Tac-Toe-Spiel zu erstellen. Diese Komponente repräsentiert ein einzelnes Feld auf dem Spielbrett.
-
-Erstelle eine neue Datei `Square.jsx` im `src`-Verzeichnis:
-
-```jsx
+```tsx
 import React from "react";
 
-const Square = () => {
-  return <button className="square">{/* Inhalt folgt später */}</button>;
-};
-
-export default Square;
-```
-
-**Erläuterung:**
-
-- **Import**: Wir importieren React, um JSX verwenden zu können.
-- **Definition**: `Square` ist eine Arrow Function, die eine React-Komponente darstellt.
-- **Rückgabe**: Die Komponente gibt ein `<button>`-Element mit der Klasse `square` zurück.
-- **Export**: Wir exportieren die Komponente, damit sie in anderen Dateien verwendet werden kann.
-
-### Einbindung in die Hauptanwendung
-
-Um die `Square`-Komponente zu verwenden, importieren wir sie in unsere `App.jsx`:
-
-```jsx
-import React from "react";
-import GameIntroduction from "./GameIntroduction";
-import Square from "./Square";
-
-const App = () => {
+function App() {
   return (
     <div>
-      <GameIntroduction />
-      <h1>Tic-Tac-Toe Spiel</h1>
-      <Square />
+      <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
     </div>
   );
-};
+}
 
 export default App;
 ```
 
-Damit wird die `Square`-Komponente innerhalb unserer App angezeigt, direkt unter der Spiel-Einführung.
+## Hands-on Aufgaben zum Selbstprobieren
 
-## Lernfragen zum Selbstüberprüfen
+### Aufgabe: Begrüßungsnachricht anzeigen
 
-**Was ist eine funktionale Komponente in React?**
+**Anforderungen:**
 
-_Antwort_: Eine funktionale Komponente ist eine JavaScript-Funktion, die Props als Parameter entgegennimmt und JSX zurückgibt, um ein React-Element zu rendern.
+1. **App.tsx bearbeiten:**
 
-**Welche Vorteile bieten funktionale Komponenten gegenüber Klassenkomponenten?**
+   - Öffne die Datei `App.tsx` in deinem Projektordner.
+   - Ersetze den bestehenden Code mit dem obigen Codebeispiel.
 
-_Antwort_: Funktionale Komponenten sind einfacher, benötigen weniger Code, haben weniger Overhead und unterstützen Hooks, was die Handhabung von Zustand und Seiteneffekten erleichtert.
+2. **Abhängigkeiten installieren:**
 
-## Hands on: Selbst coden
+   - Öffne dein Terminal oder deine Eingabeaufforderung.
+   - Navigiere in das Projektverzeichnis.
+   - Führe den folgenden Befehl aus, um alle nötigen Pakete zu installieren:
 
-**Aufgabe:** Erstelle eine `Board`-Komponente, die mehrere `Square`-Komponenten anzeigt, um eine Reihe des Tic-Tac-Toe-Bretts darzustellen.
+     ```bash
+     npm install
+     ```
 
-### Schritte:
+3. **Anwendung starten:**
 
-1. **Erstelle die Datei `Board.jsx` im `src`-Verzeichnis.**
+   - Starte die Entwicklungsumgebung mit:
 
-   ```jsx
-   import React from "react";
-   import Square from "./Square";
+     ```bash
+     npm run dev
+     ```
 
-   const Board = () => {
-     return (
-       <div className="board-row">
-         <Square />
-         <Square />
-         <Square />
-       </div>
-     );
-   };
+   - Öffne deinen Browser und rufe die angegebene lokale Adresse auf (z. B. `http://localhost:3000`).
+   - Du solltest die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** sehen.
 
-   export default Board;
-   ```
+### Zugehöriger Vitest für TDD
 
-2. **Aktualisiere `App.jsx`, um die `Board`-Komponente einzubinden.**
+Um sicherzustellen, dass unsere Anwendung korrekt funktioniert, schreiben wir einen automatisierten Test.
 
-   ```jsx
-   import React from "react";
-   import GameIntroduction from "./GameIntroduction";
-   import Board from "./Board";
+**Testdatei erstellen (`App.test.tsx`):**
 
-   const App = () => {
-     return (
-       <div>
-         <GameIntroduction />
-         <h1>Tic-Tac-Toe Spiel</h1>
-         <Board />
-       </div>
-     );
-   };
+Erstelle eine neue Datei namens `App.test.tsx` im gleichen Verzeichnis wie `App.tsx` und füge folgenden Code ein:
 
-   export default App;
-   ```
+```tsx
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-3. **Füge CSS hinzu, um die Darstellung zu verbessern.**
+test("zeigt die Begrüßungsnachricht an", () => {
+  render(<App />);
+  const greetingElement = screen.getByText(
+    /Willkommen zum Tic-Tac-Toe-Spiel!/i
+  );
+  expect(greetingElement).toBeInTheDocument();
+});
+```
 
-   In deiner CSS-Datei (`App.css` oder einer separaten CSS-Datei):
+**Test ausführen:**
 
-   ```css
-   .board-row {
-     display: flex;
-   }
+- Führe im Terminal den folgenden Befehl aus:
 
-   .square {
-     width: 60px;
-     height: 60px;
-     margin: 5px;
-     font-size: 24px;
-     text-align: center;
-   }
-   ```
+  ```bash
+  npm run test
+  ```
 
-4. **Starte die Entwicklungsumgebung und überprüfe die Ausgabe.**
+- Der Test sollte erfolgreich durchlaufen und bestätigen, dass die Begrüßungsnachricht angezeigt wird. ✅
 
-   ```bash
-   yarn start
-   ```
+---
 
-5. **Öffne die Anwendung im Browser** und stelle sicher, dass drei Quadrate nebeneinander angezeigt werden.
-
-## Ready or Done Kriterien für die Anwendung
-
-- Eine `Board`-Komponente ist erstellt und zeigt mehrere `Square`-Komponenten an.
-- Die `Square`-Komponenten werden korrekt und ohne Fehler gerendert.
-- Die Anwendung läuft ohne Fehler.
+**Herzlichen Glückwunsch!** 🎊 Du hast deine erste React-Komponente erstellt und verstanden, wie die grundlegende Struktur einer React-App aussieht. Außerdem hast du gelernt, wie man die Anwendung startet und Tests ausführt.
