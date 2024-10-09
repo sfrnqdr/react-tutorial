@@ -4,11 +4,19 @@ import useGameLogic from "../../hooks/useGameLogic";
 import Cell from "../Cell/Cell";
 import StatusMessage from "../StatusMessage/StatusMessage";
 import ScoreBoard from "../ScoreBoard/ScoreBoard";
+import GameResults from "../GameResults/GameResults";
 import "./GameBoard.css";
 
 const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
-    useGameLogic();
+  const {
+    cells,
+    currentPlayer,
+    winner,
+    score,
+    handleCellClick,
+    resetBoard,
+    gameResults,
+  } = useGameLogic();
   const firstCellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +48,7 @@ const GameBoard = () => {
           />
         ))}
       </div>
+      <GameResults results={gameResults} />
     </div>
   );
 };

@@ -30,3 +30,20 @@ h3 {
   text-align: center;
   color: green;
 }
+
+/* src/GameBoard.css */
+.game-results {
+  margin-top: 20px;
+}
+
+.game-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.game-results li {
+  background-color: #f9f9f9;
+  margin-bottom: 5px;
+  padding: 10px;
+  border-radius: 4px;
+}

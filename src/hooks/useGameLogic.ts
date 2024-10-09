@@ -1,5 +1,6 @@
 // src/hooks/useGameLogic.ts
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { saveGameResult, fetchGameResults } from "../api/api";
 
 type Score = {
   X: number;
@@ -11,6 +12,9 @@ const useGameLogic = () => {
   const [currentPlayer, setCurrentPlayer] = useState<string>("X");
   const [winner, setWinner] = useState<string>("");
   const [score, setScore] = useState<Score>({ X: 0, O: 0 });
+  const [gameResults, setGameResults] = useState<
+    { winner: string; timestamp: string }[]
+  >([]);
 
   const winningCombinations: number[][] = [
     [0, 1, 2],
@@ -43,9 +47,8 @@ const useGameLogic = () => {
     setWinner("");
   };
 
-  const handleCellClick = (index: number) => {
+  const handleCellClick = async (index: number) => {
     setCells((prevCells) => {
-      // Prevent overwriting a non-empty cell or if there's already a winner
       if (prevCells[index] !== "" || winner !== "") {
         return prevCells;
       }
@@ -60,7 +63,11 @@ const useGameLogic = () => {
           ...prevScore,
           [gameWinner]: prevScore[gameWinner] + 1,
         }));
-        // Optional: Automatically reset the board after a delay
+        const result = {
+          winner: gameWinner,
+          timestamp: new Date().toISOString(),
+        };
+        saveGameResult(result); // Speichere das Ergebnis in der API
         setTimeout(resetBoard, 2000);
       } else {
         setCurrentPlayer((prevPlayer) => (prevPlayer === "X" ? "O" : "X"));
@@ -70,6 +77,15 @@ const useGameLogic = () => {
     });
   };
 
+  const loadGameResults = async () => {
+    const results = await fetchGameResults();
+    setGameResults(results);
+  };
+
+  useEffect(() => {
+    loadGameResults();
+  }, []);
+
   return {
     cells,
     currentPlayer,
@@ -77,6 +93,7 @@ const useGameLogic = () => {
     score,
     handleCellClick,
     resetBoard,
+    gameResults,
   };
 };
 
