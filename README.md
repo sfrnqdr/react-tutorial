@@ -1,167 +1,179 @@
-# Schritt 4: Props vs. State
+# Schritt 5: Styling von Komponenten
 
 ## Leitfrage
 
-**Was sind Props und State in React, und wie unterscheiden sie sich bei der Verwaltung von Daten in unseren Komponenten?**
+**Wie können wir unsere React-Komponenten stilvoll gestalten und CSS verwenden, um unser Tic-Tac-Toe-Spiel ansprechender zu machen?**
 
 ## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 👋 Jetzt, wo wir das Spielfeld haben, ist es Zeit, uns anzusehen, wie wir Daten in unseren React-Komponenten verwalten können. Dazu müssen wir die Konzepte **Props** und **State** verstehen.
+Hey du! 👋 Jetzt, wo unser Tic-Tac-Toe-Spiel funktioniert, ist es an der Zeit, ihm einen coolen Look zu verpassen! ✨
 
-**Props** (Properties) sind wie die Parameter einer Funktion. Sie werden von außen an eine Komponente übergeben und sind unveränderlich innerhalb dieser Komponente.
+In React können wir CSS verwenden, um unsere Komponenten zu stylen und das Aussehen unserer Anwendung zu verbessern. Es gibt verschiedene Möglichkeiten, CSS in React zu verwenden: externe Stylesheets, Inline-Styles oder CSS-Module.
 
-**State** hingegen ist intern in einer Komponente. Es ermöglicht einer Komponente, ihren eigenen Datenzustand zu verwalten und zu ändern.
-
-Stell dir Props als den Input vor, den eine Komponente von ihrem Elternteil bekommt, und State als die eigenen Daten der Komponente, die sich ändern können.
-
-Lass uns sehen, wie wir das in unserem Tic-Tac-Toe-Spiel anwenden können! 🕹️
+Wir werden uns darauf konzentrieren, wie wir externe Stylesheets nutzen können, um unsere Komponenten schön und attraktiv zu gestalten. Lass uns unserem Spiel etwas Farbe und Stil hinzufügen! 🎨
 
 ## Exemplarisches Codebeispiel (Tic Tac Toe)
 
-**Erstellen einer `Cell`-Komponente mit Props und State:**
+**Erstellen und Anwenden von Styles für das Spielfeld und die Zellen:**
 
-```tsx
-// src/Cell.tsx
-import React, { useState } from "react";
+1. **Erstelle eine CSS-Datei für das Spielfeld:**
 
-type CellProps = {
-  value: string;
-};
+   ```css
+   /* src/GameBoard.css */
+   .board {
+     display: grid;
+     grid-template-columns: repeat(3, 100px);
+     grid-template-rows: repeat(3, 100px);
+     gap: 5px;
+     margin: 20px auto;
+     width: max-content;
+   }
 
-function Cell({ value }: CellProps) {
-  const [cellValue, setCellValue] = useState(value);
+   .cell {
+     width: 100px;
+     height: 100px;
+     background-color: #fff;
+     border: 2px solid #444;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 2rem;
+     cursor: pointer;
+     user-select: none;
+     transition: background-color 0.3s;
+   }
 
-  const handleClick = () => {
-    if (cellValue === "") {
-      setCellValue("X"); // Wir setzen vorerst immer 'X' als Beispiel
-    }
-  };
+   .cell:hover {
+     background-color: #f0f0f0;
+   }
+   ```
 
-  return (
-    <div className="cell" role="button" onClick={handleClick}>
-      {cellValue}
-    </div>
-  );
-}
+2. **Importiere die CSS-Datei in `GameBoard.tsx`:**
 
-export default Cell;
-```
+   ```tsx
+   // src/GameBoard.tsx
+   import React from "react";
+   import Cell from "./Cell";
+   import "./GameBoard.css"; // CSS importieren
 
-**Anpassen von `GameBoard.tsx`, um `Cell` zu verwenden:**
+   function GameBoard() {
+     // ... vorheriger Code bleibt gleich
+   }
 
-```tsx
-// src/GameBoard.tsx
-import React from "react";
-import Cell from "./Cell";
-import "./GameBoard.css";
+   export default GameBoard;
+   ```
 
-function GameBoard() {
-  const initialCells = Array(9).fill("");
+3. **Erstelle eine CSS-Datei für die `Cell`-Komponente (optional):**
 
-  return (
-    <div>
-      <h2>Tic Tac Toe</h2>
-      <div className="board">
-        {initialCells.map((cell, index) => (
-          <Cell key={index} value={cell} />
-        ))}
-      </div>
-    </div>
-  );
-}
+   ```css
+   /* src/Cell.css */
+   .cell {
+     /* Zusätzliche Styles können hier hinzugefügt werden */
+   }
+   ```
 
-export default GameBoard;
-```
+4. **Importiere die CSS-Datei in `Cell.tsx` (optional):**
+
+   ```tsx
+   // src/Cell.tsx
+   import React, { useState } from "react";
+   import "./Cell.css"; // CSS importieren
+
+   // ... restlicher Code bleibt gleich
+   ```
 
 ## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
 
-In React sind **Props** die Daten, die von einer Elternkomponente an eine Kindkomponente übergeben werden. Sie sind unveränderlich innerhalb der Kindkomponente. Das bedeutet, dass die Kindkomponente die Props nicht verändern sollte.
+In React können wir CSS nutzen, um unsere Komponenten zu stylen und ihnen ein ansprechendes Aussehen zu verleihen. Hier sind einige Möglichkeiten, wie wir CSS in React verwenden können:
 
-Der **State** hingegen stellt den internen Zustand einer Komponente dar. Mit Hooks wie `useState` können wir den State innerhalb einer funktionalen Komponente verwalten.
+1. **Externe Stylesheets:** Wir erstellen eine `.css`-Datei und importieren sie in unsere Komponente. Dies ist die gängigste Methode und fördert die Trennung von Anliegen (Separation of Concerns).
 
-In unserem Beispiel:
+2. **Inline-Styles:** Wir verwenden das `style`-Attribut in JSX-Elementen und übergeben ein JavaScript-Objekt mit den CSS-Eigenschaften. Diese Methode eignet sich für dynamische Styles, ist aber weniger übersichtlich bei vielen Styles.
 
-- In `GameBoard.tsx` erzeugen wir ein Array `initialCells`, das aus neun leeren Strings besteht. Dieses Array repräsentiert den Anfangszustand unseres Spielfelds.
-- Wir verwenden `map`, um über jedes Element des Arrays zu iterieren und eine `Cell`-Komponente zu rendern.
-- Wir übergeben die `value`-Prop an jede `Cell`, initialisiert mit einem leeren String.
+3. **CSS-Module:** Wir verwenden CSS-Dateien mit besonderen Erweiterungen (`.module.css`), die lokale Scope-Styles ermöglichen, um Namenskonflikte zu vermeiden.
 
-In der `Cell`-Komponente:
+Im obigen Beispiel verwenden wir externe Stylesheets:
 
-- Wir verwenden die `useState`-Hook, um den Zustand `cellValue` zu verwalten, initialisiert mit dem übergebenen `value`.
-- Beim Klick auf die Zelle (`handleClick`) prüfen wir, ob `cellValue` leer ist. Wenn ja, setzen wir es auf `'X'` (als einfaches Beispiel).
-- Dadurch wird die Komponente neu gerendert und zeigt den aktualisierten Wert an.
+- Wir erstellen `GameBoard.css` und definieren Styles für das `.board`-Container und die `.cell`-Elemente.
+- Durch das Importieren von `./GameBoard.css` in `GameBoard.tsx` werden die Styles auf die Komponenten angewendet.
+- Wir verwenden Grid Layout, um das Spielfeld zu gestalten, und fügen Hover-Effekte hinzu, um die Benutzerinteraktion zu verbessern.
 
-Dies zeigt, wie Props und State zusammenarbeiten:
-
-- **Props**: Die `Cell`-Komponente erhält ihren Anfangswert von der Elternkomponente `GameBoard` über die `value`-Prop.
-- **State**: Die `Cell`-Komponente verwaltet ihren eigenen Zustand `cellValue`, der sich ändern kann, wenn der Nutzer mit der Komponente interagiert.
+Durch das Styling unserer Komponenten verbessern wir die Benutzererfahrung und machen unser Spiel visuell ansprechender. 🎮
 
 ## Hands-on Aufgaben zum Selbstprobieren
 
-### Aufgabe: Verwendung von Props und State in Komponenten
+### Aufgabe: Styling des Tic-Tac-Toe-Spiels mit CSS
 
 **Anforderungen:**
 
-1. **Erstelle eine neue Datei `Cell.tsx` im `src`-Verzeichnis.**
+1. **Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis.**
 
-   - Definiere eine funktionale Komponente `Cell`, die eine `value`-Prop erhält.
-   - Verwende `useState`, um den internen Zustand `cellValue` zu verwalten, initialisiert mit `value`.
-   - Implementiere eine Klickfunktion (`handleClick`), die `cellValue` auf `'X'` setzt, wenn es leer ist.
-   - Render die Zelle mit dem aktuellen `cellValue`.
+   - Definiere Styles für die Klassen `.board` und `.cell`.
+   - Gestalte das Spielfeld als Grid mit 3 Spalten und 3 Zeilen.
+   - Füge optische Verbesserungen wie Ränder, Hintergrundfarben und Hover-Effekte hinzu.
 
-2. **Passe `GameBoard.tsx` an, um die `Cell`-Komponente zu verwenden.**
+2. **Importiere die CSS-Datei in `GameBoard.tsx`.**
 
-   - Importiere die `Cell`-Komponente.
-   - Erzeuge ein Array `initialCells` mit neun leeren Strings.
-   - Verwende `map`, um über `initialCells` zu iterieren und für jedes Element eine `Cell` zu rendern, wobei `value` übergeben wird.
+   - Stelle sicher, dass die Styles auf das Spielfeld angewendet werden.
 
-3. **Starte die Anwendung und teste das Spielfeld.**
+3. **(Optional) Erstelle eine CSS-Datei `Cell.css` für die `Cell`-Komponente.**
+
+   - Füge spezifische Styles für die Zellen hinzu, wenn nötig.
+   - Importiere die CSS-Datei in `Cell.tsx`.
+
+4. **Starte die Anwendung und überprüfe das neue Styling.**
 
    - Führe im Terminal aus:
 
      ```bash
-     npm install
      npm run dev
      ```
 
-   - Öffne die Anwendung im Browser.
-   - Klicke auf eine Zelle; sie sollte ein `'X'` anzeigen. 📝
+   - Öffne die Anwendung im Browser. Das Spielfeld sollte nun gestylt sein! 🌟
 
 ### Zugehöriger Vitest für TDD
 
-**Erstelle eine Testdatei `Cell.test.tsx` für die `Cell`-Komponente:**
+**Obwohl CSS schwer zu testen ist, können wir sicherstellen, dass die Klassen korrekt angewendet werden.**
+
+**Erstelle eine Testdatei `GameBoard.test.tsx` mit zusätzlichen Tests:**
 
 ```tsx
-// src/Cell.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
-import Cell from "./Cell";
+// src/GameBoard.test.tsx
+import { render, screen } from "@testing-library/react";
+import GameBoard from "./GameBoard";
 
-test("zeigt den initialen Wert an", () => {
-  render(<Cell value="" />);
-  const cellElement = screen.getByRole("button");
-  expect(cellElement).toHaveTextContent("");
+test('das Spielfeld hat die Klasse "board"', () => {
+  render(<GameBoard />);
+  const boardElement = screen.getByRole("grid");
+  expect(boardElement).toHaveClass("board");
 });
 
-test('ändert den Wert auf "X" bei Klick, wenn leer', () => {
-  render(<Cell value="" />);
-  const cellElement = screen.getByRole("button");
-  fireEvent.click(cellElement);
-  expect(cellElement).toHaveTextContent("X");
-});
-
-test("ändert den Wert nicht, wenn bereits gesetzt", () => {
-  render(<Cell value="O" />);
-  const cellElement = screen.getByRole("button");
-  fireEvent.click(cellElement);
-  expect(cellElement).toHaveTextContent("O");
+test('die Zellen haben die Klasse "cell"', () => {
+  render(<GameBoard />);
+  const cellElements = screen.getAllByRole("button");
+  cellElements.forEach((cell) => {
+    expect(cell).toHaveClass("cell");
+  });
 });
 ```
 
+**Anpassungen im Code, um die Tests zu unterstützen:**
+
+- Füge `role="grid"` zum Spielfeld-Container hinzu:
+
+  ```tsx
+  // src/GameBoard.tsx
+  // ...
+  <div className="board" role="grid">
+    {/* Zellen */}
+  </div>
+  // ...
+  ```
+
 **Anforderungen aus dem Test abgeleitet:**
 
-- Die `Cell`-Komponente soll den initialen Wert aus der `value`-Prop anzeigen.
-- Beim Klick auf eine leere Zelle soll der Wert auf `'X'` geändert werden.
-- Wenn die Zelle bereits einen Wert hat, soll ein Klick den Wert nicht ändern.
+- Das Spielfeld (`div` mit Klasse `board`) soll das Attribut `role="grid"` haben und die Klasse `board` besitzen.
+- Die Zellen sollen die Klasse `cell` haben.
 
 **Test ausführen:**
 
@@ -171,40 +183,43 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
   npm run test
   ```
 
-- Stelle sicher, dass alle Tests erfolgreich durchlaufen. ✅
+- Stelle sicher, dass die neuen Tests erfolgreich durchlaufen. ✅
 
 ## Fertige Musterlösung dieses Kapitels
 
-1. **Erstellen der `Cell`-Komponente:**
+1. **Erstellen der CSS-Datei `GameBoard.css`:**
 
-   ```tsx
-   // src/Cell.tsx
-   import React, { useState } from "react";
-
-   type CellProps = {
-     value: string;
-   };
-
-   function Cell({ value }: CellProps) {
-     const [cellValue, setCellValue] = useState(value);
-
-     const handleClick = () => {
-       if (cellValue === "") {
-         setCellValue("X");
-       }
-     };
-
-     return (
-       <div className="cell" role="button" onClick={handleClick}>
-         {cellValue}
-       </div>
-     );
+   ```css
+   /* src/GameBoard.css */
+   .board {
+     display: grid;
+     grid-template-columns: repeat(3, 100px);
+     grid-template-rows: repeat(3, 100px);
+     gap: 5px;
+     margin: 20px auto;
+     width: max-content;
    }
 
-   export default Cell;
+   .cell {
+     width: 100px;
+     height: 100px;
+     background-color: #fff;
+     border: 2px solid #444;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 2rem;
+     cursor: pointer;
+     user-select: none;
+     transition: background-color 0.3s;
+   }
+
+   .cell:hover {
+     background-color: #f0f0f0;
+   }
    ```
 
-2. **Anpassen von `GameBoard.tsx`:**
+2. **Importieren des CSS in `GameBoard.tsx`:**
 
    ```tsx
    // src/GameBoard.tsx
@@ -218,7 +233,7 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
      return (
        <div>
          <h2>Tic Tac Toe</h2>
-         <div className="board">
+         <div className="board" role="grid">
            {initialCells.map((cell, index) => (
              <Cell key={index} value={cell} />
            ))}
@@ -230,44 +245,59 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
    export default GameBoard;
    ```
 
-3. **Erstellen der Tests für `Cell`:**
+3. **Anpassen der `Cell`-Komponente (optional):**
+
+   - **Cell.css** erstellen (falls benötigt):
+
+     ```css
+     /* src/Cell.css */
+     /* Zusätzliche Styles für die Zelle */
+     .cell {
+       /* Styles hier hinzufügen */
+     }
+     ```
+
+   - **Importieren von `Cell.css` in `Cell.tsx`:**
+
+     ```tsx
+     // src/Cell.tsx
+     import React, { useState } from "react";
+     import "./Cell.css";
+
+     // ... restlicher Code bleibt gleich
+     ```
+
+4. **Anpassen der Tests in `GameBoard.test.tsx`:**
 
    ```tsx
-   // src/Cell.test.tsx
-   import { render, screen, fireEvent } from "@testing-library/react";
-   import Cell from "./Cell";
+   // src/GameBoard.test.tsx
+   import { render, screen } from "@testing-library/react";
+   import GameBoard from "./GameBoard";
 
-   test("zeigt den initialen Wert an", () => {
-     render(<Cell value="" />);
-     const cellElement = screen.getByRole("button");
-     expect(cellElement).toHaveTextContent("");
+   test('das Spielfeld hat die Klasse "board"', () => {
+     render(<GameBoard />);
+     const boardElement = screen.getByRole("grid");
+     expect(boardElement).toHaveClass("board");
    });
 
-   test('ändert den Wert auf "X" bei Klick, wenn leer', () => {
-     render(<Cell value="" />);
-     const cellElement = screen.getByRole("button");
-     fireEvent.click(cellElement);
-     expect(cellElement).toHaveTextContent("X");
-   });
-
-   test("ändert den Wert nicht, wenn bereits gesetzt", () => {
-     render(<Cell value="O" />);
-     const cellElement = screen.getByRole("button");
-     fireEvent.click(cellElement);
-     expect(cellElement).toHaveTextContent("O");
+   test('die Zellen haben die Klasse "cell"', () => {
+     render(<GameBoard />);
+     const cellElements = screen.getAllByRole("button");
+     cellElements.forEach((cell) => {
+       expect(cell).toHaveClass("cell");
+     });
    });
    ```
 
-4. **Anwendung starten und Tests ausführen:**
+5. **Anwendung starten und Tests ausführen:**
 
    - **Anwendung starten:**
 
      ```bash
-     npm install
      npm run dev
      ```
 
-     - Überprüfe im Browser, dass das Spielfeld angezeigt wird und die Zellen bei Klick korrekt reagieren.
+     - Öffne die Anwendung im Browser. Du solltest jetzt das gestylte Spielfeld sehen. 🌈
 
    - **Tests ausführen:**
 
@@ -277,37 +307,18 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
-5. **Optional: Anpassung des CSS für die `Cell`-Komponente**
+6. **Zusätzliche Verbesserungen (optional):**
 
-   - Passe die CSS-Datei `GameBoard.css` an, um die Darstellung der Zellen mit Werten zu verbessern.
+   - **Responsive Design:** Passe die Größenangaben an, um das Spielfeld auf verschiedenen Bildschirmgrößen gut aussehen zu lassen.
 
-     ```css
-     /* src/GameBoard.css */
+   - **Farbschema ändern:** Experimentiere mit verschiedenen Farben, um ein einzigartiges Design zu erstellen.
 
-     .board {
-       display: grid;
-       grid-template-columns: repeat(3, 100px);
-       grid-template-rows: repeat(3, 100px);
-       gap: 5px;
-       margin: 20px auto;
-       width: max-content;
-     }
-
-     .cell {
-       width: 100px;
-       height: 100px;
-       background-color: #f0f0f0;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       font-size: 2rem;
-       cursor: pointer;
-       user-select: none;
-     }
-     ```
+   - **Fonts hinzufügen:** Verwende benutzerdefinierte Schriftarten, um das Erscheinungsbild zu verbessern.
 
 ---
 
-**Super Arbeit!** 🎉 Du hast erfolgreich die Unterschiede zwischen Props und State verstanden und angewendet. Jetzt können unsere Zellen auf Klicks reagieren und ihren Zustand ändern. Damit haben wir einen wichtigen Schritt gemacht, um unser Tic-Tac-Toe-Spiel zum Laufen zu bringen. Weiter so! 💪
+**Großartig!** 🎉 Du hast gelernt, wie man in React CSS verwendet, um Komponenten zu stylen. Dein Tic-Tac-Toe-Spiel sieht jetzt viel attraktiver aus, und du hast ein besseres Verständnis dafür, wie Styling in React funktioniert.
+
+Durch das Anwenden von CSS auf deine Komponenten kannst du das Benutzererlebnis erheblich verbessern und deine Anwendung professioneller gestalten. 🚀
 
 **Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
