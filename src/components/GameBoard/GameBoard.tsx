@@ -1,5 +1,5 @@
 // src/GameBoard.tsx
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Cell from "../Cell/Cell";
 import StatusMessage from "../StatusMessage/StatusMessage";
 import ScoreBoard from "../ScoreBoard/ScoreBoard";
@@ -10,6 +10,21 @@ const GameBoard = () => {
   const [currentPlayer, setCurrentPlayer] = useState("X");
   const [winner, setWinner] = useState("");
   const [score, setScore] = useState({ X: 0, O: 0 });
+  const firstCellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (winner) {
+      document.title = `Spieler ${winner} gewinnt!`;
+    } else {
+      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
+    }
+  }, [winner, currentPlayer]);
+
+  useEffect(() => {
+    if (firstCellRef.current) {
+      firstCellRef.current.focus();
+    }
+  }, [cells]);
 
   const checkWinner = (updatedCells: string[]) => {
     const winningCombinations = [
@@ -73,6 +88,7 @@ const GameBoard = () => {
             key={index}
             value={cell}
             onClick={() => handleCellClick(index)}
+            ref={index === 0 ? firstCellRef : null}
           />
         ))}
       </div>
