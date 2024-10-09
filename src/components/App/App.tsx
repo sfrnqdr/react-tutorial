@@ -1,7 +1,10 @@
+// src/components/App/App.tsx
+import Welcome from "../Welcome/Welcome";
+
 const App = () => {
   return (
     <div>
-      <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+      <Welcome />
     </div>
   );
 };

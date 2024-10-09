@@ -1,47 +1,76 @@
-# Schritt 2: Funktionale Komponenten
+# Schritt 3: JSX-Implementierung
 
 ## Leitfrage
 
-**Was sind funktionale Komponenten in React, und wie erstellen wir unsere eigene Komponente?**
+**Was ist JSX, und wie verwenden wir es, um unsere Benutzeroberfläche in React zu gestalten?**
 
 ## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 👋 Im letzten Schritt haben wir unsere Anwendung gestartet und eine einfache Begrüßungsnachricht angezeigt. Jetzt lernen wir, was funktionale Komponenten in React sind.
+Hey du! 😊 Jetzt tauchen wir tiefer in React ein und sprechen über JSX. JSX steht für JavaScript XML und erlaubt es uns, HTML-ähnliche Syntax direkt in unserem JavaScript-Code zu schreiben. Das macht es viel einfacher und übersichtlicher, die Benutzeroberfläche unserer Anwendung zu gestalten.
 
-In React nutzen wir Komponenten, um unsere Benutzeroberfläche in wiederverwendbare Teile zu zerlegen. Eine funktionale Komponente ist einfach eine JavaScript-Funktion, die etwas JSX (das sieht aus wie HTML) zurückgibt. Damit können wir unseren Code sauber und organisiert halten. ✨
-
-Lass uns eine eigene Komponente erstellen und sie in unserer App verwenden!
+Statt komplizierten JavaScript-Code zu schreiben, können wir mit JSX unsere Komponenten strukturieren, als würden wir HTML schreiben. Lass uns gemeinsam sehen, wie wir das für unser Tic-Tac-Toe-Spiel nutzen können! 🕹️
 
 ## Exemplarisches Codebeispiel (Tic Tac Toe)
 
-**Erstellen einer neuen Komponente `Welcome.tsx`:**
+**Erstellen des Spielfeldes mit JSX:**
 
 ```tsx
-// src/Welcome.tsx
+// src/GameBoard.tsx
 import React from "react";
 
-function Welcome() {
+function GameBoard() {
   return (
     <div>
-      <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+      <h2>Tic Tac Toe</h2>
+      <div className="board">
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+        <div className="cell" role="button">
+          {" "}
+        </div>
+      </div>
     </div>
   );
 }
 
-export default Welcome;
+export default GameBoard;
 ```
 
-**Anpassen von `App.tsx`, um die neue Komponente zu verwenden:**
+**Anpassen von `App.tsx`, um `GameBoard` einzubinden:**
 
 ```tsx
 // src/App.tsx
 import React from "react";
 import Welcome from "./Welcome";
+import GameBoard from "./GameBoard";
 
 function App() {
   return (
     <div>
       <Welcome />
+      <GameBoard />
     </div>
   );
 }
@@ -51,29 +80,31 @@ export default App;
 
 ## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
 
-Funktionale Komponenten sind ein zentrales Konzept in React. Sie erlauben es uns, wiederverwendbare und isolierte Stücke von Benutzeroberfläche zu erstellen.
+JSX (JavaScript XML) ermöglicht es uns, eine deklarative Syntax für die Erstellung von React-Elementen zu verwenden. Unter der Haube wird JSX zu regulären JavaScript-Funktionsaufrufen kompiliert (`React.createElement`).
 
-In unserem Beispiel haben wir eine neue Komponente `Welcome` erstellt, die einfach eine Begrüßungsnachricht rendert. Diese Komponente ist eine Funktion, die JSX zurückgibt. Wir können diese Komponente wie ein HTML-Element verwenden, indem wir `<Welcome />` in unserem JSX einfügen.
+In unserem `GameBoard`-Beispiel verwenden wir JSX, um die Struktur des Spielfelds zu definieren. Wir erstellen neun `div`-Elemente mit der Klasse `cell`, die jeweils ein Spielfeld repräsentieren. Wir haben das `role="button"`-Attribut hinzugefügt, um die Zellen interaktiv und für Assistenztechnologien zugänglich zu machen.
 
-Durch das Aufteilen unserer Anwendung in kleine Komponenten fördern wir die Wiederverwendbarkeit und Lesbarkeit unseres Codes. Außerdem wird es einfacher, einzelne Teile unserer App zu testen und zu warten.
+Durch die Trennung der Komponenten (`Welcome` und `GameBoard`) fördern wir die Wiederverwendbarkeit und Lesbarkeit unseres Codes. Jede Komponente ist für einen bestimmten Teil der Benutzeroberfläche verantwortlich.
 
 ## Hands-on Aufgaben zum Selbstprobieren
 
-### Aufgabe: Eigene Funktionale Komponente erstellen
+### Aufgabe: Das Spielfeld mit JSX erstellen
 
 **Anforderungen:**
 
-1. **Erstelle eine neue Datei `Welcome.tsx` im `src`-Verzeichnis.**
+1. **Erstelle eine neue Datei `GameBoard.tsx` im `src`-Verzeichnis.**
 
-   - Definiere eine funktionale Komponente `Welcome`, die eine Begrüßungsnachricht anzeigt.
+   - Definiere eine funktionale Komponente `GameBoard`, die ein 3x3 Tic-Tac-Toe-Spielfeld als JSX-Elemente darstellt.
+   - Verwende `<div>`-Elemente mit der Klasse `cell` für die einzelnen Spielfelder.
+   - Füge das `role="button"`-Attribut hinzu, um die Zellen interaktiv zu machen.
    - Exportiere die Komponente standardmäßig.
 
-2. **Passe `App.tsx` an, um die `Welcome`-Komponente zu verwenden.**
+2. **Passe `App.tsx` an, um die `GameBoard`-Komponente zu verwenden.**
 
-   - Importiere die `Welcome`-Komponente.
-   - Ersetze den bisherigen Code in `App.tsx`, sodass lediglich `<Welcome />` gerendert wird.
+   - Importiere die `GameBoard`-Komponente.
+   - Füge `<GameBoard />` unterhalb von `<Welcome />` in das JSX von `App` ein.
 
-3. **Starte die Anwendung und überprüfe, ob die Begrüßungsnachricht weiterhin angezeigt wird.**
+3. **Starte die Anwendung und überprüfe, ob das Spielfeld angezeigt wird.**
 
    - Führe im Terminal aus:
 
@@ -81,29 +112,31 @@ Durch das Aufteilen unserer Anwendung in kleine Komponenten fördern wir die Wie
      npm run dev
      ```
 
-   - Öffne die Anwendung im Browser.
+   - Öffne die Anwendung im Browser. Du solltest das Tic-Tac-Toe-Spielfeld sehen. 🎉
 
 ### Zugehöriger Vitest für TDD
 
-**Erstelle eine Testdatei `Welcome.test.tsx` für die `Welcome`-Komponente:**
+**Erstelle eine Testdatei `GameBoard.test.tsx` für die `GameBoard`-Komponente:**
 
 ```tsx
-// src/Welcome.test.tsx
+// src/GameBoard.test.tsx
 import { render, screen } from "@testing-library/react";
-import Welcome from "./Welcome";
+import GameBoard from "./GameBoard";
 
-test("zeigt die Begrüßungsnachricht an", () => {
-  render(<Welcome />);
-  const greetingElement = screen.getByText(
-    /Willkommen zum Tic-Tac-Toe-Spiel!/i
-  );
-  expect(greetingElement).toBeInTheDocument();
+test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
+  render(<GameBoard />);
+  const titleElement = screen.getByText(/Tic Tac Toe/i);
+  expect(titleElement).toBeInTheDocument();
+
+  const cells = screen.getAllByRole("button");
+  expect(cells.length).toBe(9);
 });
 ```
 
 **Anforderungen aus dem Test abgeleitet:**
 
-- Die `Welcome`-Komponente soll den Text **"Willkommen zum Tic-Tac-Toe-Spiel!"** anzeigen.
+- Die `GameBoard`-Komponente soll den Titel **"Tic Tac Toe"** anzeigen.
+- Es sollen neun interaktive Zellen vorhanden sein (Rolle `button`).
 
 **Test ausführen:**
 
@@ -117,21 +150,50 @@ test("zeigt die Begrüßungsnachricht an", () => {
 
 ## Fertige Musterlösung dieses Kapitels
 
-1. **Erstellen der `Welcome`-Komponente:**
+1. **Erstellen der `GameBoard`-Komponente:**
 
    ```tsx
-   // src/Welcome.tsx
+   // src/GameBoard.tsx
    import React from "react";
 
-   function Welcome() {
+   function GameBoard() {
      return (
        <div>
-         <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+         <h2>Tic Tac Toe</h2>
+         <div className="board">
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+           <div className="cell" role="button">
+             {" "}
+           </div>
+         </div>
        </div>
      );
    }
 
-   export default Welcome;
+   export default GameBoard;
    ```
 
 2. **Anpassen von `App.tsx`:**
@@ -140,11 +202,13 @@ test("zeigt die Begrüßungsnachricht an", () => {
    // src/App.tsx
    import React from "react";
    import Welcome from "./Welcome";
+   import GameBoard from "./GameBoard";
 
    function App() {
      return (
        <div>
          <Welcome />
+         <GameBoard />
        </div>
      );
    }
@@ -152,19 +216,20 @@ test("zeigt die Begrüßungsnachricht an", () => {
    export default App;
    ```
 
-3. **Test für `Welcome`-Komponente erstellen:**
+3. **Test für `GameBoard`-Komponente erstellen:**
 
    ```tsx
-   // src/Welcome.test.tsx
+   // src/GameBoard.test.tsx
    import { render, screen } from "@testing-library/react";
-   import Welcome from "./Welcome";
+   import GameBoard from "./GameBoard";
 
-   test("zeigt die Begrüßungsnachricht an", () => {
-     render(<Welcome />);
-     const greetingElement = screen.getByText(
-       /Willkommen zum Tic-Tac-Toe-Spiel!/i
-     );
-     expect(greetingElement).toBeInTheDocument();
+   test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
+     render(<GameBoard />);
+     const titleElement = screen.getByText(/Tic Tac Toe/i);
+     expect(titleElement).toBeInTheDocument();
+
+     const cells = screen.getAllByRole("button");
+     expect(cells.length).toBe(9);
    });
    ```
 
@@ -176,7 +241,8 @@ test("zeigt die Begrüßungsnachricht an", () => {
      npm run dev
      ```
 
-     - Überprüfe im Browser, dass die Begrüßungsnachricht angezeigt wird.
+     - Öffne die Anwendung im Browser unter der angegebenen Adresse (z. B. `http://localhost:3000`).
+     - Du solltest die Begrüßungsnachricht und darunter das Tic-Tac-Toe-Spielfeld sehen.
 
    - **Tests ausführen:**
 
@@ -186,8 +252,51 @@ test("zeigt die Begrüßungsnachricht an", () => {
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
+5. **Optional: Style hinzufügen (CSS):**
+
+   - Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis:
+
+     ```css
+     /* src/GameBoard.css */
+     .board {
+       display: grid;
+       grid-template-columns: repeat(3, 100px);
+       grid-template-rows: repeat(3, 100px);
+       gap: 5px;
+       margin: 20px auto;
+       width: max-content;
+     }
+
+     .cell {
+       width: 100px;
+       height: 100px;
+       background-color: #f0f0f0;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 2rem;
+       cursor: pointer;
+     }
+     ```
+
+   - Importiere das CSS in `GameBoard.tsx`:
+
+     ```tsx
+     // src/GameBoard.tsx
+     import React from "react";
+     import "./GameBoard.css";
+
+     function GameBoard() {
+       // ... restlicher Code bleibt gleich
+     }
+
+     export default GameBoard;
+     ```
+
+   - Jetzt sieht das Spielfeld schon viel ansprechender aus! 🎨
+
 ---
 
-**Super gemacht!** 🎉 Du hast gelernt, wie man eigene funktionale Komponenten in React erstellt und verwendet. Dies ist ein wichtiger Schritt, um unsere Tic-Tac-Toe-Anwendung modular und wartbar zu gestalten.
+**Fantastisch!** 🌟 Du hast gelernt, wie man JSX verwendet, um die Benutzeroberfläche zu gestalten, und hast damit unser Tic-Tac-Toe-Spielfeld erstellt. Mit jedem Schritt kommen wir unserem funktionsfähigen Spiel näher. Mach weiter so! 💪
 
 **Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
