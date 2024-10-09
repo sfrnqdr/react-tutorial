@@ -1,6 +1,8 @@
 // src/Cell.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
+import { useState } from "react";
 import Cell from "./Cell";
+import { test, expect } from "vitest";
 
 test("zeigt den initialen Wert an", () => {
   render(<Cell value="" />);
@@ -9,7 +11,12 @@ test("zeigt den initialen Wert an", () => {
 });
 
 test('ändert den Wert auf "X" bei Klick, wenn leer', () => {
-  render(<Cell value="" />);
+  const TestCell = () => {
+    const [value, setValue] = useState("");
+    return <Cell value={value} onClick={() => setValue("X")} />;
+  };
+
+  render(<TestCell />);
   const cellElement = screen.getByRole("button");
   fireEvent.click(cellElement);
   expect(cellElement).toHaveTextContent("X");

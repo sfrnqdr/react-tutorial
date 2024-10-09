@@ -25,3 +25,8 @@
 .cell:hover {
   background-color: #f0f0f0;
 }
+
+h3 {
+  text-align: center;
+  color: green;
+}

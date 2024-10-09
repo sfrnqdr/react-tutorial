@@ -1,17 +1,22 @@
 // src/GameBoard.test.tsx
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 
-test('das Spielfeld hat die Klasse "board"', () => {
+test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
   render(<GameBoard />);
-  const boardElement = screen.getByRole("grid");
-  expect(boardElement).toHaveClass("board");
+  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
+  expect(winnerMessage).toBeNull();
 });
 
-test('die Zellen haben die Klasse "cell"', () => {
+test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
   render(<GameBoard />);
-  const cellElements = screen.getAllByRole("button");
-  cellElements.forEach((cell) => {
-    expect(cell).toHaveClass("cell");
-  });
+  const cells = screen.getAllByRole("button");
+
+  // Simuliere einen Sieg für 'X' in der oberen Reihe
+  fireEvent.click(cells[0]); // X
+  fireEvent.click(cells[1]); // X
+  fireEvent.click(cells[2]); // X
+
+  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
+  expect(winnerMessage).toBeInTheDocument();
 });

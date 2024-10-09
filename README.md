@@ -1,210 +1,59 @@
-# Schritt 6: Bedingtes Rendern
+# Schritt 7: Komponentenkomposition
 
 ## Leitfrage
 
-**Was ist bedingtes Rendern in React, und wie können wir es nutzen, um bestimmte Elemente in unserem Tic-Tac-Toe-Spiel anzuzeigen oder zu verbergen?**
+**Wie kombinieren wir in React mehrere Komponenten, um eine komplexere Benutzeroberfläche zu erstellen, und wie nutzen wir Komponentenkomposition in unserem Tic-Tac-Toe-Spiel?**
 
 ## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 👋 In diesem Schritt lernen wir, wie wir in React Inhalte basierend auf bestimmten Bedingungen ein- oder ausblenden können. Das nennt man **bedingtes Rendern**.
+Hey du! 👋 In diesem Schritt schauen wir uns an, wie wir in React mehrere Komponenten zusammenfügen können, um eine vollständige und strukturierte Anwendung zu erstellen. Das nennt man **Komponentenkomposition**.
 
-Stell dir vor, du möchtest nur dann eine Nachricht anzeigen, wenn jemand das Tic-Tac-Toe-Spiel gewonnen hat. Wenn das Spiel noch läuft, soll die Nachricht nicht zu sehen sein. Mit bedingtem Rendern kannst du genau das erreichen! 🚀
+Stell dir vor, jede Komponente ist wie ein Baustein 🧩. Indem wir diese Bausteine zusammenfügen, können wir komplexere Strukturen bauen. In unserem Tic-Tac-Toe-Spiel können wir zum Beispiel das Spielfeld, die Zellen und zusätzliche Informationen wie die Spielstandsanzeige als separate Komponenten erstellen und sie miteinander kombinieren.
 
-Wir werden gemeinsam eine Siegesnachricht hinzufügen, die nur erscheint, wenn ein Spieler gewonnen hat.
+Durch Komponentenkomposition wird unser Code übersichtlicher, wiederverwendbarer und leichter zu warten. Lass uns sehen, wie wir das in unserem Spiel umsetzen können! 🎮
 
 ## Exemplarisches Codebeispiel (Tic Tac Toe)
 
-**Hinzufügen einer Siegesnachricht mit bedingtem Rendern:**
+**Erstellen einer `StatusMessage`-Komponente und Zusammensetzen der Komponenten:**
 
-```tsx
-// src/GameBoard.tsx
-import React, { useState } from "react";
-import Cell from "./Cell";
-import "./GameBoard.css";
+1. **Erstelle eine `StatusMessage`-Komponente:**
 
-function GameBoard() {
-  const [cells, setCells] = useState(Array(9).fill(""));
-  const [winner, setWinner] = useState("");
+   ```tsx
+   // src/StatusMessage.tsx
+   import React from "react";
 
-  const checkWinner = (updatedCells: string[]) => {
-    const winningCombinations = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8], // Reihen
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8], // Spalten
-      [0, 4, 8],
-      [2, 4, 6], // Diagonalen
-    ];
+   type StatusMessageProps = {
+     currentPlayer: string;
+     winner: string;
+   };
 
-    for (let combination of winningCombinations) {
-      const [a, b, c] = combination;
-      if (
-        updatedCells[a] &&
-        updatedCells[a] === updatedCells[b] &&
-        updatedCells[a] === updatedCells[c]
-      ) {
-        return updatedCells[a];
-      }
-    }
-    return "";
-  };
+   function StatusMessage({ currentPlayer, winner }: StatusMessageProps) {
+     return (
+       <div className="status-message">
+         {winner ? (
+           <h3>🎉 Spieler {winner} hat gewonnen!</h3>
+         ) : (
+           <h3>Aktueller Spieler: {currentPlayer}</h3>
+         )}
+       </div>
+     );
+   }
 
-  const handleCellClick = (index: number) => {
-    if (cells[index] === "" && winner === "") {
-      const newCells = [...cells];
-      newCells[index] = "X"; // Fürs Erste setzen wir immer 'X'
-      setCells(newCells);
-      const gameWinner = checkWinner(newCells);
-      if (gameWinner) {
-        setWinner(gameWinner);
-      }
-    }
-  };
+   export default StatusMessage;
+   ```
 
-  return (
-    <div>
-      <h2>Tic Tac Toe</h2>
-      {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
-      <div className="board" role="grid">
-        {cells.map((cell, index) => (
-          <Cell
-            key={index}
-            value={cell}
-            onClick={() => handleCellClick(index)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default GameBoard;
-```
-
-**Anpassen der `Cell`-Komponente:**
-
-```tsx
-// src/Cell.tsx
-import React from "react";
-
-type CellProps = {
-  value: string;
-  onClick: () => void;
-};
-
-function Cell({ value, onClick }: CellProps) {
-  return (
-    <div className="cell" role="button" onClick={onClick}>
-      {value}
-    </div>
-  );
-}
-
-export default Cell;
-```
-
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
-
-Beim **bedingten Rendern** in React entscheiden wir, ob ein bestimmtes Element gerendert wird oder nicht, basierend auf einer Bedingung. Dies ähnelt der Bedingungslogik in JavaScript mit `if`-Anweisungen.
-
-In unserem Beispiel:
-
-- Wir haben den Zustand `winner` hinzugefügt, um den Gewinner des Spiels zu speichern.
-- Die Funktion `checkWinner` überprüft nach jedem Zug, ob es eine Gewinnkombination gibt.
-- In der Render-Methode verwenden wir `{winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}`.
-  - Das ist eine Kurzschlussauswertung: Wenn `winner` einen Wert hat (nicht leer ist), wird die Nachricht angezeigt.
-  - Wenn `winner` leer ist, wird die Nachricht nicht gerendert.
-
-Dies ist ein gängiges Muster für bedingtes Rendern in React:
-
-- **Mit logischem UND (`&&`):** `{condition && <Element />}`
-  - Rendert `<Element />` nur, wenn `condition` wahr ist.
-- **Mit dem ternären Operator:** `{condition ? <ElementA /> : <ElementB />}`
-  - Rendert `<ElementA />` wenn `condition` wahr ist, sonst `<ElementB />`.
-
-Bedingtes Rendern ermöglicht es uns, die Benutzeroberfläche dynamisch an den Zustand unserer Anwendung anzupassen. Im Kontext unseres Spiels können wir so verschiedene Nachrichten oder Elemente anzeigen, je nachdem, was gerade passiert. 🎮
-
-## Hands-on Aufgaben zum Selbstprobieren
-
-### Aufgabe: Implementierung einer Siegesnachricht mit bedingtem Rendern
-
-**Anforderungen:**
-
-1. **Erweitere den Zustand in `GameBoard.tsx`:**
-   - Füge `cells` und `winner` zum Zustand hinzu.
-   - Implementiere eine Funktion `checkWinner`, die überprüft, ob ein Spieler gewonnen hat.
-   - Aktualisiere `handleCellClick`, um Züge zu verarbeiten und den Gewinner zu ermitteln.
-2. **Passe das Rendern in `GameBoard.tsx` an:**
-   - Verwende bedingtes Rendern, um die Siegesnachricht nur anzuzeigen, wenn ein Gewinner ermittelt wurde.
-3. **Aktualisiere die `Cell`-Komponente:**
-   - Entferne den internen Zustand `cellValue`.
-   - Verwende stattdessen die `value`-Prop zum Anzeigen des Werts.
-   - Füge eine `onClick`-Prop hinzu, um Klicks an die Elternkomponente zu melden.
-4. **Teste das Spiel:**
-   - Starte die Anwendung:
-     ```bash
-     npm run dev
-     ```
-   - Spiele das Spiel, bis ein Spieler gewinnt. Die Siegesnachricht sollte erscheinen! 🏆
-
-### Zugehöriger Vitest für TDD
-
-**Erstelle eine Testdatei `GameBoard.test.tsx` mit Tests für das bedingte Rendern:**
-
-```tsx
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
-import GameBoard from "./GameBoard";
-
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
-});
-
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' in der oberen Reihe
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // Ignoriert, da wir nur 'X' setzen
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // Ignoriert
-  fireEvent.click(cells[2]); // X
-
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
-```
-
-**Anforderungen aus dem Test abgeleitet:**
-
-- **Test 1:** Zu Beginn des Spiels wird keine Siegesnachricht angezeigt.
-- **Test 2:** Wenn ein Spieler gewinnt, wird die entsprechende Siegesnachricht angezeigt.
-
-**Test ausführen:**
-
-```bash
-npm run test
-```
-
-- Stelle sicher, dass beide Tests erfolgreich sind. ✅
-
-## Fertige Musterlösung dieses Kapitels
-
-1. **Aktualisiere `GameBoard.tsx`:**
+2. **Anpassen von `GameBoard.tsx`, um `StatusMessage` zu verwenden:**
 
    ```tsx
    // src/GameBoard.tsx
    import React, { useState } from "react";
    import Cell from "./Cell";
+   import StatusMessage from "./StatusMessage";
    import "./GameBoard.css";
 
    function GameBoard() {
      const [cells, setCells] = useState(Array(9).fill(""));
+     const [currentPlayer, setCurrentPlayer] = useState("X");
      const [winner, setWinner] = useState("");
 
      const checkWinner = (updatedCells: string[]) => {
@@ -235,11 +84,13 @@ npm run test
      const handleCellClick = (index: number) => {
        if (cells[index] === "" && winner === "") {
          const newCells = [...cells];
-         newCells[index] = "X";
+         newCells[index] = currentPlayer;
          setCells(newCells);
          const gameWinner = checkWinner(newCells);
          if (gameWinner) {
            setWinner(gameWinner);
+         } else {
+           setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
          }
        }
      };
@@ -247,7 +98,7 @@ npm run test
      return (
        <div>
          <h2>Tic Tac Toe</h2>
-         {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
+         <StatusMessage currentPlayer={currentPlayer} winner={winner} />
          <div className="board" role="grid">
            {cells.map((cell, index) => (
              <Cell
@@ -264,7 +115,197 @@ npm run test
    export default GameBoard;
    ```
 
-2. **Aktualisiere `Cell.tsx`:**
+## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
+
+**Komponentenkomposition** ist ein grundlegendes Prinzip in React, das es uns ermöglicht, komplexe Benutzeroberflächen aus einfacheren, wiederverwendbaren Komponenten aufzubauen. Dadurch fördern wir die Modularität und Wartbarkeit unseres Codes.
+
+Im obigen Beispiel:
+
+- **`StatusMessage`-Komponente:**
+
+  - Diese Komponente ist verantwortlich für die Anzeige des aktuellen Spielstatus.
+  - Sie erhält `currentPlayer` und `winner` als Props.
+  - Sie entscheidet, basierend auf dem Wert von `winner`, ob sie die Siegesnachricht oder den aktuellen Spieler anzeigt.
+  - Durch das Auslagern dieser Logik in eine eigene Komponente halten wir `GameBoard` übersichtlich.
+
+- **Zusammensetzen der Komponenten in `GameBoard`:**
+  - Wir importieren `StatusMessage` und fügen sie in unser Render-Ergebnis ein.
+  - Indem wir Komponenten verschachteln, bauen wir unsere Benutzeroberfläche hierarchisch auf.
+
+**Vorteile der Komponentenkomposition:**
+
+- **Wiederverwendbarkeit:** Komponenten können in verschiedenen Teilen der Anwendung oder sogar in anderen Projekten wiederverwendet werden.
+- **Klarheit und Wartbarkeit:** Der Code ist sauberer und leichter zu verstehen, da jede Komponente eine spezifische Aufgabe hat.
+- **Testbarkeit:** Einzelne Komponenten können isoliert getestet werden, was die Fehlerbehebung erleichtert.
+
+Durch die Komposition von Komponenten erstellen wir eine übersichtliche und skalierbare Struktur für unsere Anwendung. Dies ist besonders wichtig in größeren Projekten, wo die Komplexität ohne klare Struktur schnell zunimmt.
+
+## Hands-on Aufgaben zum Selbstprobieren
+
+### Aufgabe: Komposition von Komponenten im Tic-Tac-Toe-Spiel
+
+**Anforderungen:**
+
+1. **Erstelle die `StatusMessage`-Komponente:**
+
+   - Erstelle eine neue Datei `StatusMessage.tsx` im `src`-Verzeichnis.
+   - Die Komponente soll die Props `currentPlayer` (aktueller Spieler) und `winner` erhalten.
+   - Basierend auf dem Wert von `winner` soll sie entweder die Siegesnachricht oder den aktuellen Spieler anzeigen.
+
+2. **Passe `GameBoard.tsx` an:**
+
+   - Importiere die `StatusMessage`-Komponente.
+   - Implementiere die Zustände `currentPlayer` und `winner`.
+   - Aktualisiere die Funktion `handleCellClick`, um zwischen den Spielern zu wechseln und den Gewinner zu ermitteln.
+   - Füge `<StatusMessage />` in das Render-Ergebnis ein und übergib die erforderlichen Props.
+
+3. **Teste das Spiel:**
+   - Starte die Anwendung:
+     ```bash
+     npm run dev
+     ```
+   - Spiele das Spiel und beobachte, wie die Anzeige zwischen den Spielern wechselt und die Siegesnachricht erscheint, wenn jemand gewinnt. 🎉
+
+### Zugehöriger Vitest für TDD
+
+**Erstelle eine Testdatei `StatusMessage.test.tsx` für die `StatusMessage`-Komponente:**
+
+```tsx
+// src/StatusMessage.test.tsx
+import { render, screen } from "@testing-library/react";
+import StatusMessage from "./StatusMessage";
+
+test("zeigt den aktuellen Spieler an, wenn kein Gewinner vorhanden ist", () => {
+  render(<StatusMessage currentPlayer="X" winner="" />);
+  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
+  expect(statusElement).toBeInTheDocument();
+});
+
+test("zeigt die Siegesnachricht an, wenn ein Gewinner vorhanden ist", () => {
+  render(<StatusMessage currentPlayer="O" winner="X" />);
+  const winnerElement = screen.getByText(/Spieler X hat gewonnen!/i);
+  expect(winnerElement).toBeInTheDocument();
+});
+```
+
+**Anforderungen aus dem Test abgeleitet:**
+
+- Die `StatusMessage`-Komponente soll:
+  - Den aktuellen Spieler anzeigen, wenn `winner` leer ist.
+  - Die Siegesnachricht anzeigen, wenn `winner` einen Wert hat.
+
+**Test ausführen:**
+
+- Führe im Terminal aus:
+
+  ```bash
+  npm run test
+  ```
+
+- Stelle sicher, dass beide Tests erfolgreich sind. ✅
+
+## Fertige Musterlösung dieses Kapitels
+
+1. **Erstellen der `StatusMessage`-Komponente:**
+
+   ```tsx
+   // src/StatusMessage.tsx
+   import React from "react";
+
+   type StatusMessageProps = {
+     currentPlayer: string;
+     winner: string;
+   };
+
+   function StatusMessage({ currentPlayer, winner }: StatusMessageProps) {
+     return (
+       <div className="status-message">
+         {winner ? (
+           <h3>🎉 Spieler {winner} hat gewonnen!</h3>
+         ) : (
+           <h3>Aktueller Spieler: {currentPlayer}</h3>
+         )}
+       </div>
+     );
+   }
+
+   export default StatusMessage;
+   ```
+
+2. **Anpassen von `GameBoard.tsx`:**
+
+   ```tsx
+   // src/GameBoard.tsx
+   import React, { useState } from "react";
+   import Cell from "./Cell";
+   import StatusMessage from "./StatusMessage";
+   import "./GameBoard.css";
+
+   function GameBoard() {
+     const [cells, setCells] = useState(Array(9).fill(""));
+     const [currentPlayer, setCurrentPlayer] = useState("X");
+     const [winner, setWinner] = useState("");
+
+     const checkWinner = (updatedCells: string[]) => {
+       const winningCombinations = [
+         [0, 1, 2],
+         [3, 4, 5],
+         [6, 7, 8],
+         [0, 3, 6],
+         [1, 4, 7],
+         [2, 5, 8],
+         [0, 4, 8],
+         [2, 4, 6],
+       ];
+
+       for (let combination of winningCombinations) {
+         const [a, b, c] = combination;
+         if (
+           updatedCells[a] &&
+           updatedCells[a] === updatedCells[b] &&
+           updatedCells[a] === updatedCells[c]
+         ) {
+           return updatedCells[a];
+         }
+       }
+       return "";
+     };
+
+     const handleCellClick = (index: number) => {
+       if (cells[index] === "" && winner === "") {
+         const newCells = [...cells];
+         newCells[index] = currentPlayer;
+         setCells(newCells);
+         const gameWinner = checkWinner(newCells);
+         if (gameWinner) {
+           setWinner(gameWinner);
+         } else {
+           setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+         }
+       }
+     };
+
+     return (
+       <div>
+         <h2>Tic Tac Toe</h2>
+         <StatusMessage currentPlayer={currentPlayer} winner={winner} />
+         <div className="board" role="grid">
+           {cells.map((cell, index) => (
+             <Cell
+               key={index}
+               value={cell}
+               onClick={() => handleCellClick(index)}
+             />
+           ))}
+         </div>
+       </div>
+     );
+   }
+
+   export default GameBoard;
+   ```
+
+3. **Aktualisieren der `Cell`-Komponente (falls noch nicht geschehen):**
 
    ```tsx
    // src/Cell.tsx
@@ -286,34 +327,27 @@ npm run test
    export default Cell;
    ```
 
-3. **Aktualisiere `GameBoard.test.tsx`:**
+4. **Erstellen der Tests für `StatusMessage`:**
 
    ```tsx
-   // src/GameBoard.test.tsx
-   import { render, screen, fireEvent } from "@testing-library/react";
-   import GameBoard from "./GameBoard";
+   // src/StatusMessage.test.tsx
+   import { render, screen } from "@testing-library/react";
+   import StatusMessage from "./StatusMessage";
 
-   test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-     render(<GameBoard />);
-     const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-     expect(winnerMessage).toBeNull();
+   test("zeigt den aktuellen Spieler an, wenn kein Gewinner vorhanden ist", () => {
+     render(<StatusMessage currentPlayer="X" winner="" />);
+     const statusElement = screen.getByText(/Aktueller Spieler: X/i);
+     expect(statusElement).toBeInTheDocument();
    });
 
-   test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-     render(<GameBoard />);
-     const cells = screen.getAllByRole("button");
-
-     // Simuliere einen Sieg für 'X' in der oberen Reihe
-     fireEvent.click(cells[0]); // X
-     fireEvent.click(cells[1]); // X
-     fireEvent.click(cells[2]); // X
-
-     const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-     expect(winnerMessage).toBeInTheDocument();
+   test("zeigt die Siegesnachricht an, wenn ein Gewinner vorhanden ist", () => {
+     render(<StatusMessage currentPlayer="O" winner="X" />);
+     const winnerElement = screen.getByText(/Spieler X hat gewonnen!/i);
+     expect(winnerElement).toBeInTheDocument();
    });
    ```
 
-4. **Anwendung starten und Tests ausführen:**
+5. **Anwendung starten und Tests ausführen:**
 
    - **Anwendung starten:**
 
@@ -321,7 +355,7 @@ npm run test
      npm run dev
      ```
 
-     - Spiele das Spiel im Browser und achte darauf, dass die Siegesnachricht erscheint, wenn du gewinnst. 🥳
+     - Spiele das Spiel im Browser und beobachte, wie die Anzeige zwischen den Spielern wechselt und die Siegesnachricht erscheint, wenn jemand gewinnt. 🎉
 
    - **Tests ausführen:**
 
@@ -331,20 +365,32 @@ npm run test
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
-5. **Optional: Styles anpassen**
+6. **Optional: Styles hinzufügen:**
 
-   - Füge Styles hinzu, um die Siegesnachricht hervorzuheben.
+   - **Styles für `StatusMessage`:**
 
      ```css
-     /* src/GameBoard.css */
-     h3 {
+     /* src/GameBoard.css oder src/StatusMessage.css */
+     .status-message h3 {
        text-align: center;
-       color: green;
+       margin: 10px 0;
      }
+     ```
+
+   - **Importieren der Styles (falls in `StatusMessage.css`):**
+
+     ```tsx
+     // src/StatusMessage.tsx
+     import React from "react";
+     import "./StatusMessage.css";
+
+     // Restlicher Code bleibt gleich
      ```
 
 ---
 
-**Herzlichen Glückwunsch!** 🎉 Du hast gelernt, wie man bedingtes Rendern in React verwendet. Jetzt zeigt unser Tic-Tac-Toe-Spiel eine Siegesnachricht an, sobald ein Spieler gewinnt. 🏆
+**Fantastisch!** 🎉 Du hast gelernt, wie man Komponenten in React zusammensetzt, um eine modularere und besser strukturierte Anwendung zu erstellen.
 
-Das Verständnis von bedingtem Rendern ist entscheidend, um dynamische und interaktive Benutzeroberflächen zu erstellen. Du bist auf dem besten Weg, ein React-Profi zu werden! 🚀
+Durch das Erstellen einer separaten `StatusMessage`-Komponente und das Zusammensetzen mit `GameBoard` und `Cell` haben wir unser Tic-Tac-Toe-Spiel verbessert und unseren Code sauberer gestaltet. 🧼
+
+Die Komponentenkomposition ist ein wesentliches Konzept in React und wird dir dabei helfen, größere und komplexere Anwendungen zu bauen. Du machst großartige Fortschritte! 🚀

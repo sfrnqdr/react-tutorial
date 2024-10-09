@@ -1,23 +1,13 @@
 // src/Cell.tsx
-import { useState } from "react";
-import "./Cell.css";
-
 type CellProps = {
   value: string;
+  onClick: () => void;
 };
 
-const Cell = ({ value }: CellProps) => {
-  const [cellValue, setCellValue] = useState(value);
-
-  const handleClick = () => {
-    if (cellValue === "") {
-      setCellValue("X");
-    }
-  };
-
+const Cell = ({ value, onClick }: CellProps) => {
   return (
-    <div className="cell" role="button" onClick={handleClick}>
-      {cellValue}
+    <div className="cell" role="button" onClick={onClick}>
+      {value}
     </div>
   );
 };
