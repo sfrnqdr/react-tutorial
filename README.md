@@ -1,55 +1,70 @@
-# Schritt 3: JSX-Implementierung
+# Schritt 4: Props vs. State
 
 ## Leitfrage
 
-**Was ist JSX, und wie verwenden wir es, um unsere Benutzeroberfläche in React zu gestalten?**
+**Was sind Props und State in React, und wie unterscheiden sie sich bei der Verwaltung von Daten in unseren Komponenten?**
 
 ## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 😊 Jetzt tauchen wir tiefer in React ein und sprechen über JSX. JSX steht für JavaScript XML und erlaubt es uns, HTML-ähnliche Syntax direkt in unserem JavaScript-Code zu schreiben. Das macht es viel einfacher und übersichtlicher, die Benutzeroberfläche unserer Anwendung zu gestalten.
+Hey du! 👋 Jetzt, wo wir das Spielfeld haben, ist es Zeit, uns anzusehen, wie wir Daten in unseren React-Komponenten verwalten können. Dazu müssen wir die Konzepte **Props** und **State** verstehen.
 
-Statt komplizierten JavaScript-Code zu schreiben, können wir mit JSX unsere Komponenten strukturieren, als würden wir HTML schreiben. Lass uns gemeinsam sehen, wie wir das für unser Tic-Tac-Toe-Spiel nutzen können! 🕹️
+**Props** (Properties) sind wie die Parameter einer Funktion. Sie werden von außen an eine Komponente übergeben und sind unveränderlich innerhalb dieser Komponente.
+
+**State** hingegen ist intern in einer Komponente. Es ermöglicht einer Komponente, ihren eigenen Datenzustand zu verwalten und zu ändern.
+
+Stell dir Props als den Input vor, den eine Komponente von ihrem Elternteil bekommt, und State als die eigenen Daten der Komponente, die sich ändern können.
+
+Lass uns sehen, wie wir das in unserem Tic-Tac-Toe-Spiel anwenden können! 🕹️
 
 ## Exemplarisches Codebeispiel (Tic Tac Toe)
 
-**Erstellen des Spielfeldes mit JSX:**
+**Erstellen einer `Cell`-Komponente mit Props und State:**
+
+```tsx
+// src/Cell.tsx
+import React, { useState } from "react";
+
+type CellProps = {
+  value: string;
+};
+
+function Cell({ value }: CellProps) {
+  const [cellValue, setCellValue] = useState(value);
+
+  const handleClick = () => {
+    if (cellValue === "") {
+      setCellValue("X"); // Wir setzen vorerst immer 'X' als Beispiel
+    }
+  };
+
+  return (
+    <div className="cell" role="button" onClick={handleClick}>
+      {cellValue}
+    </div>
+  );
+}
+
+export default Cell;
+```
+
+**Anpassen von `GameBoard.tsx`, um `Cell` zu verwenden:**
 
 ```tsx
 // src/GameBoard.tsx
 import React from "react";
+import Cell from "./Cell";
+import "./GameBoard.css";
 
 function GameBoard() {
+  const initialCells = Array(9).fill("");
+
   return (
     <div>
       <h2>Tic Tac Toe</h2>
       <div className="board">
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
-        <div className="cell" role="button">
-          {" "}
-        </div>
+        {initialCells.map((cell, index) => (
+          <Cell key={index} value={cell} />
+        ))}
       </div>
     </div>
   );
@@ -58,85 +73,95 @@ function GameBoard() {
 export default GameBoard;
 ```
 
-**Anpassen von `App.tsx`, um `GameBoard` einzubinden:**
-
-```tsx
-// src/App.tsx
-import React from "react";
-import Welcome from "./Welcome";
-import GameBoard from "./GameBoard";
-
-function App() {
-  return (
-    <div>
-      <Welcome />
-      <GameBoard />
-    </div>
-  );
-}
-
-export default App;
-```
-
 ## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
 
-JSX (JavaScript XML) ermöglicht es uns, eine deklarative Syntax für die Erstellung von React-Elementen zu verwenden. Unter der Haube wird JSX zu regulären JavaScript-Funktionsaufrufen kompiliert (`React.createElement`).
+In React sind **Props** die Daten, die von einer Elternkomponente an eine Kindkomponente übergeben werden. Sie sind unveränderlich innerhalb der Kindkomponente. Das bedeutet, dass die Kindkomponente die Props nicht verändern sollte.
 
-In unserem `GameBoard`-Beispiel verwenden wir JSX, um die Struktur des Spielfelds zu definieren. Wir erstellen neun `div`-Elemente mit der Klasse `cell`, die jeweils ein Spielfeld repräsentieren. Wir haben das `role="button"`-Attribut hinzugefügt, um die Zellen interaktiv und für Assistenztechnologien zugänglich zu machen.
+Der **State** hingegen stellt den internen Zustand einer Komponente dar. Mit Hooks wie `useState` können wir den State innerhalb einer funktionalen Komponente verwalten.
 
-Durch die Trennung der Komponenten (`Welcome` und `GameBoard`) fördern wir die Wiederverwendbarkeit und Lesbarkeit unseres Codes. Jede Komponente ist für einen bestimmten Teil der Benutzeroberfläche verantwortlich.
+In unserem Beispiel:
+
+- In `GameBoard.tsx` erzeugen wir ein Array `initialCells`, das aus neun leeren Strings besteht. Dieses Array repräsentiert den Anfangszustand unseres Spielfelds.
+- Wir verwenden `map`, um über jedes Element des Arrays zu iterieren und eine `Cell`-Komponente zu rendern.
+- Wir übergeben die `value`-Prop an jede `Cell`, initialisiert mit einem leeren String.
+
+In der `Cell`-Komponente:
+
+- Wir verwenden die `useState`-Hook, um den Zustand `cellValue` zu verwalten, initialisiert mit dem übergebenen `value`.
+- Beim Klick auf die Zelle (`handleClick`) prüfen wir, ob `cellValue` leer ist. Wenn ja, setzen wir es auf `'X'` (als einfaches Beispiel).
+- Dadurch wird die Komponente neu gerendert und zeigt den aktualisierten Wert an.
+
+Dies zeigt, wie Props und State zusammenarbeiten:
+
+- **Props**: Die `Cell`-Komponente erhält ihren Anfangswert von der Elternkomponente `GameBoard` über die `value`-Prop.
+- **State**: Die `Cell`-Komponente verwaltet ihren eigenen Zustand `cellValue`, der sich ändern kann, wenn der Nutzer mit der Komponente interagiert.
 
 ## Hands-on Aufgaben zum Selbstprobieren
 
-### Aufgabe: Das Spielfeld mit JSX erstellen
+### Aufgabe: Verwendung von Props und State in Komponenten
 
 **Anforderungen:**
 
-1. **Erstelle eine neue Datei `GameBoard.tsx` im `src`-Verzeichnis.**
+1. **Erstelle eine neue Datei `Cell.tsx` im `src`-Verzeichnis.**
 
-   - Definiere eine funktionale Komponente `GameBoard`, die ein 3x3 Tic-Tac-Toe-Spielfeld als JSX-Elemente darstellt.
-   - Verwende `<div>`-Elemente mit der Klasse `cell` für die einzelnen Spielfelder.
-   - Füge das `role="button"`-Attribut hinzu, um die Zellen interaktiv zu machen.
-   - Exportiere die Komponente standardmäßig.
+   - Definiere eine funktionale Komponente `Cell`, die eine `value`-Prop erhält.
+   - Verwende `useState`, um den internen Zustand `cellValue` zu verwalten, initialisiert mit `value`.
+   - Implementiere eine Klickfunktion (`handleClick`), die `cellValue` auf `'X'` setzt, wenn es leer ist.
+   - Render die Zelle mit dem aktuellen `cellValue`.
 
-2. **Passe `App.tsx` an, um die `GameBoard`-Komponente zu verwenden.**
+2. **Passe `GameBoard.tsx` an, um die `Cell`-Komponente zu verwenden.**
 
-   - Importiere die `GameBoard`-Komponente.
-   - Füge `<GameBoard />` unterhalb von `<Welcome />` in das JSX von `App` ein.
+   - Importiere die `Cell`-Komponente.
+   - Erzeuge ein Array `initialCells` mit neun leeren Strings.
+   - Verwende `map`, um über `initialCells` zu iterieren und für jedes Element eine `Cell` zu rendern, wobei `value` übergeben wird.
 
-3. **Starte die Anwendung und überprüfe, ob das Spielfeld angezeigt wird.**
+3. **Starte die Anwendung und teste das Spielfeld.**
 
    - Führe im Terminal aus:
 
      ```bash
+     npm install
      npm run dev
      ```
 
-   - Öffne die Anwendung im Browser. Du solltest das Tic-Tac-Toe-Spielfeld sehen. 🎉
+   - Öffne die Anwendung im Browser.
+   - Klicke auf eine Zelle; sie sollte ein `'X'` anzeigen. 📝
 
 ### Zugehöriger Vitest für TDD
 
-**Erstelle eine Testdatei `GameBoard.test.tsx` für die `GameBoard`-Komponente:**
+**Erstelle eine Testdatei `Cell.test.tsx` für die `Cell`-Komponente:**
 
 ```tsx
-// src/GameBoard.test.tsx
-import { render, screen } from "@testing-library/react";
-import GameBoard from "./GameBoard";
+// src/Cell.test.tsx
+import { render, screen, fireEvent } from "@testing-library/react";
+import Cell from "./Cell";
 
-test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
-  render(<GameBoard />);
-  const titleElement = screen.getByText(/Tic Tac Toe/i);
-  expect(titleElement).toBeInTheDocument();
+test("zeigt den initialen Wert an", () => {
+  render(<Cell value="" />);
+  const cellElement = screen.getByRole("button");
+  expect(cellElement).toHaveTextContent("");
+});
 
-  const cells = screen.getAllByRole("button");
-  expect(cells.length).toBe(9);
+test('ändert den Wert auf "X" bei Klick, wenn leer', () => {
+  render(<Cell value="" />);
+  const cellElement = screen.getByRole("button");
+  fireEvent.click(cellElement);
+  expect(cellElement).toHaveTextContent("X");
+});
+
+test("ändert den Wert nicht, wenn bereits gesetzt", () => {
+  render(<Cell value="O" />);
+  const cellElement = screen.getByRole("button");
+  fireEvent.click(cellElement);
+  expect(cellElement).toHaveTextContent("O");
 });
 ```
 
 **Anforderungen aus dem Test abgeleitet:**
 
-- Die `GameBoard`-Komponente soll den Titel **"Tic Tac Toe"** anzeigen.
-- Es sollen neun interaktive Zellen vorhanden sein (Rolle `button`).
+- Die `Cell`-Komponente soll den initialen Wert aus der `value`-Prop anzeigen.
+- Beim Klick auf eine leere Zelle soll der Wert auf `'X'` geändert werden.
+- Wenn die Zelle bereits einen Wert hat, soll ein Klick den Wert nicht ändern.
 
 **Test ausführen:**
 
@@ -146,48 +171,57 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
   npm run test
   ```
 
-- Stelle sicher, dass der Test erfolgreich durchläuft. ✅
+- Stelle sicher, dass alle Tests erfolgreich durchlaufen. ✅
 
 ## Fertige Musterlösung dieses Kapitels
 
-1. **Erstellen der `GameBoard`-Komponente:**
+1. **Erstellen der `Cell`-Komponente:**
+
+   ```tsx
+   // src/Cell.tsx
+   import React, { useState } from "react";
+
+   type CellProps = {
+     value: string;
+   };
+
+   function Cell({ value }: CellProps) {
+     const [cellValue, setCellValue] = useState(value);
+
+     const handleClick = () => {
+       if (cellValue === "") {
+         setCellValue("X");
+       }
+     };
+
+     return (
+       <div className="cell" role="button" onClick={handleClick}>
+         {cellValue}
+       </div>
+     );
+   }
+
+   export default Cell;
+   ```
+
+2. **Anpassen von `GameBoard.tsx`:**
 
    ```tsx
    // src/GameBoard.tsx
    import React from "react";
+   import Cell from "./Cell";
+   import "./GameBoard.css";
 
    function GameBoard() {
+     const initialCells = Array(9).fill("");
+
      return (
        <div>
          <h2>Tic Tac Toe</h2>
          <div className="board">
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
-           <div className="cell" role="button">
-             {" "}
-           </div>
+           {initialCells.map((cell, index) => (
+             <Cell key={index} value={cell} />
+           ))}
          </div>
        </div>
      );
@@ -196,40 +230,31 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
    export default GameBoard;
    ```
 
-2. **Anpassen von `App.tsx`:**
+3. **Erstellen der Tests für `Cell`:**
 
    ```tsx
-   // src/App.tsx
-   import React from "react";
-   import Welcome from "./Welcome";
-   import GameBoard from "./GameBoard";
+   // src/Cell.test.tsx
+   import { render, screen, fireEvent } from "@testing-library/react";
+   import Cell from "./Cell";
 
-   function App() {
-     return (
-       <div>
-         <Welcome />
-         <GameBoard />
-       </div>
-     );
-   }
+   test("zeigt den initialen Wert an", () => {
+     render(<Cell value="" />);
+     const cellElement = screen.getByRole("button");
+     expect(cellElement).toHaveTextContent("");
+   });
 
-   export default App;
-   ```
+   test('ändert den Wert auf "X" bei Klick, wenn leer', () => {
+     render(<Cell value="" />);
+     const cellElement = screen.getByRole("button");
+     fireEvent.click(cellElement);
+     expect(cellElement).toHaveTextContent("X");
+   });
 
-3. **Test für `GameBoard`-Komponente erstellen:**
-
-   ```tsx
-   // src/GameBoard.test.tsx
-   import { render, screen } from "@testing-library/react";
-   import GameBoard from "./GameBoard";
-
-   test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
-     render(<GameBoard />);
-     const titleElement = screen.getByText(/Tic Tac Toe/i);
-     expect(titleElement).toBeInTheDocument();
-
-     const cells = screen.getAllByRole("button");
-     expect(cells.length).toBe(9);
+   test("ändert den Wert nicht, wenn bereits gesetzt", () => {
+     render(<Cell value="O" />);
+     const cellElement = screen.getByRole("button");
+     fireEvent.click(cellElement);
+     expect(cellElement).toHaveTextContent("O");
    });
    ```
 
@@ -238,11 +263,11 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
    - **Anwendung starten:**
 
      ```bash
+     npm install
      npm run dev
      ```
 
-     - Öffne die Anwendung im Browser unter der angegebenen Adresse (z. B. `http://localhost:3000`).
-     - Du solltest die Begrüßungsnachricht und darunter das Tic-Tac-Toe-Spielfeld sehen.
+     - Überprüfe im Browser, dass das Spielfeld angezeigt wird und die Zellen bei Klick korrekt reagieren.
 
    - **Tests ausführen:**
 
@@ -252,12 +277,13 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
-5. **Optional: Style hinzufügen (CSS):**
+5. **Optional: Anpassung des CSS für die `Cell`-Komponente**
 
-   - Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis:
+   - Passe die CSS-Datei `GameBoard.css` an, um die Darstellung der Zellen mit Werten zu verbessern.
 
      ```css
      /* src/GameBoard.css */
+
      .board {
        display: grid;
        grid-template-columns: repeat(3, 100px);
@@ -276,27 +302,12 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
        justify-content: center;
        font-size: 2rem;
        cursor: pointer;
+       user-select: none;
      }
      ```
-
-   - Importiere das CSS in `GameBoard.tsx`:
-
-     ```tsx
-     // src/GameBoard.tsx
-     import React from "react";
-     import "./GameBoard.css";
-
-     function GameBoard() {
-       // ... restlicher Code bleibt gleich
-     }
-
-     export default GameBoard;
-     ```
-
-   - Jetzt sieht das Spielfeld schon viel ansprechender aus! 🎨
 
 ---
 
-**Fantastisch!** 🌟 Du hast gelernt, wie man JSX verwendet, um die Benutzeroberfläche zu gestalten, und hast damit unser Tic-Tac-Toe-Spielfeld erstellt. Mit jedem Schritt kommen wir unserem funktionsfähigen Spiel näher. Mach weiter so! 💪
+**Super Arbeit!** 🎉 Du hast erfolgreich die Unterschiede zwischen Props und State verstanden und angewendet. Jetzt können unsere Zellen auf Klicks reagieren und ihren Zustand ändern. Damit haben wir einen wichtigen Schritt gemacht, um unser Tic-Tac-Toe-Spiel zum Laufen zu bringen. Weiter so! 💪
 
 **Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
