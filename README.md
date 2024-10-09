@@ -1,382 +1,51 @@
-````markdown
-# Kapitel 12: Erstellung und Nutzung von Custom Hooks in React
+# Kapitel 13: API-Integration (REST/GraphQL)
 
 ## Leitfrage
 
-**Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik in meinem Tic-Tac-Toe-Spiel zu implementieren?**
+**Wie können wir unser Tic-Tac-Toe-Spiel mit einer externen API verbinden, um Daten wie Spielergebnisse zu speichern und abzurufen?**
 
-## Verständliche Antwort für Anfänger
+## Verständliche Antwort
 
-In React kannst du eigene Hooks erstellen, sogenannte **Custom Hooks**, um wiederverwendbare Logik in deinen Komponenten zu kapseln. Ein Custom Hook ist einfach eine JavaScript-Funktion, die interne Hooks wie `useState` oder `useEffect` verwendet und dabei hilft, bestimmte Funktionalitäten logisch zu gruppieren und mehrfach in verschiedenen Komponenten zu nutzen. In deinem Tic-Tac-Toe-Spiel kannst du beispielsweise einen Custom Hook erstellen, der die Spiel- und Gewinnerlogik verwaltet. Dadurch bleibt deine Hauptkomponente übersichtlich und die Logik ist leichter zu pflegen und wiederzuverwenden.
+Wir können unser Tic-Tac-Toe-Spiel mit einer externen API verbinden, indem wir HTTP-Anfragen senden und empfangen. Dadurch können wir beispielsweise Spielergebnisse speichern, abrufen oder analysieren. Dazu verwenden wir in React Bibliotheken wie `axios` für REST-APIs oder `graphql-request` für GraphQL-APIs. Im nächsten Schritt integrieren wir diese Funktionen in unser Spiel, sodass die Ergebnisse automatisch gespeichert und angezeigt werden können.
 
-## Exemplarisches Codebeispiel
+## Exemplarisches Codebeispiel (Tic-Tac-Toe mit REST API)
 
-Wir erstellen einen Custom Hook namens `useGameLogic`, der die gesamte Spiel- und Gewinnerlogik kapselt. Dadurch wird die `GameBoard`-Komponente sauberer und fokussiert sich nur noch auf die Darstellung.
+````markdown
+```javascript
+// src/api/api.ts
+import axios from "axios";
 
-```typescript
-// src/hooks/useGameLogic.ts
-import { useState } from "react";
+const API_URL = "https://example.com/api"; // Ersetze dies mit deiner API-URL
 
-type Score = {
-  X: number;
-  O: number;
+export const saveGameResult = async (result: {
+  winner: string,
+  timestamp: string,
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/results`, result);
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Speichern des Spielergebnisses:", error);
+    throw error;
+  }
 };
 
-const useGameLogic = () => {
-  const [cells, setCells] = useState<string[]>(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
-  const [winner, setWinner] = useState<string>("");
-  const [score, setScore] = useState<Score>({ X: 0, O: 0 });
-
-  const winningCombinations: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  const checkWinner = (updatedCells: string[]): string => {
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
-      if (
-        updatedCells[a] &&
-        updatedCells[a] === updatedCells[b] &&
-        updatedCells[a] === updatedCells[c]
-      ) {
-        return updatedCells[a];
-      }
-    }
-    return "";
-  };
-
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
-  };
-
-  const handleCellClick = (index: number) => {
-    if (cells[index] === "" && winner === "") {
-      const newCells = [...cells];
-      newCells[index] = currentPlayer;
-      setCells(newCells);
-      const gameWinner = checkWinner(newCells);
-      if (gameWinner) {
-        setWinner(gameWinner);
-        setScore((prevScore) => ({
-          ...prevScore,
-          [gameWinner]: prevScore[gameWinner] + 1,
-        }));
-        // Optional: Automatisches Zurücksetzen des Brettes nach dem Sieg
-        setTimeout(resetBoard, 2000);
-      } else {
-        setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-      }
-    }
-  };
-
-  return {
-    cells,
-    currentPlayer,
-    winner,
-    score,
-    handleCellClick,
-    resetBoard,
-  };
+export const fetchGameResults = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/results`);
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Spielergebnisse:", error);
+    throw error;
+  }
 };
-
-export default useGameLogic;
 ```
 ````
 
-```typescript
-// src/GameBoard.tsx
-import React, { useEffect, useRef } from "react";
-import useGameLogic from "../hooks/useGameLogic";
-import Cell from "../Cell/Cell";
-import StatusMessage from "../StatusMessage/StatusMessage";
-import ScoreBoard from "../ScoreBoard/ScoreBoard";
-import "./GameBoard.css";
-
-const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
-    useGameLogic();
-  const firstCellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (winner) {
-      document.title = `Spieler ${winner} gewinnt!`;
-    } else {
-      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
-    }
-  }, [winner, currentPlayer]);
-
-  useEffect(() => {
-    if (firstCellRef.current) {
-      firstCellRef.current.focus();
-    }
-  }, [cells]);
-
-  return (
-    <div>
-      <h2>Tic Tac Toe</h2>
-      <ScoreBoard score={score} />
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
-      <div className="board" role="grid">
-        {cells.map((cell, index) => (
-          <Cell
-            key={index}
-            value={cell}
-            onClick={() => handleCellClick(index)}
-            ref={index === 0 ? firstCellRef : null}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default GameBoard;
-```
-
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
-
-### Was sind Custom Hooks?
-
-Custom Hooks sind benutzerdefinierte Funktionen in React, die die Funktionalität von bestehenden Hooks kombinieren und wiederverwenden. Sie ermöglichen es dir, komplexe Logik in modulare und wiederverwendbare Teile zu zerlegen, wodurch deine Komponenten sauberer und leichter verständlich bleiben.
-
-### Vorteile von Custom Hooks
-
-1. **Wiederverwendbarkeit**: Du kannst die gleiche Logik in verschiedenen Komponenten nutzen, ohne sie duplizieren zu müssen.
-2. **Lesbarkeit**: Komponenten bleiben fokussiert auf die Darstellung und weniger auf die Geschäftslogik.
-3. **Testbarkeit**: Logik in Custom Hooks kann isoliert und einfacher getestet werden.
-
-### Erstellung eines Custom Hooks
-
-Beim Erstellen eines Custom Hooks solltest du die folgenden Regeln beachten:
-
-- **Namenskonvention**: Custom Hooks müssen mit `use` beginnen, zum Beispiel `useGameLogic`.
-- **Nur Hooks innerhalb von Custom Hooks verwenden**: Du darfst nur andere Hooks (wie `useState`, `useEffect`) innerhalb von Custom Hooks oder Komponenten aufrufen.
-
-### Anwendung im Tic-Tac-Toe-Spiel
-
-Im Tic-Tac-Toe-Spiel kapselt der `useGameLogic`-Hook die gesamte Logik für das Spiel, einschließlich des Spielstatus, der aktuellen Spieler, der Gewinnerermittlung und der Spielstandverfolgung. Dadurch bleibt die `GameBoard`-Komponente übersichtlich und konzentriert sich nur auf das Rendern der Benutzeroberfläche.
-
-### Tiefergehende Implementierung
-
-Der `useGameLogic`-Hook verwaltet mehrere Zustände:
-
-- **cells**: Ein Array, das den Inhalt jeder Zelle auf dem Spielbrett speichert.
-- **currentPlayer**: Gibt an, welcher Spieler gerade am Zug ist ("X" oder "O").
-- **winner**: Speichert den Gewinner des Spiels, falls vorhanden.
-- **score**: Ein Objekt, das die Anzahl der Siege für jeden Spieler verfolgt.
-
-Der Hook bietet auch Funktionen zur Handhabung von Zellklicks (`handleCellClick`) und zum Zurücksetzen des Spielbretts (`resetBoard`).
-
-Durch die Trennung dieser Logik in einen eigenen Hook wird die `GameBoard`-Komponente einfacher und fokussierter auf das Rendering.
-
-## Hands-on Aufgaben
-
-### Aufgabe 1: Erstellung eines Custom Hooks für die Spiellogik
-
-**Aufgabenstellung:**
-Erstelle einen Custom Hook namens `useGameLogic`, der die gesamte Spiel- und Gewinnerlogik deines Tic-Tac-Toe-Spiels verwaltet. Dieser Hook sollte die Zustände und Funktionen kapseln, die zur Verwaltung des Spiels erforderlich sind.
-
-**Anforderungen:**
-
-- Verwende den `useState`-Hook innerhalb des Custom Hooks, um die Zustände `cells`, `currentPlayer`, `winner` und `score` zu verwalten.
-- Implementiere die `checkWinner`-Funktion innerhalb des Hooks.
-- Implementiere die `handleCellClick`-Funktion, die den Spielzustand aktualisiert, wenn eine Zelle angeklickt wird.
-- Implementiere die `resetBoard`-Funktion zum Zurücksetzen des Spielbretts.
-- Gib alle Zustände und Funktionen als Rückgabewerte des Hooks zurück.
-- Aktualisiere die `GameBoard`-Komponente, um den neuen Custom Hook zu verwenden.
-
-**Vite-Test (`useGameLogic.test.ts`):**
-
-```typescript
-// src/hooks/useGameLogic.test.ts
-import { renderHook, act } from "@testing-library/react";
-import useGameLogic from "./useGameLogic";
-
-describe("useGameLogic Hook", () => {
-  test("initialisiert die Zustände korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
-  });
-
-  test("fügt einen Zug hinzu und wechselt den Spieler", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0);
-    });
-
-    expect(result.current.cells[0]).toBe("X");
-    expect(result.current.currentPlayer).toBe("O");
-    expect(result.current.winner).toBe("");
-  });
-
-  test("ermittelt den Gewinner korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      // Spieler X gewinnt durch die Zellen 0, 1, 2
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(3); // O
-      result.current.handleCellClick(1); // X
-      result.current.handleCellClick(4); // O
-      result.current.handleCellClick(2); // X
-    });
-
-    expect(result.current.winner).toBe("X");
-    expect(result.current.score).toEqual({ X: 1, O: 0 });
-  });
-
-  test("kann das Spielbrett zurücksetzen", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(1); // O
-      result.current.resetBoard();
-    });
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
-  });
-});
-```
-
-### Aufgabe 2: Nutzung des Custom Hooks in der `GameBoard`-Komponente
-
-**Aufgabenstellung:**
-Integriere den neu erstellten `useGameLogic`-Hook in deine `GameBoard`-Komponente, um die Spiellogik aus der Komponente auszulagern. Stelle sicher, dass die `GameBoard`-Komponente nur noch für das Rendering zuständig ist.
-
-**Anforderungen:**
-
-- Importiere den `useGameLogic`-Hook in die `GameBoard`-Komponente.
-- Verwende den Hook, um die Zustände und Funktionen zu erhalten.
-- Entferne die zuvor in der `GameBoard`-Komponente definierten Zustände und Funktionen.
-- Passe das JSX-Rendering entsprechend an.
-
-**Vite-Test (`GameBoard.test.tsx`):**
-
-Die bestehenden Tests sollten weiterhin funktionieren. Es sind keine zusätzlichen Tests erforderlich, aber du kannst sicherstellen, dass die Integration funktioniert.
-
-```typescript
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import GameBoard from "./GameBoard";
-
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
-});
-
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
-
-test("klick auf eine Zelle trägt den Zug ein", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // Klick auf die erste Zelle
-
-  expect(cells[0]).toHaveTextContent("X"); // Erster Spieler ist 'X'
-});
-
-test("Spieler wechseln nach jedem Zug", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
-
-  fireEvent.click(cells[0]); // 'X'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: O");
-
-  fireEvent.click(cells[1]); // 'O'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: X");
-});
-
-test("Zelle kann nicht überschrieben werden", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // 'X'
-  fireEvent.click(cells[0]); // Versuch, erneut zu klicken
-
-  expect(cells[0]).toHaveTextContent("X"); // Wert bleibt 'X'
-});
-
-test("aktualisiert den Dokumenttitel beim Spielstart", () => {
-  render(<GameBoard />);
-  expect(document.title).toBe("Tic Tac Toe - Spieler X ist am Zug");
-});
-
-test("aktualisiert den Dokumenttitel, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  expect(document.title).toBe("Spieler X gewinnt!");
-});
-
-test("fokussiert die erste Zelle nach dem Zurücksetzen des Spielbretts", async () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' und das Zurücksetzen des Brettes
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  // Warte auf das automatische Zurücksetzen
-  await waitFor(
-    () => {
-      expect(document.activeElement).toBe(cells[0]);
-    },
-    { timeout: 2500 }
-  );
-});
-```
-
-## Musterlösung
-
-### Schritt 1: Erstellung des `useGameLogic`-Hooks
-
-```typescript
+```javascript
 // src/hooks/useGameLogic.ts
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import { saveGameResult, fetchGameResults } from '../api/api';
 
 type Score = {
   X: number;
@@ -384,10 +53,11 @@ type Score = {
 };
 
 const useGameLogic = () => {
-  const [cells, setCells] = useState<string[]>(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
-  const [winner, setWinner] = useState<string>("");
+  const [cells, setCells] = useState<string[]>(Array(9).fill(''));
+  const [currentPlayer, setCurrentPlayer] = useState<string>('X');
+  const [winner, setWinner] = useState<string>('');
   const [score, setScore] = useState<Score>({ X: 0, O: 0 });
+  const [gameResults, setGameResults] = useState<{ winner: string; timestamp: string }[]>([]);
 
   const winningCombinations: number[][] = [
     [0, 1, 2],
@@ -411,34 +81,50 @@ const useGameLogic = () => {
         return updatedCells[a];
       }
     }
-    return "";
+    return '';
   };
 
   const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
+    setCells(Array(9).fill(''));
+    setCurrentPlayer('X');
+    setWinner('');
   };
 
-  const handleCellClick = (index: number) => {
-    if (cells[index] === "" && winner === "") {
-      const newCells = [...cells];
+  const handleCellClick = async (index: number) => {
+    setCells((prevCells) => {
+      if (prevCells[index] !== '' || winner !== '') {
+        return prevCells;
+      }
+
+      const newCells = [...prevCells];
       newCells[index] = currentPlayer;
-      setCells(newCells);
       const gameWinner = checkWinner(newCells);
+
       if (gameWinner) {
         setWinner(gameWinner);
         setScore((prevScore) => ({
           ...prevScore,
           [gameWinner]: prevScore[gameWinner] + 1,
         }));
-        // Optional: Automatisches Zurücksetzen des Brettes nach dem Sieg
+        const result = { winner: gameWinner, timestamp: new Date().toISOString() };
+        saveGameResult(result); // Speichere das Ergebnis in der API
         setTimeout(resetBoard, 2000);
       } else {
-        setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+        setCurrentPlayer((prevPlayer) => (prevPlayer === 'X' ? 'O' : 'X'));
       }
-    }
+
+      return newCells;
+    });
   };
+
+  const loadGameResults = async () => {
+    const results = await fetchGameResults();
+    setGameResults(results);
+  };
+
+  useEffect(() => {
+    loadGameResults();
+  }, []);
 
   return {
     cells,
@@ -447,27 +133,356 @@ const useGameLogic = () => {
     score,
     handleCellClick,
     resetBoard,
+    gameResults,
   };
 };
 
 export default useGameLogic;
 ```
 
-### Schritt 2: Nutzung des `useGameLogic`-Hooks in der `GameBoard`-Komponente
+```javascript
+// src/ScoreBoard.tsx
+import React from "react";
 
-```typescript
+type ScoreBoardProps = {
+  score: {
+    X: number,
+    O: number,
+  },
+};
+
+const ScoreBoard: React.FC<ScoreBoardProps> = ({ score }) => {
+  return (
+    <div className="scoreboard">
+      <p>Spieler X: {score.X}</p>
+      <p>Spieler O: {score.O}</p>
+    </div>
+  );
+};
+
+export default ScoreBoard;
+```
+
+````
+
+## Ausführliche vertiefende Erläuterung des Konzepts
+
+### Was ist eine API?
+Eine **API (Application Programming Interface)** ist eine Schnittstelle, die es verschiedenen Softwareanwendungen ermöglicht, miteinander zu kommunizieren. In unserem Fall verwenden wir eine externe API, um Daten wie Spielergebnisse zu speichern und abzurufen. Dadurch können wir Informationen zwischen unserem Spiel und einem Server austauschen.
+
+### REST vs. GraphQL
+Es gibt verschiedene Arten von APIs, aber die häufigsten sind **REST** und **GraphQL**.
+
+- **REST (Representational State Transfer):**
+  - Arbeitet mit klar definierten Endpunkten (URLs) für verschiedene Ressourcen.
+  - Verwendet HTTP-Methoden wie GET, POST, PUT und DELETE.
+  - Einfach zu implementieren und weit verbreitet.
+
+- **GraphQL:**
+  - Bietet eine flexible Abfragesprache, mit der der Client genau die benötigten Daten anfordern kann.
+  - Reduziert die Anzahl der erforderlichen API-Aufrufe.
+  - Komplexer in der Einrichtung, aber mächtiger bei komplexen Datenanforderungen.
+
+Für diesen Schritt verwenden wir **REST**, da es einfacher zu verstehen und zu integrieren ist, besonders für Anfänger.
+
+### Integration einer REST-API in unser React-Projekt
+
+1. **Installation von Axios:**
+   - `axios` ist eine beliebte Bibliothek zum Durchführen von HTTP-Anfragen.
+   - Installation: Führe im Terminal `npm install axios` aus.
+
+2. **Erstellen eines API-Moduls:**
+   - Wir erstellen eine Datei `api.ts`, die Funktionen zum Speichern und Abrufen von Spielergebnissen enthält.
+   - Diese Funktionen verwenden `axios`, um HTTP-Anfragen an unsere API zu senden.
+
+3. **Anpassen des Game-Logic-Hooks:**
+   - In unserem Hook `useGameLogic` importieren wir die API-Funktionen.
+   - Nach jedem Sieg speichern wir das Ergebnis in der API.
+   - Beim Laden der Anwendung rufen wir alle gespeicherten Spiele ab, um sie anzuzeigen oder anderweitig zu verwenden.
+
+4. **Fehlerbehandlung:**
+   - Es ist wichtig, Fehler bei API-Anfragen zu behandeln, um Abstürze der Anwendung zu vermeiden und dem Benutzer hilfreiche Informationen bereitzustellen.
+
+### Vorteile der API-Integration
+- **Persistenz:** Spielergebnisse bleiben auch nach dem Schließen der Anwendung erhalten.
+- **Analyse:** Wir können Daten sammeln und analysieren, um das Spiel zu verbessern oder Einblicke in das Spielerlebnis zu gewinnen.
+- **Skalierbarkeit:** Eine API ermöglicht es uns, das Spiel später auf mehrere Geräte oder Benutzer auszudehnen.
+
+## Hands-on Aufgaben
+
+### Aufgabe 1: Spielergebnisse speichern
+
+**Beschreibung:** Integriere die Funktionalität, um jede Spielrunde in einer externen REST-API zu speichern. Jedes Mal, wenn ein Spieler gewinnt, soll das Ergebnis automatisch an die API gesendet werden.
+
+**Anforderungen:**
+- Sende eine POST-Anfrage an die API mit den Daten `{ winner: 'X', timestamp: '2023-10-01T12:00:00Z' }`.
+- Behandle mögliche Fehler während der Anfrage.
+- Aktualisiere die Anzeige der Spielstände nach dem Speichern.
+
+**Vitest-Test:**
+
+```javascript
+// src/api/api.test.ts
+import { saveGameResult, fetchGameResults } from './api';
+import axios from 'axios';
+import { vi } from 'vitest';
+
+vi.mock('axios');
+
+describe('API Integration', () => {
+  test('sollte Spielergebnis erfolgreich speichern', async () => {
+    const mockResult = { winner: 'X', timestamp: '2023-10-01T12:00:00Z' };
+    (axios.post as vi.Mock).mockResolvedValue({ data: mockResult });
+
+    const result = await saveGameResult(mockResult);
+    expect(axios.post).toHaveBeenCalledWith('https://example.com/api/results', mockResult);
+    expect(result).toEqual(mockResult);
+  });
+
+  test('sollte Fehler beim Speichern des Spielergebnisses behandeln', async () => {
+    const mockResult = { winner: 'O', timestamp: '2023-10-01T12:05:00Z' };
+    (axios.post as vi.Mock).mockRejectedValue(new Error('Netzwerkfehler'));
+
+    await expect(saveGameResult(mockResult)).rejects.toThrow('Netzwerkfehler');
+  });
+});
+````
+
+### Aufgabe 2: Spielergebnisse abrufen
+
+**Beschreibung:** Füge die Funktionalität hinzu, um alle gespeicherten Spielergebnisse von der API abzurufen und in der Anwendung anzuzeigen.
+
+**Anforderungen:**
+
+- Sende eine GET-Anfrage an die API, um alle Ergebnisse zu erhalten.
+- Zeige die abgerufenen Ergebnisse in einer neuen Komponente `GameResults` an.
+- Aktualisiere die Ergebnisse automatisch, wenn ein neues Spiel gespeichert wird.
+
+**Vitest-Test:**
+
+```javascript
+// src/api/api.test.ts (weiter)
+test('sollte Spielresultate erfolgreich abrufen', async () => {
+  const mockResults = [
+    { winner: 'X', timestamp: '2023-10-01T12:00:00Z' },
+    { winner: 'O', timestamp: '2023-10-01T12:05:00Z' },
+  ];
+  (axios.get as vi.Mock).mockResolvedValue({ data: mockResults });
+
+  const results = await fetchGameResults();
+  expect(axios.get).toHaveBeenCalledWith('https://example.com/api/results');
+  expect(results).toEqual(mockResults);
+});
+
+test('sollte Fehler beim Abrufen der Spielresultate behandeln', async () => {
+  (axios.get as vi.Mock).mockRejectedValue(new Error('Serverfehler'));
+
+  await expect(fetchGameResults()).rejects.toThrow('Serverfehler');
+});
+```
+
+## Musterlösung dieses Kapitels
+
+### 1. Installation von Axios
+
+Führe im Projektverzeichnis im Terminal folgenden Befehl aus:
+
+```bash
+npm install axios
+```
+
+### 2. Erstellen des API-Moduls
+
+Erstelle die Datei `src/api/api.ts` mit folgendem Inhalt:
+
+```javascript
+// src/api/api.ts
+import axios from "axios";
+
+const API_URL = "https://example.com/api"; // Ersetze dies mit deiner API-URL
+
+export const saveGameResult = async (result: {
+  winner: string,
+  timestamp: string,
+}) => {
+  try {
+    const response = await axios.post(`${API_URL}/results`, result);
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Speichern des Spielergebnisses:", error);
+    throw error;
+  }
+};
+
+export const fetchGameResults = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/results`);
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Abrufen der Spielergebnisse:", error);
+    throw error;
+  }
+};
+```
+
+### 3. Anpassen des Game-Logic-Hooks
+
+Ersetze den Inhalt von `src/hooks/useGameLogic.ts` mit dem folgenden Code:
+
+```javascript
+// src/hooks/useGameLogic.ts
+import { useState, useEffect } from 'react';
+import { saveGameResult, fetchGameResults } from '../api/api';
+
+type Score = {
+  X: number;
+  O: number;
+};
+
+const useGameLogic = () => {
+  const [cells, setCells] = useState<string[]>(Array(9).fill(''));
+  const [currentPlayer, setCurrentPlayer] = useState<string>('X');
+  const [winner, setWinner] = useState<string>('');
+  const [score, setScore] = useState<Score>({ X: 0, O: 0 });
+  const [gameResults, setGameResults] = useState<{ winner: string; timestamp: string }[]>([]);
+
+  const winningCombinations: number[][] = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const checkWinner = (updatedCells: string[]): string => {
+    for (const combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (
+        updatedCells[a] &&
+        updatedCells[a] === updatedCells[b] &&
+        updatedCells[a] === updatedCells[c]
+      ) {
+        return updatedCells[a];
+      }
+    }
+    return '';
+  };
+
+  const resetBoard = () => {
+    setCells(Array(9).fill(''));
+    setCurrentPlayer('X');
+    setWinner('');
+  };
+
+  const handleCellClick = async (index: number) => {
+    setCells((prevCells) => {
+      if (prevCells[index] !== '' || winner !== '') {
+        return prevCells;
+      }
+
+      const newCells = [...prevCells];
+      newCells[index] = currentPlayer;
+      const gameWinner = checkWinner(newCells);
+
+      if (gameWinner) {
+        setWinner(gameWinner);
+        setScore((prevScore) => ({
+          ...prevScore,
+          [gameWinner]: prevScore[gameWinner] + 1,
+        }));
+        const result = { winner: gameWinner, timestamp: new Date().toISOString() };
+        saveGameResult(result); // Speichere das Ergebnis in der API
+        setTimeout(resetBoard, 2000);
+      } else {
+        setCurrentPlayer((prevPlayer) => (prevPlayer === 'X' ? 'O' : 'X'));
+      }
+
+      return newCells;
+    });
+  };
+
+  const loadGameResults = async () => {
+    const results = await fetchGameResults();
+    setGameResults(results);
+  };
+
+  useEffect(() => {
+    loadGameResults();
+  }, []);
+
+  return {
+    cells,
+    currentPlayer,
+    winner,
+    score,
+    handleCellClick,
+    resetBoard,
+    gameResults,
+  };
+};
+
+export default useGameLogic;
+```
+
+### 4. Anzeigen der Spielergebnisse
+
+Erstelle eine neue Komponente `src/GameResults.tsx`:
+
+```javascript
+// src/GameResults.tsx
+import React from "react";
+
+type GameResultsProps = {
+  results: { winner: string, timestamp: string }[],
+};
+
+const GameResults: React.FC<GameResultsProps> = ({ results }) => {
+  return (
+    <div className="game-results">
+      <h3>Frühere Spiele</h3>
+      <ul>
+        {results.map((result, index) => (
+          <li key={index}>
+            Spieler {result.winner} gewann am{" "}
+            {new Date(result.timestamp).toLocaleString()}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default GameResults;
+```
+
+### 5. Einbinden der Spielergebnisse in das Spielbrett
+
+Passe die `GameBoard`-Komponente an, um die `GameResults`-Komponente anzuzeigen:
+
+```javascript
 // src/GameBoard.tsx
-import React, { useEffect, useRef } from "react";
-import useGameLogic from "../hooks/useGameLogic";
+import { useEffect, useRef } from "react";
+import useGameLogic from "../../hooks/useGameLogic";
 import Cell from "../Cell/Cell";
 import StatusMessage from "../StatusMessage/StatusMessage";
 import ScoreBoard from "../ScoreBoard/ScoreBoard";
+import GameResults from "../GameResults/GameResults";
 import "./GameBoard.css";
 
 const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
-    useGameLogic();
-  const firstCellRef = useRef<HTMLDivElement>(null);
+  const {
+    cells,
+    currentPlayer,
+    winner,
+    score,
+    handleCellClick,
+    resetBoard,
+    gameResults,
+  } = useGameLogic();
+  const firstCellRef = useRef < HTMLDivElement > null;
 
   useEffect(() => {
     if (winner) {
@@ -498,6 +513,7 @@ const GameBoard = () => {
           />
         ))}
       </div>
+      <GameResults results={gameResults} />
     </div>
   );
 };
@@ -505,171 +521,125 @@ const GameBoard = () => {
 export default GameBoard;
 ```
 
-### Schritt 3: Erstellung der Tests für den Custom Hook
+### 6. Styling der Spielergebnisse (optional)
 
-```typescript
-// src/hooks/useGameLogic.test.ts
-import { renderHook, act } from "@testing-library/react";
-import useGameLogic from "./useGameLogic";
+Füge der Datei `GameBoard.css` oder einer entsprechenden CSS-Datei folgendes Styling hinzu:
 
-describe("useGameLogic Hook", () => {
-  test("initialisiert die Zustände korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
+```css
+/* src/GameBoard.css */
+.game-results {
+  margin-top: 20px;
+}
 
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
+.game-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.game-results li {
+  background-color: #f9f9f9;
+  margin-bottom: 5px;
+  padding: 10px;
+  border-radius: 4px;
+}
+```
+
+### 7. Schreiben der Tests
+
+Erstelle die Datei `src/api/api.test.ts` mit folgenden Tests:
+
+```javascript
+// src/api/api.test.ts
+import { saveGameResult, fetchGameResults } from './api';
+import axios from 'axios';
+import { vi } from 'vitest';
+
+vi.mock('axios');
+
+describe('API Integration', () => {
+  test('sollte Spielergebnis erfolgreich speichern', async () => {
+    const mockResult = { winner: 'X', timestamp: '2023-10-01T12:00:00Z' };
+    (axios.post as vi.Mock).mockResolvedValue({ data: mockResult });
+
+    const result = await saveGameResult(mockResult);
+    expect(axios.post).toHaveBeenCalledWith('https://example.com/api/results', mockResult);
+    expect(result).toEqual(mockResult);
   });
 
-  test("fügt einen Zug hinzu und wechselt den Spieler", () => {
-    const { result } = renderHook(() => useGameLogic());
+  test('sollte Fehler beim Speichern des Spielergebnisses behandeln', async () => {
+    const mockResult = { winner: 'O', timestamp: '2023-10-01T12:05:00Z' };
+    (axios.post as vi.Mock).mockRejectedValue(new Error('Netzwerkfehler'));
 
-    act(() => {
-      result.current.handleCellClick(0);
-    });
-
-    expect(result.current.cells[0]).toBe("X");
-    expect(result.current.currentPlayer).toBe("O");
-    expect(result.current.winner).toBe("");
+    await expect(saveGameResult(mockResult)).rejects.toThrow('Netzwerkfehler');
   });
 
-  test("ermittelt den Gewinner korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
+  test('sollte Spielresultate erfolgreich abrufen', async () => {
+    const mockResults = [
+      { winner: 'X', timestamp: '2023-10-01T12:00:00Z' },
+      { winner: 'O', timestamp: '2023-10-01T12:05:00Z' },
+    ];
+    (axios.get as vi.Mock).mockResolvedValue({ data: mockResults });
 
-    act(() => {
-      // Spieler X gewinnt durch die Zellen 0, 1, 2
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(3); // O
-      result.current.handleCellClick(1); // X
-      result.current.handleCellClick(4); // O
-      result.current.handleCellClick(2); // X
-    });
-
-    expect(result.current.winner).toBe("X");
-    expect(result.current.score).toEqual({ X: 1, O: 0 });
+    const results = await fetchGameResults();
+    expect(axios.get).toHaveBeenCalledWith('https://example.com/api/results');
+    expect(results).toEqual(mockResults);
   });
 
-  test("kann das Spielbrett zurücksetzen", () => {
-    const { result } = renderHook(() => useGameLogic());
+  test('sollte Fehler beim Abrufen der Spielresultate behandeln', async () => {
+    (axios.get as vi.Mock).mockRejectedValue(new Error('Serverfehler'));
 
-    act(() => {
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(1); // O
-      result.current.resetBoard();
-    });
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
+    await expect(fetchGameResults()).rejects.toThrow('Serverfehler');
   });
 });
 ```
 
-### Schritt 4: Aktualisieren der `GameBoard`-Tests
+Füge außerdem einen Test für die `GameResults`-Komponente hinzu:
 
-Da die gesamte Logik nun im `useGameLogic`-Hook enthalten ist, bleibt die `GameBoard`-Komponente für Rendering zuständig. Die bestehenden Tests bleiben größtenteils unverändert, stellen jedoch sicher, dass die Integration des Hooks korrekt funktioniert.
+```javascript
+// src/GameResults.test.tsx
+import { render, screen } from "@testing-library/react";
+import GameResults from "./GameResults";
+import { test, expect } from "vitest";
 
-```typescript
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import GameBoard from "./GameBoard";
-
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
+test("zeigt keine Ergebnisse an, wenn keine vorhanden sind", () => {
+  render(<GameResults results={[]} />);
+  const header = screen.getByText(/Frühere Spiele/i);
+  expect(header).toBeInTheDocument();
+  const listItems = screen.queryAllByRole("listitem");
+  expect(listItems.length).toBe(0);
 });
 
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
-
-test("klick auf eine Zelle trägt den Zug ein", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // Klick auf die erste Zelle
-
-  expect(cells[0]).toHaveTextContent("X"); // Erster Spieler ist 'X'
-});
-
-test("Spieler wechseln nach jedem Zug", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
-
-  fireEvent.click(cells[0]); // 'X'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: O");
-
-  fireEvent.click(cells[1]); // 'O'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: X");
-});
-
-test("Zelle kann nicht überschrieben werden", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // 'X'
-  fireEvent.click(cells[0]); // Versuch, erneut zu klicken
-
-  expect(cells[0]).toHaveTextContent("X"); // Wert bleibt 'X'
-});
-
-test("aktualisiert den Dokumenttitel beim Spielstart", () => {
-  render(<GameBoard />);
-  expect(document.title).toBe("Tic Tac Toe - Spieler X ist am Zug");
-});
-
-test("aktualisiert den Dokumenttitel, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  expect(document.title).toBe("Spieler X gewinnt!");
-});
-
-test("fokussiert die erste Zelle nach dem Zurücksetzen des Spielbretts", async () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' und das Zurücksetzen des Brettes
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  // Warte auf das automatische Zurücksetzen
-  await waitFor(
-    () => {
-      expect(document.activeElement).toBe(cells[0]);
-    },
-    { timeout: 2500 }
-  );
+test("zeigt eine Liste von Spielergebnissen an", () => {
+  const mockResults = [
+    { winner: "X", timestamp: "2023-10-01T12:00:00Z" },
+    { winner: "O", timestamp: "2023-10-01T12:05:00Z" },
+  ];
+  render(<GameResults results={mockResults} />);
+  const listItems = screen.getAllByRole("listitem");
+  expect(listItems.length).toBe(2);
+  expect(listItems[0]).toHaveTextContent("Spieler X gewinnt am");
+  expect(listItems[1]).toHaveTextContent("Spieler O gewinnt am");
 });
 ```
+
+### 8. Ausführen der Tests
+
+Führe im Terminal den Testbefehl aus, um sicherzustellen, dass alle Tests bestehen:
+
+```bash
+npm run test
+```
+
+### 9. Anwendung testen
+
+Starte die Anwendung mit:
+
+```bash
+npm start
+```
+
+Spiele einige Runden Tic-Tac-Toe und überprüfe, ob die Ergebnisse in der `GameResults`-Sektion angezeigt werden. Stelle sicher, dass die Ergebnisse auch nach einem Neuladen der Seite vorhanden sind, was bestätigt, dass sie erfolgreich in der API gespeichert wurden.
 
 ## Zusammenfassung
 
-In diesem Kapitel haben wir gelernt, wie man **Custom Hooks** in React erstellt und nutzt, um wiederverwendbare und modulare Logik in einem Tic-Tac-Toe-Spiel zu implementieren. Durch die Erstellung des `useGameLogic`-Hooks haben wir die Spiel- und Gewinnerlogik von der Präsentationskomponente `GameBoard` getrennt, was zu einer saubereren und besser wartbaren Codebasis führt.
-
-Custom Hooks sind ein mächtiges Werkzeug in React, das es Entwicklern ermöglicht, komplexe Logik zu abstrahieren und in wiederverwendbare Einheiten zu zerlegen. Dies fördert nicht nur die Wiederverwendbarkeit, sondern auch die Lesbarkeit und Testbarkeit des Codes. Indem du Custom Hooks meisterst, kannst du deine React-Anwendungen effizienter gestalten und skalierbarer machen.
+In diesem Kapitel haben wir gelernt, wie man eine externe REST-API in unser Tic-Tac-Toe-Spiel integriert. Wir haben Funktionen zum Speichern und Abrufen von Spielergebnissen erstellt, diese in unseren Spiel-Logik-Hook eingebunden und eine neue Komponente erstellt, um die Ergebnisse anzuzeigen. Außerdem haben wir Tests geschrieben, um sicherzustellen, dass unsere API-Integration zuverlässig funktioniert. Mit dieser neuen Funktionalität ist unser Spiel nun in der Lage, Daten persistieren zu können, was das Spielerlebnis verbessert und weitere Analyseoptionen eröffnet.

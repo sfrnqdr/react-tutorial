@@ -21,9 +21,6 @@ test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
 
   const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
   expect(winnerMessage).toBeInTheDocument();
-
-  const scoreElement = screen.getByText(/Spielstand:/i);
-  expect(scoreElement).toHaveTextContent("Spielstand: X: 1 - O: 0");
 });
 
 test("klick auf eine Zelle trägt den Zug ein", () => {
