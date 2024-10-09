@@ -1,21 +1,26 @@
-# Schritt 1: Willkommen zu React (App.tsx)
+# Schritt 2: Funktionale Komponenten
 
 ## Leitfrage
 
-**Wie funktioniert die grundlegende Struktur einer React-App, und wie können wir unsere Anwendung starten?**
+**Was sind funktionale Komponenten in React, und wie erstellen wir unsere eigene Komponente?**
 
-## Antwort
+## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 👋 Willkommen zu unserem React-Tutorial für das Tic-Tac-Toe-Spiel. Bevor wir anfangen, das Spiel zu bauen, schauen wir uns an, wie eine React-App grundsätzlich aufgebaut ist.
+Hey du! 👋 Im letzten Schritt haben wir unsere Anwendung gestartet und eine einfache Begrüßungsnachricht angezeigt. Jetzt lernen wir, was funktionale Komponenten in React sind.
 
-In React arbeiten wir mit Komponenten. Die Hauptkomponente unserer Anwendung ist die `App`-Komponente. Dort definieren wir, was auf dem Bildschirm angezeigt wird, wenn die App gestartet wird. Lass uns gemeinsam eine Begrüßungsnachricht einfügen und die App zum Laufen bringen! 🚀
+In React nutzen wir Komponenten, um unsere Benutzeroberfläche in wiederverwendbare Teile zu zerlegen. Eine funktionale Komponente ist einfach eine JavaScript-Funktion, die etwas JSX (das sieht aus wie HTML) zurückgibt. Damit können wir unseren Code sauber und organisiert halten. ✨
 
-## Codebeispiel
+Lass uns eine eigene Komponente erstellen und sie in unserer App verwenden!
+
+## Exemplarisches Codebeispiel (Tic Tac Toe)
+
+**Erstellen einer neuen Komponente `Welcome.tsx`:**
 
 ```tsx
+// src/Welcome.tsx
 import React from "react";
 
-function App() {
+function Welcome() {
   return (
     <div>
       <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
@@ -23,55 +28,72 @@ function App() {
   );
 }
 
+export default Welcome;
+```
+
+**Anpassen von `App.tsx`, um die neue Komponente zu verwenden:**
+
+```tsx
+// src/App.tsx
+import React from "react";
+import Welcome from "./Welcome";
+
+function App() {
+  return (
+    <div>
+      <Welcome />
+    </div>
+  );
+}
+
 export default App;
 ```
 
+## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
+
+Funktionale Komponenten sind ein zentrales Konzept in React. Sie erlauben es uns, wiederverwendbare und isolierte Stücke von Benutzeroberfläche zu erstellen.
+
+In unserem Beispiel haben wir eine neue Komponente `Welcome` erstellt, die einfach eine Begrüßungsnachricht rendert. Diese Komponente ist eine Funktion, die JSX zurückgibt. Wir können diese Komponente wie ein HTML-Element verwenden, indem wir `<Welcome />` in unserem JSX einfügen.
+
+Durch das Aufteilen unserer Anwendung in kleine Komponenten fördern wir die Wiederverwendbarkeit und Lesbarkeit unseres Codes. Außerdem wird es einfacher, einzelne Teile unserer App zu testen und zu warten.
+
 ## Hands-on Aufgaben zum Selbstprobieren
 
-### Aufgabe: Begrüßungsnachricht anzeigen
+### Aufgabe: Eigene Funktionale Komponente erstellen
 
 **Anforderungen:**
 
-1. **App.tsx bearbeiten:**
+1. **Erstelle eine neue Datei `Welcome.tsx` im `src`-Verzeichnis.**
 
-   - Öffne die Datei `App.tsx` in deinem Projektordner.
-   - Ersetze den bestehenden Code mit dem obigen Codebeispiel.
+   - Definiere eine funktionale Komponente `Welcome`, die eine Begrüßungsnachricht anzeigt.
+   - Exportiere die Komponente standardmäßig.
 
-2. **Abhängigkeiten installieren:**
+2. **Passe `App.tsx` an, um die `Welcome`-Komponente zu verwenden.**
 
-   - Öffne dein Terminal oder deine Eingabeaufforderung.
-   - Navigiere in das Projektverzeichnis.
-   - Führe den folgenden Befehl aus, um alle nötigen Pakete zu installieren:
+   - Importiere die `Welcome`-Komponente.
+   - Ersetze den bisherigen Code in `App.tsx`, sodass lediglich `<Welcome />` gerendert wird.
 
-     ```bash
-     npm install
-     ```
+3. **Starte die Anwendung und überprüfe, ob die Begrüßungsnachricht weiterhin angezeigt wird.**
 
-3. **Anwendung starten:**
-
-   - Starte die Entwicklungsumgebung mit:
+   - Führe im Terminal aus:
 
      ```bash
      npm run dev
      ```
 
-   - Öffne deinen Browser und rufe die angegebene lokale Adresse auf (z. B. `http://localhost:3000`).
-   - Du solltest die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** sehen.
+   - Öffne die Anwendung im Browser.
 
 ### Zugehöriger Vitest für TDD
 
-Um sicherzustellen, dass unsere Anwendung korrekt funktioniert, schreiben wir einen automatisierten Test.
-
-**Testdatei erstellen (`App.test.tsx`):**
-
-Erstelle eine neue Datei namens `App.test.tsx` im gleichen Verzeichnis wie `App.tsx` und füge folgenden Code ein:
+**Erstelle eine Testdatei `Welcome.test.tsx` für die `Welcome`-Komponente:**
 
 ```tsx
+// src/Welcome.test.tsx
 import { render, screen } from "@testing-library/react";
-import App from "./App";
+import Welcome from "./Welcome";
 
 test("zeigt die Begrüßungsnachricht an", () => {
-  render(<App />);
+  render(<Welcome />);
   const greetingElement = screen.getByText(
     /Willkommen zum Tic-Tac-Toe-Spiel!/i
   );
@@ -79,16 +101,93 @@ test("zeigt die Begrüßungsnachricht an", () => {
 });
 ```
 
+**Anforderungen aus dem Test abgeleitet:**
+
+- Die `Welcome`-Komponente soll den Text **"Willkommen zum Tic-Tac-Toe-Spiel!"** anzeigen.
+
 **Test ausführen:**
 
-- Führe im Terminal den folgenden Befehl aus:
+- Führe im Terminal aus:
 
   ```bash
   npm run test
   ```
 
-- Der Test sollte erfolgreich durchlaufen und bestätigen, dass die Begrüßungsnachricht angezeigt wird. ✅
+- Stelle sicher, dass der Test erfolgreich durchläuft. ✅
+
+## Fertige Musterlösung dieses Kapitels
+
+1. **Erstellen der `Welcome`-Komponente:**
+
+   ```tsx
+   // src/Welcome.tsx
+   import React from "react";
+
+   function Welcome() {
+     return (
+       <div>
+         <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+       </div>
+     );
+   }
+
+   export default Welcome;
+   ```
+
+2. **Anpassen von `App.tsx`:**
+
+   ```tsx
+   // src/App.tsx
+   import React from "react";
+   import Welcome from "./Welcome";
+
+   function App() {
+     return (
+       <div>
+         <Welcome />
+       </div>
+     );
+   }
+
+   export default App;
+   ```
+
+3. **Test für `Welcome`-Komponente erstellen:**
+
+   ```tsx
+   // src/Welcome.test.tsx
+   import { render, screen } from "@testing-library/react";
+   import Welcome from "./Welcome";
+
+   test("zeigt die Begrüßungsnachricht an", () => {
+     render(<Welcome />);
+     const greetingElement = screen.getByText(
+       /Willkommen zum Tic-Tac-Toe-Spiel!/i
+     );
+     expect(greetingElement).toBeInTheDocument();
+   });
+   ```
+
+4. **Anwendung starten und Tests ausführen:**
+
+   - **Anwendung starten:**
+
+     ```bash
+     npm run dev
+     ```
+
+     - Überprüfe im Browser, dass die Begrüßungsnachricht angezeigt wird.
+
+   - **Tests ausführen:**
+
+     ```bash
+     npm run test
+     ```
+
+     - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
 ---
 
-**Herzlichen Glückwunsch!** 🎊 Du hast deine erste React-Komponente erstellt und verstanden, wie die grundlegende Struktur einer React-App aussieht. Außerdem hast du gelernt, wie man die Anwendung startet und Tests ausführt.
+**Super gemacht!** 🎉 Du hast gelernt, wie man eigene funktionale Komponenten in React erstellt und verwendet. Dies ist ein wichtiger Schritt, um unsere Tic-Tac-Toe-Anwendung modular und wartbar zu gestalten.
+
+**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
