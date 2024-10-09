@@ -1,241 +1,260 @@
-# Schritt 5: Styling von Komponenten
+# Schritt 6: Bedingtes Rendern
 
 ## Leitfrage
 
-**Wie können wir unsere React-Komponenten stilvoll gestalten und CSS verwenden, um unser Tic-Tac-Toe-Spiel ansprechender zu machen?**
+**Was ist bedingtes Rendern in React, und wie können wir es nutzen, um bestimmte Elemente in unserem Tic-Tac-Toe-Spiel anzuzeigen oder zu verbergen?**
 
 ## Verständliche Antwort der Leitfrage für Anfänger
 
-Hey du! 👋 Jetzt, wo unser Tic-Tac-Toe-Spiel funktioniert, ist es an der Zeit, ihm einen coolen Look zu verpassen! ✨
+Hey du! 👋 In diesem Schritt lernen wir, wie wir in React Inhalte basierend auf bestimmten Bedingungen ein- oder ausblenden können. Das nennt man **bedingtes Rendern**.
 
-In React können wir CSS verwenden, um unsere Komponenten zu stylen und das Aussehen unserer Anwendung zu verbessern. Es gibt verschiedene Möglichkeiten, CSS in React zu verwenden: externe Stylesheets, Inline-Styles oder CSS-Module.
+Stell dir vor, du möchtest nur dann eine Nachricht anzeigen, wenn jemand das Tic-Tac-Toe-Spiel gewonnen hat. Wenn das Spiel noch läuft, soll die Nachricht nicht zu sehen sein. Mit bedingtem Rendern kannst du genau das erreichen! 🚀
 
-Wir werden uns darauf konzentrieren, wie wir externe Stylesheets nutzen können, um unsere Komponenten schön und attraktiv zu gestalten. Lass uns unserem Spiel etwas Farbe und Stil hinzufügen! 🎨
+Wir werden gemeinsam eine Siegesnachricht hinzufügen, die nur erscheint, wenn ein Spieler gewonnen hat.
 
 ## Exemplarisches Codebeispiel (Tic Tac Toe)
 
-**Erstellen und Anwenden von Styles für das Spielfeld und die Zellen:**
+**Hinzufügen einer Siegesnachricht mit bedingtem Rendern:**
 
-1. **Erstelle eine CSS-Datei für das Spielfeld:**
+```tsx
+// src/GameBoard.tsx
+import React, { useState } from "react";
+import Cell from "./Cell";
+import "./GameBoard.css";
 
-   ```css
-   /* src/GameBoard.css */
-   .board {
-     display: grid;
-     grid-template-columns: repeat(3, 100px);
-     grid-template-rows: repeat(3, 100px);
-     gap: 5px;
-     margin: 20px auto;
-     width: max-content;
-   }
+function GameBoard() {
+  const [cells, setCells] = useState(Array(9).fill(""));
+  const [winner, setWinner] = useState("");
 
-   .cell {
-     width: 100px;
-     height: 100px;
-     background-color: #fff;
-     border: 2px solid #444;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 2rem;
-     cursor: pointer;
-     user-select: none;
-     transition: background-color 0.3s;
-   }
+  const checkWinner = (updatedCells: string[]) => {
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8], // Reihen
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8], // Spalten
+      [0, 4, 8],
+      [2, 4, 6], // Diagonalen
+    ];
 
-   .cell:hover {
-     background-color: #f0f0f0;
-   }
-   ```
+    for (let combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (
+        updatedCells[a] &&
+        updatedCells[a] === updatedCells[b] &&
+        updatedCells[a] === updatedCells[c]
+      ) {
+        return updatedCells[a];
+      }
+    }
+    return "";
+  };
 
-2. **Importiere die CSS-Datei in `GameBoard.tsx`:**
+  const handleCellClick = (index: number) => {
+    if (cells[index] === "" && winner === "") {
+      const newCells = [...cells];
+      newCells[index] = "X"; // Fürs Erste setzen wir immer 'X'
+      setCells(newCells);
+      const gameWinner = checkWinner(newCells);
+      if (gameWinner) {
+        setWinner(gameWinner);
+      }
+    }
+  };
 
-   ```tsx
-   // src/GameBoard.tsx
-   import React from "react";
-   import Cell from "./Cell";
-   import "./GameBoard.css"; // CSS importieren
+  return (
+    <div>
+      <h2>Tic Tac Toe</h2>
+      {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
+      <div className="board" role="grid">
+        {cells.map((cell, index) => (
+          <Cell
+            key={index}
+            value={cell}
+            onClick={() => handleCellClick(index)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-   function GameBoard() {
-     // ... vorheriger Code bleibt gleich
-   }
+export default GameBoard;
+```
 
-   export default GameBoard;
-   ```
+**Anpassen der `Cell`-Komponente:**
 
-3. **Erstelle eine CSS-Datei für die `Cell`-Komponente (optional):**
+```tsx
+// src/Cell.tsx
+import React from "react";
 
-   ```css
-   /* src/Cell.css */
-   .cell {
-     /* Zusätzliche Styles können hier hinzugefügt werden */
-   }
-   ```
+type CellProps = {
+  value: string;
+  onClick: () => void;
+};
 
-4. **Importiere die CSS-Datei in `Cell.tsx` (optional):**
+function Cell({ value, onClick }: CellProps) {
+  return (
+    <div className="cell" role="button" onClick={onClick}>
+      {value}
+    </div>
+  );
+}
 
-   ```tsx
-   // src/Cell.tsx
-   import React, { useState } from "react";
-   import "./Cell.css"; // CSS importieren
-
-   // ... restlicher Code bleibt gleich
-   ```
+export default Cell;
+```
 
 ## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
 
-In React können wir CSS nutzen, um unsere Komponenten zu stylen und ihnen ein ansprechendes Aussehen zu verleihen. Hier sind einige Möglichkeiten, wie wir CSS in React verwenden können:
+Beim **bedingten Rendern** in React entscheiden wir, ob ein bestimmtes Element gerendert wird oder nicht, basierend auf einer Bedingung. Dies ähnelt der Bedingungslogik in JavaScript mit `if`-Anweisungen.
 
-1. **Externe Stylesheets:** Wir erstellen eine `.css`-Datei und importieren sie in unsere Komponente. Dies ist die gängigste Methode und fördert die Trennung von Anliegen (Separation of Concerns).
+In unserem Beispiel:
 
-2. **Inline-Styles:** Wir verwenden das `style`-Attribut in JSX-Elementen und übergeben ein JavaScript-Objekt mit den CSS-Eigenschaften. Diese Methode eignet sich für dynamische Styles, ist aber weniger übersichtlich bei vielen Styles.
+- Wir haben den Zustand `winner` hinzugefügt, um den Gewinner des Spiels zu speichern.
+- Die Funktion `checkWinner` überprüft nach jedem Zug, ob es eine Gewinnkombination gibt.
+- In der Render-Methode verwenden wir `{winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}`.
+  - Das ist eine Kurzschlussauswertung: Wenn `winner` einen Wert hat (nicht leer ist), wird die Nachricht angezeigt.
+  - Wenn `winner` leer ist, wird die Nachricht nicht gerendert.
 
-3. **CSS-Module:** Wir verwenden CSS-Dateien mit besonderen Erweiterungen (`.module.css`), die lokale Scope-Styles ermöglichen, um Namenskonflikte zu vermeiden.
+Dies ist ein gängiges Muster für bedingtes Rendern in React:
 
-Im obigen Beispiel verwenden wir externe Stylesheets:
+- **Mit logischem UND (`&&`):** `{condition && <Element />}`
+  - Rendert `<Element />` nur, wenn `condition` wahr ist.
+- **Mit dem ternären Operator:** `{condition ? <ElementA /> : <ElementB />}`
+  - Rendert `<ElementA />` wenn `condition` wahr ist, sonst `<ElementB />`.
 
-- Wir erstellen `GameBoard.css` und definieren Styles für das `.board`-Container und die `.cell`-Elemente.
-- Durch das Importieren von `./GameBoard.css` in `GameBoard.tsx` werden die Styles auf die Komponenten angewendet.
-- Wir verwenden Grid Layout, um das Spielfeld zu gestalten, und fügen Hover-Effekte hinzu, um die Benutzerinteraktion zu verbessern.
-
-Durch das Styling unserer Komponenten verbessern wir die Benutzererfahrung und machen unser Spiel visuell ansprechender. 🎮
+Bedingtes Rendern ermöglicht es uns, die Benutzeroberfläche dynamisch an den Zustand unserer Anwendung anzupassen. Im Kontext unseres Spiels können wir so verschiedene Nachrichten oder Elemente anzeigen, je nachdem, was gerade passiert. 🎮
 
 ## Hands-on Aufgaben zum Selbstprobieren
 
-### Aufgabe: Styling des Tic-Tac-Toe-Spiels mit CSS
+### Aufgabe: Implementierung einer Siegesnachricht mit bedingtem Rendern
 
 **Anforderungen:**
 
-1. **Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis.**
-
-   - Definiere Styles für die Klassen `.board` und `.cell`.
-   - Gestalte das Spielfeld als Grid mit 3 Spalten und 3 Zeilen.
-   - Füge optische Verbesserungen wie Ränder, Hintergrundfarben und Hover-Effekte hinzu.
-
-2. **Importiere die CSS-Datei in `GameBoard.tsx`.**
-
-   - Stelle sicher, dass die Styles auf das Spielfeld angewendet werden.
-
-3. **(Optional) Erstelle eine CSS-Datei `Cell.css` für die `Cell`-Komponente.**
-
-   - Füge spezifische Styles für die Zellen hinzu, wenn nötig.
-   - Importiere die CSS-Datei in `Cell.tsx`.
-
-4. **Starte die Anwendung und überprüfe das neue Styling.**
-
-   - Führe im Terminal aus:
-
+1. **Erweitere den Zustand in `GameBoard.tsx`:**
+   - Füge `cells` und `winner` zum Zustand hinzu.
+   - Implementiere eine Funktion `checkWinner`, die überprüft, ob ein Spieler gewonnen hat.
+   - Aktualisiere `handleCellClick`, um Züge zu verarbeiten und den Gewinner zu ermitteln.
+2. **Passe das Rendern in `GameBoard.tsx` an:**
+   - Verwende bedingtes Rendern, um die Siegesnachricht nur anzuzeigen, wenn ein Gewinner ermittelt wurde.
+3. **Aktualisiere die `Cell`-Komponente:**
+   - Entferne den internen Zustand `cellValue`.
+   - Verwende stattdessen die `value`-Prop zum Anzeigen des Werts.
+   - Füge eine `onClick`-Prop hinzu, um Klicks an die Elternkomponente zu melden.
+4. **Teste das Spiel:**
+   - Starte die Anwendung:
      ```bash
      npm run dev
      ```
-
-   - Öffne die Anwendung im Browser. Das Spielfeld sollte nun gestylt sein! 🌟
+   - Spiele das Spiel, bis ein Spieler gewinnt. Die Siegesnachricht sollte erscheinen! 🏆
 
 ### Zugehöriger Vitest für TDD
 
-**Obwohl CSS schwer zu testen ist, können wir sicherstellen, dass die Klassen korrekt angewendet werden.**
-
-**Erstelle eine Testdatei `GameBoard.test.tsx` mit zusätzlichen Tests:**
+**Erstelle eine Testdatei `GameBoard.test.tsx` mit Tests für das bedingte Rendern:**
 
 ```tsx
 // src/GameBoard.test.tsx
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 
-test('das Spielfeld hat die Klasse "board"', () => {
+test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
   render(<GameBoard />);
-  const boardElement = screen.getByRole("grid");
-  expect(boardElement).toHaveClass("board");
+  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
+  expect(winnerMessage).toBeNull();
 });
 
-test('die Zellen haben die Klasse "cell"', () => {
+test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
   render(<GameBoard />);
-  const cellElements = screen.getAllByRole("button");
-  cellElements.forEach((cell) => {
-    expect(cell).toHaveClass("cell");
-  });
+  const cells = screen.getAllByRole("button");
+
+  // Simuliere einen Sieg für 'X' in der oberen Reihe
+  fireEvent.click(cells[0]); // X
+  fireEvent.click(cells[3]); // Ignoriert, da wir nur 'X' setzen
+  fireEvent.click(cells[1]); // X
+  fireEvent.click(cells[4]); // Ignoriert
+  fireEvent.click(cells[2]); // X
+
+  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
+  expect(winnerMessage).toBeInTheDocument();
 });
 ```
 
-**Anpassungen im Code, um die Tests zu unterstützen:**
-
-- Füge `role="grid"` zum Spielfeld-Container hinzu:
-
-  ```tsx
-  // src/GameBoard.tsx
-  // ...
-  <div className="board" role="grid">
-    {/* Zellen */}
-  </div>
-  // ...
-  ```
-
 **Anforderungen aus dem Test abgeleitet:**
 
-- Das Spielfeld (`div` mit Klasse `board`) soll das Attribut `role="grid"` haben und die Klasse `board` besitzen.
-- Die Zellen sollen die Klasse `cell` haben.
+- **Test 1:** Zu Beginn des Spiels wird keine Siegesnachricht angezeigt.
+- **Test 2:** Wenn ein Spieler gewinnt, wird die entsprechende Siegesnachricht angezeigt.
 
 **Test ausführen:**
 
-- Führe im Terminal aus:
+```bash
+npm run test
+```
 
-  ```bash
-  npm run test
-  ```
-
-- Stelle sicher, dass die neuen Tests erfolgreich durchlaufen. ✅
+- Stelle sicher, dass beide Tests erfolgreich sind. ✅
 
 ## Fertige Musterlösung dieses Kapitels
 
-1. **Erstellen der CSS-Datei `GameBoard.css`:**
-
-   ```css
-   /* src/GameBoard.css */
-   .board {
-     display: grid;
-     grid-template-columns: repeat(3, 100px);
-     grid-template-rows: repeat(3, 100px);
-     gap: 5px;
-     margin: 20px auto;
-     width: max-content;
-   }
-
-   .cell {
-     width: 100px;
-     height: 100px;
-     background-color: #fff;
-     border: 2px solid #444;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 2rem;
-     cursor: pointer;
-     user-select: none;
-     transition: background-color 0.3s;
-   }
-
-   .cell:hover {
-     background-color: #f0f0f0;
-   }
-   ```
-
-2. **Importieren des CSS in `GameBoard.tsx`:**
+1. **Aktualisiere `GameBoard.tsx`:**
 
    ```tsx
    // src/GameBoard.tsx
-   import React from "react";
+   import React, { useState } from "react";
    import Cell from "./Cell";
    import "./GameBoard.css";
 
    function GameBoard() {
-     const initialCells = Array(9).fill("");
+     const [cells, setCells] = useState(Array(9).fill(""));
+     const [winner, setWinner] = useState("");
+
+     const checkWinner = (updatedCells: string[]) => {
+       const winningCombinations = [
+         [0, 1, 2],
+         [3, 4, 5],
+         [6, 7, 8],
+         [0, 3, 6],
+         [1, 4, 7],
+         [2, 5, 8],
+         [0, 4, 8],
+         [2, 4, 6],
+       ];
+
+       for (let combination of winningCombinations) {
+         const [a, b, c] = combination;
+         if (
+           updatedCells[a] &&
+           updatedCells[a] === updatedCells[b] &&
+           updatedCells[a] === updatedCells[c]
+         ) {
+           return updatedCells[a];
+         }
+       }
+       return "";
+     };
+
+     const handleCellClick = (index: number) => {
+       if (cells[index] === "" && winner === "") {
+         const newCells = [...cells];
+         newCells[index] = "X";
+         setCells(newCells);
+         const gameWinner = checkWinner(newCells);
+         if (gameWinner) {
+           setWinner(gameWinner);
+         }
+       }
+     };
 
      return (
        <div>
          <h2>Tic Tac Toe</h2>
+         {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
          <div className="board" role="grid">
-           {initialCells.map((cell, index) => (
-             <Cell key={index} value={cell} />
+           {cells.map((cell, index) => (
+             <Cell
+               key={index}
+               value={cell}
+               onClick={() => handleCellClick(index)}
+             />
            ))}
          </div>
        </div>
@@ -245,51 +264,56 @@ test('die Zellen haben die Klasse "cell"', () => {
    export default GameBoard;
    ```
 
-3. **Anpassen der `Cell`-Komponente (optional):**
+2. **Aktualisiere `Cell.tsx`:**
 
-   - **Cell.css** erstellen (falls benötigt):
+   ```tsx
+   // src/Cell.tsx
+   import React from "react";
 
-     ```css
-     /* src/Cell.css */
-     /* Zusätzliche Styles für die Zelle */
-     .cell {
-       /* Styles hier hinzufügen */
-     }
-     ```
+   type CellProps = {
+     value: string;
+     onClick: () => void;
+   };
 
-   - **Importieren von `Cell.css` in `Cell.tsx`:**
+   function Cell({ value, onClick }: CellProps) {
+     return (
+       <div className="cell" role="button" onClick={onClick}>
+         {value}
+       </div>
+     );
+   }
 
-     ```tsx
-     // src/Cell.tsx
-     import React, { useState } from "react";
-     import "./Cell.css";
+   export default Cell;
+   ```
 
-     // ... restlicher Code bleibt gleich
-     ```
-
-4. **Anpassen der Tests in `GameBoard.test.tsx`:**
+3. **Aktualisiere `GameBoard.test.tsx`:**
 
    ```tsx
    // src/GameBoard.test.tsx
-   import { render, screen } from "@testing-library/react";
+   import { render, screen, fireEvent } from "@testing-library/react";
    import GameBoard from "./GameBoard";
 
-   test('das Spielfeld hat die Klasse "board"', () => {
+   test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
      render(<GameBoard />);
-     const boardElement = screen.getByRole("grid");
-     expect(boardElement).toHaveClass("board");
+     const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
+     expect(winnerMessage).toBeNull();
    });
 
-   test('die Zellen haben die Klasse "cell"', () => {
+   test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
      render(<GameBoard />);
-     const cellElements = screen.getAllByRole("button");
-     cellElements.forEach((cell) => {
-       expect(cell).toHaveClass("cell");
-     });
+     const cells = screen.getAllByRole("button");
+
+     // Simuliere einen Sieg für 'X' in der oberen Reihe
+     fireEvent.click(cells[0]); // X
+     fireEvent.click(cells[1]); // X
+     fireEvent.click(cells[2]); // X
+
+     const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
+     expect(winnerMessage).toBeInTheDocument();
    });
    ```
 
-5. **Anwendung starten und Tests ausführen:**
+4. **Anwendung starten und Tests ausführen:**
 
    - **Anwendung starten:**
 
@@ -297,7 +321,7 @@ test('die Zellen haben die Klasse "cell"', () => {
      npm run dev
      ```
 
-     - Öffne die Anwendung im Browser. Du solltest jetzt das gestylte Spielfeld sehen. 🌈
+     - Spiele das Spiel im Browser und achte darauf, dass die Siegesnachricht erscheint, wenn du gewinnst. 🥳
 
    - **Tests ausführen:**
 
@@ -307,18 +331,20 @@ test('die Zellen haben die Klasse "cell"', () => {
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
-6. **Zusätzliche Verbesserungen (optional):**
+5. **Optional: Styles anpassen**
 
-   - **Responsive Design:** Passe die Größenangaben an, um das Spielfeld auf verschiedenen Bildschirmgrößen gut aussehen zu lassen.
+   - Füge Styles hinzu, um die Siegesnachricht hervorzuheben.
 
-   - **Farbschema ändern:** Experimentiere mit verschiedenen Farben, um ein einzigartiges Design zu erstellen.
-
-   - **Fonts hinzufügen:** Verwende benutzerdefinierte Schriftarten, um das Erscheinungsbild zu verbessern.
+     ```css
+     /* src/GameBoard.css */
+     h3 {
+       text-align: center;
+       color: green;
+     }
+     ```
 
 ---
 
-**Großartig!** 🎉 Du hast gelernt, wie man in React CSS verwendet, um Komponenten zu stylen. Dein Tic-Tac-Toe-Spiel sieht jetzt viel attraktiver aus, und du hast ein besseres Verständnis dafür, wie Styling in React funktioniert.
+**Herzlichen Glückwunsch!** 🎉 Du hast gelernt, wie man bedingtes Rendern in React verwendet. Jetzt zeigt unser Tic-Tac-Toe-Spiel eine Siegesnachricht an, sobald ein Spieler gewinnt. 🏆
 
-Durch das Anwenden von CSS auf deine Komponenten kannst du das Benutzererlebnis erheblich verbessern und deine Anwendung professioneller gestalten. 🚀
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
+Das Verständnis von bedingtem Rendern ist entscheidend, um dynamische und interaktive Benutzeroberflächen zu erstellen. Du bist auf dem besten Weg, ein React-Profi zu werden! 🚀

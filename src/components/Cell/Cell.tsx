@@ -1,5 +1,6 @@
 // src/Cell.tsx
 import { useState } from "react";
+import "./Cell.css";
 
 type CellProps = {
   value: string;

@@ -2,11 +2,16 @@
 import { render, screen } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 
-test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
+test('das Spielfeld hat die Klasse "board"', () => {
   render(<GameBoard />);
-  const titleElement = screen.getByText(/Tic Tac Toe/i);
-  expect(titleElement).toBeInTheDocument();
+  const boardElement = screen.getByRole("grid");
+  expect(boardElement).toHaveClass("board");
+});
 
-  const cells = screen.getAllByRole("button");
-  expect(cells.length).toBe(9);
+test('die Zellen haben die Klasse "cell"', () => {
+  render(<GameBoard />);
+  const cellElements = screen.getAllByRole("button");
+  cellElements.forEach((cell) => {
+    expect(cell).toHaveClass("cell");
+  });
 });
