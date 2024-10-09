@@ -7,7 +7,6 @@ type CellProps = {
 };
 
 const Cell = React.memo(({ value, onClick }: CellProps) => {
-  console.log(`Rendering Cell with value: ${value}`);
   return (
     <div className="cell" role="button" onClick={onClick}>
       {value}

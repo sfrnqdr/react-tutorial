@@ -1,8 +1,8 @@
 // src/GameBoard.tsx
 import { useState } from "react";
 import Cell from "../Cell/Cell";
+import StatusMessage from "../StatusMessage/StatusMessage";
 import "./GameBoard.css";
-import StatusMessage from "../StatusMessage.tsx/StatusMessage";
 
 const GameBoard = () => {
   const [cells, setCells] = useState(Array(9).fill(""));
@@ -37,7 +37,7 @@ const GameBoard = () => {
   const handleCellClick = (index: number) => {
     if (cells[index] === "" && winner === "") {
       const newCells = [...cells];
-      newCells[index] = "X";
+      newCells[index] = currentPlayer;
       setCells(newCells);
       const gameWinner = checkWinner(newCells);
       if (gameWinner) {
