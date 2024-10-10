@@ -1,23 +1,189 @@
-# Schritt 6: Bedingtes Rendern
-
 ## Leitfrage
 
-**Was ist bedingtes Rendern in React, und wie können wir es nutzen, um bestimmte Elemente in unserem Tic-Tac-Toe-Spiel anzuzeigen oder zu verbergen?**
+Was ist bedingtes Rendern?
 
-## Verständliche Antwort der Leitfrage für Anfänger
+## Antwort
 
-Hey du! 👋 In diesem Schritt lernen wir, wie wir in React Inhalte basierend auf bestimmten Bedingungen ein- oder ausblenden können. Das nennt man **bedingtes Rendern**.
+**Bedingtes Rendern** bedeutet, dass wir in unserer React-Anwendung entscheiden können, **was** auf dem Bildschirm angezeigt wird, abhängig von bestimmten **Bedingungen**. Das ist wie eine wenn-dann-Logik:
 
-Stell dir vor, du möchtest nur dann eine Nachricht anzeigen, wenn jemand das Tic-Tac-Toe-Spiel gewonnen hat. Wenn das Spiel noch läuft, soll die Nachricht nicht zu sehen sein. Mit bedingtem Rendern kannst du genau das erreichen! 🚀
+- **Wenn** etwas **wahr** ist, dann zeige **A** an.
+- **Ansonsten** zeige **B** an.
 
-Wir werden gemeinsam eine Siegesnachricht hinzufügen, die nur erscheint, wenn ein Spieler gewonnen hat.
+Dieses Konzept ermöglicht es uns, **interaktive** und **dynamische** Benutzeroberflächen zu erstellen, die auf den Zustand der Anwendung oder Benutzerinteraktionen reagieren.
 
-## Exemplarisches Codebeispiel (Tic Tac Toe)
+## Warum ist bedingtes Rendern nützlich?
 
-**Hinzufügen einer Siegesnachricht mit bedingtem Rendern:**
+- **Interaktivität:** Zeige oder verberge Elemente basierend auf Benutzereingaben.
+- **Benutzerführung:** Zeige Fehlermeldungen, Warnungen oder Erfolgsmeldungen nur dann an, wenn sie relevant sind.
+- **Komplexe UIs vereinfachen:** Teile der Benutzeroberfläche können ausgeblendet werden, um den Fokus auf wichtige Elemente zu lenken.
+
+## Wie funktioniert bedingtes Rendern in React?
+
+In React können wir JavaScript **Kontrollstrukturen** wie `if`-Anweisungen, den **ternären Operator** `? :` oder den **logischen UND-Operator** `&&` innerhalb unseres JSX-Codes verwenden, um Entscheidungen zu treffen.
+
+## Codebeispiel
+
+### Szenario
+
+Stell dir vor, wir möchten in unserer Anwendung einen Begrüßungstext anzeigen, der sich ändert, je nachdem, ob der Benutzer eingeloggt ist oder nicht.
+
+### Ternärer Operator
+
+Wir verwenden den React-Hook `useState`, um den Zustand des Logins zu verwalten.
 
 ```tsx
-// src/GameBoard.tsx
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <div>
+      {isLoggedIn ? <h1>Willkommen zurück!</h1> : <h1>Willkommen, Gast!</h1>}
+      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
+        {isLoggedIn ? "Ausloggen" : "Einloggen"}
+      </button>
+    </div>
+  );
+};
+
+export default App;
+```
+
+### If-Else-Bedingungen
+
+Wir können innerhalb unserer Komponente `if`-Anweisungen verwenden.
+
+```tsx
+const App() => {
+  const [isMember, setIsMember] = useState(false);
+  let message;
+
+  if (isMember) {
+    message = <h2>Danke für Ihre Mitgliedschaft!</h2>;
+  } else {
+    message = <h2>Bitte treten Sie unserer Community bei.</h2>;
+  }
+
+  return <div>{message}</div>;
+}
+```
+
+### Logischer UND-Operator `&&`
+
+Wenn wir nur dann etwas anzeigen wollen, wenn eine Bedingung wahr ist.
+
+```tsx
+const Notification = ({ isVisible }) => {
+  return <div>{isVisible && <p>Sie haben eine neue Nachricht!</p>}</div>;
+};
+```
+
+## Hands-on Aufgaben: Conditional Rendering
+
+### Ziel der Aufgabe
+
+In dieser Aufgabe erweitern wir unsere `GameBoard`-Komponente um bedingtes Rendern, um eine Siegesnachricht anzuzeigen, sobald ein Spieler das Tic-Tac-Toe-Spiel gewinnt. Dabei fügen wir eine `winner`-State hinzu, implementieren die Logik zur Gewinnerermittlung und passen die Benutzeroberfläche entsprechend an. Zusätzlich aktualisieren wir die Tests, um sicherzustellen, dass die bedingte Anzeige korrekt funktioniert.
+
+---
+
+### Schritt 0: Clean Workspace herstellen
+
+Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzustellen, dass dein Arbeitsbereich sauber ist und mit dem Remote-Repository synchronisiert ist. Dies verhindert mögliche Konflikte und stellt sicher, dass du von einem stabilen Ausgangspunkt aus startest.
+
+**Warum ist das sinnvoll für das Tutorial?**
+
+- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
+- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
+- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
+
+**So gehst du vor:**
+
+1. **Überprüfe den aktuellen Status deines Arbeitsbereichs:**
+
+   `git status`
+
+   - Stelle sicher, dass keine ungespeicherten Änderungen oder nicht committeten Dateien vorhanden sind. Wenn es solche gibt, committe sie oder sichere sie anderweitig ab.
+
+-
+
+1. **Hole die neuesten Änderungen vom Remote-Repository:**
+
+   `git fetch origin`
+
+2. **Setze deinen lokalen Branch auf den Stand des Remote-Branches zurück:**
+
+   `git reset --hard origin/main`
+
+   - **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
+
+3. **Bereinige nicht verfolgte Dateien und Verzeichnisse:**
+
+   `git clean -fd`
+
+   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
+
+---
+
+### Schritt 1: Den Test verstehen
+
+Zunächst erstellen wir Tests für die `GameBoard`-Komponente, um sicherzustellen, dass die bedingte Rendering-Logik korrekt funktioniert und eine Siegesnachricht angezeigt wird, wenn ein Spieler gewinnt.
+
+```tsx
+// src/components/GameBoard/GameBoard.test.tsx
+
+import { render, screen, fireEvent } from "@testing-library/react";
+import GameBoard from "./GameBoard";
+
+test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
+  render(<GameBoard />);
+  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
+  expect(winnerMessage).toBeNull();
+});
+
+test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
+  render(<GameBoard />);
+  const cells = screen.getAllByRole("button");
+
+  // Simuliere einen Sieg für 'X' in der oberen Reihe
+  fireEvent.click(cells[0]); // X
+  fireEvent.click(cells[1]); // X
+  fireEvent.click(cells[2]); // X
+
+  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
+  expect(winnerMessage).toBeInTheDocument();
+});
+```
+
+**Was macht dieser Test?**
+
+Dieser Test überprüft die bedingte Rendering-Logik der `GameBoard`-Komponente:
+
+1. **Keine Siegesnachricht zu Spielbeginn:** Überprüft, dass keine Siegesnachricht angezeigt wird, wenn das Spiel gerade begonnen hat und noch kein Gewinner feststeht.
+2. **Siegesnachricht bei Gewinn:** Simuliert Spielzüge, die einen Sieg für Spieler "X" auslösen, und überprüft, ob die entsprechende Siegesnachricht korrekt angezeigt wird.
+
+---
+
+### Schritt 2: Den Test ausführen
+
+Falls der "Watch"-Modus nicht bereits läuft, gebe den Befehl `npm run test:watch` im Terminal ein.
+
+**Erwarte folgendes Ergebnis:**
+
+- Der Test sollte **fehlschlagen**. ❌
+- Dies ist beabsichtigt, da die bedingte Rendering-Logik noch nicht implementiert ist und der Test die noch fehlende Funktionalität erkennt.
+
+---
+
+### Schritt 3: Den Code anpassen, um den Test zu bestehen
+
+Jetzt schreiben wir den notwendigen Code, damit die Tests erfolgreich sind.
+
+**So geht's:**
+
+1. **Aktualisiere `GameBoard.tsx`:**
+
+```tsx
+// src/components/GameBoard/GameBoard.tsx
+
 import React, { useState } from "react";
 import Cell from "./Cell";
 import "./GameBoard.css";
@@ -30,12 +196,12 @@ function GameBoard() {
     const winningCombinations = [
       [0, 1, 2],
       [3, 4, 5],
-      [6, 7, 8], // Reihen
+      [6, 7, 8],
       [0, 3, 6],
       [1, 4, 7],
-      [2, 5, 8], // Spalten
+      [2, 5, 8],
       [0, 4, 8],
-      [2, 4, 6], // Diagonalen
+      [2, 4, 6],
     ];
 
     for (let combination of winningCombinations) {
@@ -54,7 +220,7 @@ function GameBoard() {
   const handleCellClick = (index: number) => {
     if (cells[index] === "" && winner === "") {
       const newCells = [...cells];
-      newCells[index] = "X"; // Fürs Erste setzen wir immer 'X'
+      newCells[index] = "X";
       setCells(newCells);
       const gameWinner = checkWinner(newCells);
       if (gameWinner) {
@@ -66,7 +232,7 @@ function GameBoard() {
   return (
     <div>
       <h2>Tic Tac Toe</h2>
-      {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
+      {/* TODO: Hier Siegesnachricht in Abhängigkeit zum Sieger implementieren */}
       <div className="board" role="grid">
         {cells.map((cell, index) => (
           <Cell
@@ -83,268 +249,72 @@ function GameBoard() {
 export default GameBoard;
 ```
 
-**Anpassen der `Cell`-Komponente:**
+3. **Erstellen der CSS-Datei für die `GameBoard`-Komponente:**
 
-```tsx
-// src/Cell.tsx
-import React from "react";
-
-type CellProps = {
-  value: string;
-  onClick: () => void;
-};
-
-function Cell({ value, onClick }: CellProps) {
-  return (
-    <div className="cell" role="button" onClick={onClick}>
-      {value}
-    </div>
-  );
-}
-
-export default Cell;
-```
-
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
-
-Beim **bedingten Rendern** in React entscheiden wir, ob ein bestimmtes Element gerendert wird oder nicht, basierend auf einer Bedingung. Dies ähnelt der Bedingungslogik in JavaScript mit `if`-Anweisungen.
-
-In unserem Beispiel:
-
-- Wir haben den Zustand `winner` hinzugefügt, um den Gewinner des Spiels zu speichern.
-- Die Funktion `checkWinner` überprüft nach jedem Zug, ob es eine Gewinnkombination gibt.
-- In der Render-Methode verwenden wir `{winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}`.
-  - Das ist eine Kurzschlussauswertung: Wenn `winner` einen Wert hat (nicht leer ist), wird die Nachricht angezeigt.
-  - Wenn `winner` leer ist, wird die Nachricht nicht gerendert.
-
-Dies ist ein gängiges Muster für bedingtes Rendern in React:
-
-- **Mit logischem UND (`&&`):** `{condition && <Element />}`
-  - Rendert `<Element />` nur, wenn `condition` wahr ist.
-- **Mit dem ternären Operator:** `{condition ? <ElementA /> : <ElementB />}`
-  - Rendert `<ElementA />` wenn `condition` wahr ist, sonst `<ElementB />`.
-
-Bedingtes Rendern ermöglicht es uns, die Benutzeroberfläche dynamisch an den Zustand unserer Anwendung anzupassen. Im Kontext unseres Spiels können wir so verschiedene Nachrichten oder Elemente anzeigen, je nachdem, was gerade passiert. 🎮
-
-## Hands-on Aufgaben zum Selbstprobieren
-
-### Aufgabe: Implementierung einer Siegesnachricht mit bedingtem Rendern
-
-**Anforderungen:**
-
-1. **Erweitere den Zustand in `GameBoard.tsx`:**
-   - Füge `cells` und `winner` zum Zustand hinzu.
-   - Implementiere eine Funktion `checkWinner`, die überprüft, ob ein Spieler gewonnen hat.
-   - Aktualisiere `handleCellClick`, um Züge zu verarbeiten und den Gewinner zu ermitteln.
-2. **Passe das Rendern in `GameBoard.tsx` an:**
-   - Verwende bedingtes Rendern, um die Siegesnachricht nur anzuzeigen, wenn ein Gewinner ermittelt wurde.
-3. **Aktualisiere die `Cell`-Komponente:**
-   - Entferne den internen Zustand `cellValue`.
-   - Verwende stattdessen die `value`-Prop zum Anzeigen des Werts.
-   - Füge eine `onClick`-Prop hinzu, um Klicks an die Elternkomponente zu melden.
-4. **Teste das Spiel:**
-   - Starte die Anwendung:
-     ```bash
-     npm run dev
-     ```
-   - Spiele das Spiel, bis ein Spieler gewinnt. Die Siegesnachricht sollte erscheinen! 🏆
-
-### Zugehöriger Vitest für TDD
-
-**Erstelle eine Testdatei `GameBoard.test.tsx` mit Tests für das bedingte Rendern:**
-
-```tsx
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
-import GameBoard from "./GameBoard";
-
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
-});
-
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' in der oberen Reihe
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // Ignoriert, da wir nur 'X' setzen
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // Ignoriert
-  fireEvent.click(cells[2]); // X
-
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
-```
-
-**Anforderungen aus dem Test abgeleitet:**
-
-- **Test 1:** Zu Beginn des Spiels wird keine Siegesnachricht angezeigt.
-- **Test 2:** Wenn ein Spieler gewinnt, wird die entsprechende Siegesnachricht angezeigt.
-
-**Test ausführen:**
-
-```bash
-npm run test
-```
-
-- Stelle sicher, dass beide Tests erfolgreich sind. ✅
-
-## Fertige Musterlösung dieses Kapitels
-
-1. **Aktualisiere `GameBoard.tsx`:**
-
-   ```tsx
-   // src/GameBoard.tsx
-   import React, { useState } from "react";
-   import Cell from "./Cell";
-   import "./GameBoard.css";
-
-   function GameBoard() {
-     const [cells, setCells] = useState(Array(9).fill(""));
-     const [winner, setWinner] = useState("");
-
-     const checkWinner = (updatedCells: string[]) => {
-       const winningCombinations = [
-         [0, 1, 2],
-         [3, 4, 5],
-         [6, 7, 8],
-         [0, 3, 6],
-         [1, 4, 7],
-         [2, 5, 8],
-         [0, 4, 8],
-         [2, 4, 6],
-       ];
-
-       for (let combination of winningCombinations) {
-         const [a, b, c] = combination;
-         if (
-           updatedCells[a] &&
-           updatedCells[a] === updatedCells[b] &&
-           updatedCells[a] === updatedCells[c]
-         ) {
-           return updatedCells[a];
-         }
-       }
-       return "";
-     };
-
-     const handleCellClick = (index: number) => {
-       if (cells[index] === "" && winner === "") {
-         const newCells = [...cells];
-         newCells[index] = "X";
-         setCells(newCells);
-         const gameWinner = checkWinner(newCells);
-         if (gameWinner) {
-           setWinner(gameWinner);
-         }
-       }
-     };
-
-     return (
-       <div>
-         <h2>Tic Tac Toe</h2>
-         {winner && <h3>🎉 Spieler {winner} hat gewonnen!</h3>}
-         <div className="board" role="grid">
-           {cells.map((cell, index) => (
-             <Cell
-               key={index}
-               value={cell}
-               onClick={() => handleCellClick(index)}
-             />
-           ))}
-         </div>
-       </div>
-     );
-   }
-
-   export default GameBoard;
-   ```
-
-2. **Aktualisiere `Cell.tsx`:**
-
-   ```tsx
-   // src/Cell.tsx
-   import React from "react";
-
-   type CellProps = {
-     value: string;
-     onClick: () => void;
-   };
-
-   function Cell({ value, onClick }: CellProps) {
-     return (
-       <div className="cell" role="button" onClick={onClick}>
-         {value}
-       </div>
-     );
-   }
-
-   export default Cell;
-   ```
-
-3. **Aktualisiere `GameBoard.test.tsx`:**
-
-   ```tsx
-   // src/GameBoard.test.tsx
-   import { render, screen, fireEvent } from "@testing-library/react";
-   import GameBoard from "./GameBoard";
-
-   test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-     render(<GameBoard />);
-     const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-     expect(winnerMessage).toBeNull();
-   });
-
-   test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-     render(<GameBoard />);
-     const cells = screen.getAllByRole("button");
-
-     // Simuliere einen Sieg für 'X' in der oberen Reihe
-     fireEvent.click(cells[0]); // X
-     fireEvent.click(cells[1]); // X
-     fireEvent.click(cells[2]); // X
-
-     const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-     expect(winnerMessage).toBeInTheDocument();
-   });
-   ```
-
-4. **Anwendung starten und Tests ausführen:**
-
-   - **Anwendung starten:**
-
-     ```bash
-     npm run dev
-     ```
-
-     - Spiele das Spiel im Browser und achte darauf, dass die Siegesnachricht erscheint, wenn du gewinnst. 🥳
-
-   - **Tests ausführen:**
-
-     ```bash
-     npm run test
-     ```
-
-     - Stelle sicher, dass alle Tests erfolgreich sind. ✅
-
-5. **Optional: Styles anpassen**
-
-   - Füge Styles hinzu, um die Siegesnachricht hervorzuheben.
-
-     ```css
-     /* src/GameBoard.css */
-     h3 {
-       text-align: center;
-       color: green;
-     }
-     ```
+Die Siegesnachricht soll in Grün dargestellt werden.
 
 ---
 
-**Herzlichen Glückwunsch!** 🎉 Du hast gelernt, wie man bedingtes Rendern in React verwendet. Jetzt zeigt unser Tic-Tac-Toe-Spiel eine Siegesnachricht an, sobald ein Spieler gewinnt. 🏆
+### Schritt 4: Den Test erneut ausführen
 
-Das Verständnis von bedingtem Rendern ist entscheidend, um dynamische und interaktive Benutzeroberflächen zu erstellen. Du bist auf dem besten Weg, ein React-Profi zu werden! 🚀
+Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sobald du die Dateien gespeichert hast.
+
+**Erwarte folgendes Ergebnis:**
+
+- Der Test sollte jetzt **erfolgreich** sein. ✅
+- Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt und die bedingte Anzeige der Siegesnachricht korrekt funktioniert.
+
+---
+
+### Schritt 5: Die Anwendung im Browser betrachten
+
+**So gehst du vor:**
+
+1. **Starte die Entwicklungsumgebung:**
+
+   - Falls der Entwicklungsserver nicht bereits läuft, gebe folgenden Befehl im Terminal ein:
+
+     `npm run dev`
+
+   - Dies startet deinen Entwicklungsserver.
+
+2. **Öffne deinen Browser:**
+
+   - Im Terminal wird eine lokale Adresse angezeigt, z. B. `http://localhost:3000`.
+   - Öffne diese Adresse in deinem Browser.
+
+3. **Überprüfe die Anzeige:**
+
+   - Du solltest die Begrüßungsnachricht aus der `Welcome`-Komponente sehen.
+   - Darunter sollte das Tic-Tac-Toe-Spielfeld mit neun klickbaren Zellen angezeigt werden.
+   - Spiele einige Züge, bis ein Spieler gewinnt. Sobald ein Spieler gewonnen hat, sollte die Siegesnachricht angezeigt werden, z. B. "🎉 Spieler X hat gewonnen!".
+
+---
+
+### Zusammenfassung
+
+- **Bedingtes Rendern** erlaubt es uns, die angezeigten Inhalte dynamisch zu steuern.
+- **Methoden des bedingten Renderns:**
+  - **If-Else-Bedingungen**
+  - **Ternärer Operator `? :`**
+  - **Logischer UND-Operator `&&`**
+- **Anwendungsfälle:**
+  - Anzeigen von Statusmeldungen
+  - Steuerung der Sichtbarkeit von Elementen
+  - Reaktionen auf Benutzeraktionen
+
+## Ergebnis veröffentlichen
+
+Zum Abschluss dieses Kapitels solltest du deine Änderungen im remote Repository sichern:
+
+```bash
+git add .
+git commit -m "Schritt 3: Interaktive Zellen mit JSX erstellt"
+git push
+```
+
+## Nächstes Kapitel
+
+```
+git checkout -b mustermann-max-step-1-welcome origin/step-4-props-vs-state
+```
