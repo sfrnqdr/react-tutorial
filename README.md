@@ -1,3 +1,5 @@
+# Schritt 4: Props vs. State
+
 ## Leitfrage
 
 Wie können wir Daten innerhalb unserer React-Komponenten verwalten und was ist der Unterschied zwischen Props und States?
