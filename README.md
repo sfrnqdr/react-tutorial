@@ -93,8 +93,6 @@ Damit startest Du den Testlauf, der Deine Dateien überwacht und Tests bei jeder
 
 Jetzt bist Du bereit, mit dem ersten Schritt zu starten! Wechsle zum Branch `step-1-welcome` und starte die App mit `npm run dev`, sowie die Testumgebung  `npm run test:watch`. Folge den Anleitungen in den einzelnen Themenblöcken und baue Dir Schritt für Schritt ein solides React-Know-how auf.
 
-## Nächstes Kapitel:
-
 ```bash
 git checkout -b mustermann-max-step-1-welcome origin/step-1-welcome
 ```
