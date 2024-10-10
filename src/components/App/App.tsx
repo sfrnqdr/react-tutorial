@@ -1,5 +1,7 @@
-// App.js
+// src/components/App/App.tsx
+
 const App = () => {
+  //TODO: Hier die Willkommensnachricht einfügen
   return <div></div>;
 };
 
