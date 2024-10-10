@@ -182,5 +182,3 @@ npm run test
 **Klasse gemacht!** 🎉 Du hast gelernt, wie das Rendering von Komponenten in React funktioniert und wie du mit `React.memo` unnötige Renderzyklen vermeiden kannst. Das erhöht die Performance deiner Anwendung und sorgt für ein flüssigeres Nutzererlebnis. 🚀
 
 Indem du Komponenten nur dann neu renderst, wenn es nötig ist, kannst du große Anwendungen effizient halten. Mach weiter so! 💪
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
