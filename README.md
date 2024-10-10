@@ -60,9 +60,7 @@ class Welcome extends React.Component {
 - **Komplexer:** Klassenkomponenten sind etwas komplizierter zu schreiben und zu verstehen.
 - **Aktueller Stand:** In modernen React-Anwendungen werden funktionale Komponenten bevorzugt, weil sie einfacher sind und leistungsfähiger sein können.
 - **Wir fokussieren uns auf funktionale Komponenten:** Für unseren Workshop konzentrieren wir uns auf funktionale Komponenten, da sie für Anfänger zugänglicher sind.
--
-
----
+- ***
 
 ## Hands-on Aufgaben
 

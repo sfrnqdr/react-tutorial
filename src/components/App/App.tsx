@@ -1,3 +1,5 @@
+// src/components/App/App.tsx
+
 const App = () => {
   return (
     <div>
