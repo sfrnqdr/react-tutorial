@@ -1,10 +1,6 @@
 // src/components/App/App.tsx
 
-{
-  /* TODO: Implementiere die bbenötigten Komponenten */
-}
-import Welcome from "../Welcome/Welcome";
-import GameIntroduction from "../GameIntroduction/GameIntroduction";
+// TODO: Implementiere die bbenötigten Komponenten
 
 const App = () => {
   return (
