@@ -18,6 +18,7 @@ Anstatt komplizierten JavaScript-Code zu schreiben, können wir mit JSX unsere K
 
 ```tsx
 // src/components/GameBoard/GameBoard.tsx
+
 const GameBoard = () => {
   return (
     <div>
@@ -99,6 +100,7 @@ Zunächst erstellen wir einen Test für die `GameBoard`-Komponente, um sicherzus
 
 ```typescript
 // src/components/GameBoard/GameBoard.test.tsx
+
 import { render, screen } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 
