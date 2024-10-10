@@ -2,143 +2,154 @@
 
 ## Leitfrage
 
-**Wie können wir unsere React-Komponenten stilvoll gestalten und CSS verwenden, um unser Tic-Tac-Toe-Spiel ansprechender zu machen?**
+Wie können wir unsere React-Komponenten stilvoll gestalten und CSS verwenden, um unser Tic-Tac-Toe-Spiel ansprechender zu machen?
 
-## Verständliche Antwort der Leitfrage für Anfänger
+## Antwort
 
-Hey du! 👋 Jetzt, wo unser Tic-Tac-Toe-Spiel funktioniert, ist es an der Zeit, ihm einen coolen Look zu verpassen! ✨
+In React können wir **CSS** verwenden, um unsere Komponenten zu stylen und das Aussehen unserer Anwendung zu verbessern. Das bedeutet, wir können Farben, Schriftarten, Abstände und vieles mehr hinzufügen, um unsere App ansprechender zu gestalten.
 
-In React können wir CSS verwenden, um unsere Komponenten zu stylen und das Aussehen unserer Anwendung zu verbessern. Es gibt verschiedene Möglichkeiten, CSS in React zu verwenden: externe Stylesheets, Inline-Styles oder CSS-Module.
+Es gibt verschiedene Möglichkeiten, **CSS in React** zu nutzen:
 
-Wir werden uns darauf konzentrieren, wie wir externe Stylesheets nutzen können, um unsere Komponenten schön und attraktiv zu gestalten. Lass uns unserem Spiel etwas Farbe und Stil hinzufügen! 🎨
+1. **Externe Stylesheets**
+2. **Inline-Styles**
+3. **CSS-Module**
 
-## Exemplarisches Codebeispiel (Tic Tac Toe)
+Wir werden uns darauf konzentrieren, **wie wir externe Stylesheets nutzen können**, um unsere Komponenten schön und attraktiv zu gestalten. Lass uns unserem Spiel etwas Farbe und Stil hinzufügen! 🎨
 
-**Erstellen und Anwenden von Styles für das Spielfeld und die Zellen:**
+## Warum sollten wir unsere App stylen?
 
-1. **Erstelle eine CSS-Datei für das Spielfeld:**
+Ein gut gestaltetes Spiel macht einfach mehr Spaß! 🕹️ Durch das Hinzufügen von Farben, Layouts und anderen Stilelementen können wir:
 
-   ```css
-   /* src/GameBoard.css */
-   .board {
-     display: grid;
-     grid-template-columns: repeat(3, 100px);
-     grid-template-rows: repeat(3, 100px);
-     gap: 5px;
-     margin: 20px auto;
-     width: max-content;
-   }
+- Die Benutzererfahrung verbessern
+- Das Spiel übersichtlicher und ansprechender gestalten
+- Unsere Kreativität ausdrücken
 
-   .cell {
-     width: 100px;
-     height: 100px;
-     background-color: #fff;
-     border: 2px solid #444;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 2rem;
-     cursor: pointer;
-     user-select: none;
-     transition: background-color 0.3s;
-   }
+## Wie verwenden wir CSS in React?
 
-   .cell:hover {
-     background-color: #f0f0f0;
-   }
-   ```
+### 1. Externe Stylesheets
 
-2. **Importiere die CSS-Datei in `GameBoard.tsx`:**
+Wir erstellen eine separate CSS-Datei und verlinken sie in unseren Komponenten. Das ist eine übliche Methode, die auch bei normalen HTML-Seiten verwendet wird.
 
-   ```tsx
-   // src/GameBoard.tsx
-   import React from "react";
-   import Cell from "./Cell";
-   import "./GameBoard.css"; // CSS importieren
+### 2. Inline-Styles
 
-   function GameBoard() {
-     // ... vorheriger Code bleibt gleich
-   }
+Wir fügen die CSS-Stile direkt in unsere Elemente ein. Das kann nützlich sein für einfache oder dynamische Stile, wird aber bei komplexeren Stilen schnell unübersichtlich.
 
-   export default GameBoard;
-   ```
+### 3. CSS-Module
 
-3. **Erstelle eine CSS-Datei für die `Cell`-Komponente (optional):**
+Eine fortgeschrittenere Methode, bei der CSS-Dateien wie Module behandelt werden. Das hilft, Namenskonflikte zu vermeiden, ist aber für den Anfang etwas komplexer.
 
-   ```css
-   /* src/Cell.css */
-   .cell {
-     /* Zusätzliche Styles können hier hinzugefügt werden */
-   }
-   ```
+## Codebeispiel
 
-4. **Importiere die CSS-Datei in `Cell.tsx` (optional):**
+### Schritt 1: Erstelle die CSS-Datei
 
-   ```tsx
-   // src/Cell.tsx
-   import React, { useState } from "react";
-   import "./Cell.css"; // CSS importieren
+- **Datei erstellen:**
+  - Navigiere in deinem Projektordner zu `src/components/App`.
+  - Erstelle eine neue Datei und nenne sie `App.css`.
 
-   // ... restlicher Code bleibt gleich
-   ```
+### Schritt 2: Füge CSS-Stile hinzu
 
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
+- **Öffne `App.css`:**
 
-In React können wir CSS nutzen, um unsere Komponenten zu stylen und ihnen ein ansprechendes Aussehen zu verleihen. Hier sind einige Möglichkeiten, wie wir CSS in React verwenden können:
+```css
+/* App.css */
+/* Körper der Seite stylen */
+body {
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
 
-1. **Externe Stylesheets:** Wir erstellen eine `.css`-Datei und importieren sie in unsere Komponente. Dies ist die gängigste Methode und fördert die Trennung von Anliegen (Separation of Concerns).
+/* Überschrift stylen */
+h1 {
+  color: #333333;
+  margin-top: 50px;
+}
+```
 
-2. **Inline-Styles:** Wir verwenden das `style`-Attribut in JSX-Elementen und übergeben ein JavaScript-Objekt mit den CSS-Eigenschaften. Diese Methode eignet sich für dynamische Styles, ist aber weniger übersichtlich bei vielen Styles.
+### Schritt 3: Importiere die CSS-Datei
 
-3. **CSS-Module:** Wir verwenden CSS-Dateien mit besonderen Erweiterungen (`.module.css`), die lokale Scope-Styles ermöglichen, um Namenskonflikte zu vermeiden.
-
-Im obigen Beispiel verwenden wir externe Stylesheets:
-
-- Wir erstellen `GameBoard.css` und definieren Styles für das `.board`-Container und die `.cell`-Elemente.
-- Durch das Importieren von `./GameBoard.css` in `GameBoard.tsx` werden die Styles auf die Komponenten angewendet.
-- Wir verwenden Grid Layout, um das Spielfeld zu gestalten, und fügen Hover-Effekte hinzu, um die Benutzerinteraktion zu verbessern.
-
-Durch das Styling unserer Komponenten verbessern wir die Benutzererfahrung und machen unser Spiel visuell ansprechender. 🎮
-
-## Hands-on Aufgaben zum Selbstprobieren
-
-### Aufgabe: Styling des Tic-Tac-Toe-Spiels mit CSS
-
-**Anforderungen:**
-
-1. **Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis.**
-
-   - Definiere Styles für die Klassen `.board` und `.cell`.
-   - Gestalte das Spielfeld als Grid mit 3 Spalten und 3 Zeilen.
-   - Füge optische Verbesserungen wie Ränder, Hintergrundfarben und Hover-Effekte hinzu.
-
-2. **Importiere die CSS-Datei in `GameBoard.tsx`.**
-
-   - Stelle sicher, dass die Styles auf das Spielfeld angewendet werden.
-
-3. **(Optional) Erstelle eine CSS-Datei `Cell.css` für die `Cell`-Komponente.**
-
-   - Füge spezifische Styles für die Zellen hinzu, wenn nötig.
-   - Importiere die CSS-Datei in `Cell.tsx`.
-
-4. **Starte die Anwendung und überprüfe das neue Styling.**
-
-   - Führe im Terminal aus:
-
-     ```bash
-     npm run dev
-     ```
-
-   - Öffne die Anwendung im Browser. Das Spielfeld sollte nun gestylt sein! 🌟
-
-### Zugehöriger Vitest für TDD
-
-**Obwohl CSS schwer zu testen ist, können wir sicherstellen, dass die Klassen korrekt angewendet werden.**
-
-**Erstelle eine Testdatei `GameBoard.test.tsx` mit zusätzlichen Tests:**
+- **Öffne `App.tsx` :**
 
 ```tsx
-// src/GameBoard.test.tsx
+// src/components/App/App.tsx
+
+import "./App.css";
+
+const App => () {
+  return (
+    <div>
+      <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+      <Spielbrett />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Hands-on Aufgaben: Spielfeld erstellen
+
+### Ziel der Aufgabe
+
+Das Ziel dieser Aufgabe ist es, das Spielfeld für das Tic Tac Toe Spiel visuell ansprechend zu gestalten. Durch das Erstellen und Anpassen von CSS-Dateien sowie das Integrieren dieser in die React-Komponenten lernst du grundlegende Styling-Techniken und die Anwendung von CSS in einer React-Anwendung.
+
+---
+
+### Schritt 0: Clean Workspace herstellen
+
+Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzustellen, dass dein Arbeitsbereich sauber ist und mit dem Remote-Repository synchronisiert ist. Dies verhindert mögliche Konflikte und stellt sicher, dass du von einem stabilen Ausgangspunkt aus startest.
+
+**Warum ist das sinnvoll für das Tutorial?**
+
+- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
+- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
+- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
+
+**So gehst du vor:**
+
+1. **Überprüfe den aktuellen Status deines Arbeitsbereichs:**
+
+```bash
+git status
+```
+
+- Stelle sicher, dass keine ungespeicherten Änderungen oder nicht committeten Dateien vorhanden sind. Wenn es solche gibt, committe sie oder sichere sie anderweitig ab.
+
+2. **Hole die neuesten Änderungen vom Remote-Repository:**
+
+```bash
+git fetch origin
+```
+
+3. **Setze deinen lokalen Branch auf den Stand des Remote-Branches zurück:**
+
+```bash
+git reset --hard origin/main
+```
+
+- **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
+
+4. **Bereinige nicht verfolgte Dateien und Verzeichnisse:**
+
+   bash
+
+   `1git clean -fd`
+
+   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
+
+---
+
+### Schritt 1: Den Test verstehen
+
+**Was macht dieser Test?**
+
+In diesem Schritt werden wir die vorhandenen Tests für das Spielfeld analysieren. Die Tests überprüfen, ob die CSS-Klassen korrekt angewendet werden, um sicherzustellen, dass das Spielfeld und die Zellen die gewünschten Stile erhalten.
+
+Beispielhafte Tests in `GameBoard.test.tsx`:
+
+```tsx
+// src/components/Gameboard/GameBoard.test.tsx
+
 import { render, screen } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 
@@ -157,166 +168,140 @@ test('die Zellen haben die Klasse "cell"', () => {
 });
 ```
 
-**Anpassungen im Code, um die Tests zu unterstützen:**
-
-- Füge `role="grid"` zum Spielfeld-Container hinzu:
-
-  ```tsx
-  // src/GameBoard.tsx
-  // ...
-  <div className="board" role="grid">
-    {/* Zellen */}
-  </div>
-  // ...
-  ```
-
-**Anforderungen aus dem Test abgeleitet:**
-
-- Das Spielfeld (`div` mit Klasse `board`) soll das Attribut `role="grid"` haben und die Klasse `board` besitzen.
-- Die Zellen sollen die Klasse `cell` haben.
-
-**Test ausführen:**
-
-- Führe im Terminal aus:
-
-  ```bash
-  npm run test
-  ```
-
-- Stelle sicher, dass die neuen Tests erfolgreich durchlaufen. ✅
-
-## Fertige Musterlösung dieses Kapitels
-
-1. **Erstellen der CSS-Datei `GameBoard.css`:**
-
-   ```css
-   /* src/GameBoard.css */
-   .board {
-     display: grid;
-     grid-template-columns: repeat(3, 100px);
-     grid-template-rows: repeat(3, 100px);
-     gap: 5px;
-     margin: 20px auto;
-     width: max-content;
-   }
-
-   .cell {
-     width: 100px;
-     height: 100px;
-     background-color: #fff;
-     border: 2px solid #444;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     font-size: 2rem;
-     cursor: pointer;
-     user-select: none;
-     transition: background-color 0.3s;
-   }
-
-   .cell:hover {
-     background-color: #f0f0f0;
-   }
-   ```
-
-2. **Importieren des CSS in `GameBoard.tsx`:**
-
-   ```tsx
-   // src/GameBoard.tsx
-   import React from "react";
-   import Cell from "./Cell";
-   import "./GameBoard.css";
-
-   function GameBoard() {
-     const initialCells = Array(9).fill("");
-
-     return (
-       <div>
-         <h2>Tic Tac Toe</h2>
-         <div className="board" role="grid">
-           {initialCells.map((cell, index) => (
-             <Cell key={index} value={cell} />
-           ))}
-         </div>
-       </div>
-     );
-   }
-
-   export default GameBoard;
-   ```
-
-3. **Anpassen der `Cell`-Komponente (optional):**
-
-   - **Cell.css** erstellen (falls benötigt):
-
-     ```css
-     /* src/Cell.css */
-     /* Zusätzliche Styles für die Zelle */
-     .cell {
-       /* Styles hier hinzufügen */
-     }
-     ```
-
-   - **Importieren von `Cell.css` in `Cell.tsx`:**
-
-     ```tsx
-     // src/Cell.tsx
-     import React, { useState } from "react";
-     import "./Cell.css";
-
-     // ... restlicher Code bleibt gleich
-     ```
-
-4. **Anpassen der Tests in `GameBoard.test.tsx`:**
-
-   ```tsx
-   // src/GameBoard.test.tsx
-   import { render, screen } from "@testing-library/react";
-   import GameBoard from "./GameBoard";
-
-   test('das Spielfeld hat die Klasse "board"', () => {
-     render(<GameBoard />);
-     const boardElement = screen.getByRole("grid");
-     expect(boardElement).toHaveClass("board");
-   });
-
-   test('die Zellen haben die Klasse "cell"', () => {
-     render(<GameBoard />);
-     const cellElements = screen.getAllByRole("button");
-     cellElements.forEach((cell) => {
-       expect(cell).toHaveClass("cell");
-     });
-   });
-   ```
-
-5. **Anwendung starten und Tests ausführen:**
-
-   - **Anwendung starten:**
-
-     ```bash
-     npm run dev
-     ```
-
-     - Öffne die Anwendung im Browser. Du solltest jetzt das gestylte Spielfeld sehen. 🌈
-
-   - **Tests ausführen:**
-
-     ```bash
-     npm run test
-     ```
-
-     - Stelle sicher, dass alle Tests erfolgreich sind. ✅
-
-6. **Zusätzliche Verbesserungen (optional):**
-
-   - **Responsive Design:** Passe die Größenangaben an, um das Spielfeld auf verschiedenen Bildschirmgrößen gut aussehen zu lassen.
-
-   - **Farbschema ändern:** Experimentiere mit verschiedenen Farben, um ein einzigartiges Design zu erstellen.
-
-   - **Fonts hinzufügen:** Verwende benutzerdefinierte Schriftarten, um das Erscheinungsbild zu verbessern.
+Diese Tests stellen sicher, dass das Spielfeld die Klasse `board` und jede Zelle die Klasse `cell` besitzt. Dadurch können wir später spezifische CSS-Stile anwenden.
 
 ---
 
-**Großartig!** 🎉 Du hast gelernt, wie man in React CSS verwendet, um Komponenten zu stylen. Dein Tic-Tac-Toe-Spiel sieht jetzt viel attraktiver aus, und du hast ein besseres Verständnis dafür, wie Styling in React funktioniert.
+### Schritt 2: Den Test ausführen
 
-Durch das Anwenden von CSS auf deine Komponenten kannst du das Benutzererlebnis erheblich verbessern und deine Anwendung professioneller gestalten. 🚀
+Falls der "Watch"-Modus nicht bereits läuft, gebe den Befehl `npm run test:watch` im Terminal ein.
+
+**Erwarte folgendes Ergebnis:**
+
+- Der Test sollte **fehlschlagen**. ❌
+  - Dies ist beabsichtigt, da die CSS-Klassen noch nicht implementiert wurden und somit die Tests nicht bestehen können.
+
+---
+
+### Schritt 3: Den Code anpassen, um den Test zu bestehen
+
+Jetzt schreiben wir den notwendigen Code, damit die Tests erfolgreich sind und das Spielfeld entsprechend gestylt wird.
+
+**So geht's:**
+
+1. **Erstellen der CSS-Datei `GameBoard.css`:**
+
+```css
+/* src/components/Gameboard/GameBoard.css */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  margin: 20px auto;
+  width: max-content;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: #fff;
+  border: 2px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s;
+}
+
+.cell:hover {
+  background-color: #f0f0f0;
+}
+```
+
+2. **Importieren des CSS in `GameBoard.tsx`:**
+
+```tsx
+// src/GameBoard/GameBoard.tsx
+
+import Cell from "./Cell";
+import "./GameBoard.css";
+
+const GameBoard = () => {
+  const initialCells = Array(9).fill("");
+
+  return (
+    <div>
+      <h2>Tic Tac Toe</h2>
+      {/* TODO: Hier CSS Klassen implementieren*/}
+      <div>
+        {initialCells.map((cell, index) => (
+          <Cell key={index} value={cell} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default GameBoard;
+```
+
+---
+
+### Schritt 4: Den Test erneut ausführen
+
+Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sobald du die Dateien gespeichert hast.
+
+**Erwarte folgendes Ergebnis:**
+
+- Die Tests sollten jetzt **erfolgreich** sein. ✅
+  - Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt und die CSS-Klassen korrekt angewendet wurden.
+
+---
+
+### Schritt 5: Die Anwendung im Browser betrachten
+
+**So gehst du vor:**
+
+1. **Starte die Entwicklungsumgebung:**
+
+   - Falls der Entwicklungsserver nicht bereits läuft, gebe folgenden Befehl im Terminal ein:
+     bash
+     `1npm run dev`
+   - Dies startet deinen Entwicklungsserver.
+
+2. **Öffne deinen Browser:**
+
+   - Im Terminal wird eine lokale Adresse angezeigt, typischerweise `http://localhost:3000`.
+   - Öffne diese Adresse in deinem Browser.
+
+3. **Überprüfe die Anzeige:**
+
+   - Du solltest nun das gestylte Tic Tac Toe Spielfeld sehen, das aus einem 3x3 Raster von Zellen besteht.
+   - Jede Zelle sollte die definierten Stile aufweisen, inklusive Hover-Effekt.
+
+---
+
+### Zusammenfassung
+
+In diesem Kapitel haben wir gelernt, wie man ein Tic Tac Toe Spielfeld mit CSS stilisiert und diese Stile in einer React-Anwendung implementiert. Wir haben eine CSS-Datei erstellt, sie in die entsprechenden Komponenten importiert und Tests angepasst, um sicherzustellen, dass die Stile korrekt angewendet werden. Durch das Ausführen und Überprüfen der Tests sowie das Betrachtend der Anwendung im Browser konnten wir die erfolgreiche Implementierung der Styling-Funktionalität verifizieren.
+
+Mit diesen Grundlagen bist du nun in der Lage, weitere Styling-Anpassungen vorzunehmen und dein Tic Tac Toe Spiel optisch weiter zu verbessern.
+
+## Ergebnis veröffentlichen
+
+Zum Abschluss dieses Kapitels solltest du deine Änderungen im remote Repository sichern:
+
+```bash
+git add .
+git commit -m "Schritt 3: Interaktive Zellen mit JSX erstellt"
+git push
+```
+
+## Nächstes Kapitel
+
+```
+git checkout -b mustermann-max-step-1-welcome origin/step-4-props-vs-state
+```
