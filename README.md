@@ -138,13 +138,19 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
 - Die `GameBoard`-Komponente soll den Titel **"Tic Tac Toe"** anzeigen.
 - Es sollen neun interaktive Zellen vorhanden sein (Rolle `button`).
 
-**Test ausführen:**
+#### **Schritt 2: Test ausführen und initiales Ergebnis beobachten**
 
-- Führe im Terminal aus:
+1. **Terminal öffnen:**
 
-  ```bash
-  npm run test
-  ```
+   - Öffne das Terminal (z.B. über VS Code oder dein bevorzugtes Terminal-Programm) in deinem Projektordner.
+
+2. **Testbefehl ausführen:**
+
+   - Gib folgenden Befehl ein und drücke Enter:
+
+```bash
+npm run test
+```
 
 - Stelle sicher, dass der Test erfolgreich durchläuft. ✅
 
@@ -233,7 +239,14 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
    });
    ```
 
-4. **Anwendung starten und Tests ausführen:**
+**Erklärung:**
+
+- **Erster Test:** Prüft, ob die Überschrift "Einführung in Tic-Tac-Toe" vorhanden ist.
+- **Zweiter Test:** Prüft, ob die Beschreibung des Spiels im Absatz (`<p>`) vorhanden ist.
+
+#### **Schritt 2: Test ausführen und initiales Ergebnis beobachten**
+
+1. **Terminal öffnen:**
 
    - **Anwendung starten:**
 
@@ -252,7 +265,7 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
 
      - Stelle sicher, dass alle Tests erfolgreich sind. ✅
 
-5. **Optional: Style hinzufügen (CSS):**
+2. **Optional: Style hinzufügen (CSS):**
 
    - Erstelle eine CSS-Datei `GameBoard.css` im `src`-Verzeichnis:
 
