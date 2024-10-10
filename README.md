@@ -189,5 +189,3 @@ test("zeigt die Begrüßungsnachricht an", () => {
 ---
 
 **Super gemacht!** 🎉 Du hast gelernt, wie man eigene funktionale Komponenten in React erstellt und verwendet. Dies ist ein wichtiger Schritt, um unsere Tic-Tac-Toe-Anwendung modular und wartbar zu gestalten.
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
