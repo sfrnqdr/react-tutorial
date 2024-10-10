@@ -1,0 +1,49 @@
+/* src/GameBoard.css */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  margin: 20px auto;
+  width: max-content;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: #fff;
+  border: 2px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s;
+}
+
+.cell:hover {
+  background-color: #f0f0f0;
+}
+
+h3 {
+  text-align: center;
+  color: green;
+}
+
+/* src/GameBoard.css */
+.game-results {
+  margin-top: 20px;
+}
+
+.game-results ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.game-results li {
+  background-color: #f9f9f9;
+  margin-bottom: 5px;
+  padding: 10px;
+  border-radius: 4px;
+}

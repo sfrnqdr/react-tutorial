@@ -1,8 +1,14 @@
-// App.js
-import GameIntroduction from "../GameIntroduction/GameIntroduction";
+// src/components/App/App.tsx
+import GameBoard from "../GameBoard/GameBoard";
+import Welcome from "../Welcome/Welcome";
 
 const App = () => {
-  return <GameIntroduction />;
+  return (
+    <div>
+      <Welcome />
+      <GameBoard />
+    </div>
+  );
 };
 
 export default App;
