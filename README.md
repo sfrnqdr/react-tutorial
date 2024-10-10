@@ -309,5 +309,3 @@ test("ändert den Wert nicht, wenn bereits gesetzt", () => {
 ---
 
 **Super Arbeit!** 🎉 Du hast erfolgreich die Unterschiede zwischen Props und State verstanden und angewendet. Jetzt können unsere Zellen auf Klicks reagieren und ihren Zustand ändern. Damit haben wir einen wichtigen Schritt gemacht, um unser Tic-Tac-Toe-Spiel zum Laufen zu bringen. Weiter so! 💪
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
