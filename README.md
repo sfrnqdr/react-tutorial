@@ -298,5 +298,3 @@ test("zeigt das Tic-Tac-Toe-Spielfeld an", () => {
 ---
 
 **Fantastisch!** 🌟 Du hast gelernt, wie man JSX verwendet, um die Benutzeroberfläche zu gestalten, und hast damit unser Tic-Tac-Toe-Spielfeld erstellt. Mit jedem Schritt kommen wir unserem funktionsfähigen Spiel näher. Mach weiter so! 💪
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
