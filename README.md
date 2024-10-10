@@ -320,5 +320,3 @@ test('die Zellen haben die Klasse "cell"', () => {
 **Großartig!** 🎉 Du hast gelernt, wie man in React CSS verwendet, um Komponenten zu stylen. Dein Tic-Tac-Toe-Spiel sieht jetzt viel attraktiver aus, und du hast ein besseres Verständnis dafür, wie Styling in React funktioniert.
 
 Durch das Anwenden von CSS auf deine Komponenten kannst du das Benutzererlebnis erheblich verbessern und deine Anwendung professioneller gestalten. 🚀
-
-**Wenn du bereit bist, sage "weiter", um zum nächsten Kapitel zu gelangen.**
