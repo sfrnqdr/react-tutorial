@@ -2,143 +2,108 @@
 
 ## Leitfrage
 
-**Wie kombinieren wir in React mehrere Komponenten, um eine komplexere Benutzeroberfläche zu erstellen, und wie nutzen wir Komponentenkomposition in unserem Tic-Tac-Toe-Spiel?**
+Wie nutzen wir in React Komponentenkomposition?
 
-## Verständliche Antwort der Leitfrage für Anfänger
+## Antwort
 
-Hey du! 👋 In diesem Schritt schauen wir uns an, wie wir in React mehrere Komponenten zusammenfügen können, um eine vollständige und strukturierte Anwendung zu erstellen. Das nennt man **Komponentenkomposition**.
+In React dreht sich alles um Komponenten. Komponenten sind wiederverwendbare Bausteine, aus denen Benutzeroberflächen aufgebaut werden. Komponentenkomposition ist ein grundlegendes Konzept in React, das beschreibt, wie kleinere Komponenten zu komplexeren Benutzeroberflächen zusammengesetzt werden.
 
-Stell dir vor, jede Komponente ist wie ein Baustein 🧩. Indem wir diese Bausteine zusammenfügen, können wir komplexere Strukturen bauen. In unserem Tic-Tac-Toe-Spiel können wir zum Beispiel das Spielfeld, die Zellen und zusätzliche Informationen wie die Spielstandsanzeige als separate Komponenten erstellen und sie miteinander kombinieren.
+### Warum nutzen wir Komponentenkomposition?
 
-Durch Komponentenkomposition wird unser Code übersichtlicher, wiederverwendbarer und leichter zu warten. Lass uns sehen, wie wir das in unserem Spiel umsetzen können! 🎮
+- Wiederverwendung: Einmal erstellte Komponenten können an verschiedenen Stellen der Anwendung wiederverwendet werden.
+- Klarheit und Struktur: Die Anwendung wird in überschaubare Teile zerlegt, was die Wartung und Weiterentwicklung erleichtert.
+- Flexibilität: Durch das Kombinieren von Komponenten auf unterschiedliche Weise können vielfältige Layouts und Funktionen erreicht werden.
+- Wartbarkeit: Änderungen müssen oft nur in einer Komponente vorgenommen werden und wirken sich automatisch überall dort aus, wo die Komponente verwendet wird.
 
-## Exemplarisches Codebeispiel (Tic Tac Toe)
+## Codebeispiel
 
-**Erstellen einer `StatusMessage`-Komponente und Zusammensetzen der Komponenten:**
+Nehmen wir an, wir möchten eine Webseite mit einem Header, einem Hauptinhalt und einem Footer erstellen. Wir erstellen dafür drei separate Komponenten und setzen sie dann in der Haupt-App-Komponente zusammen.
 
-1. **Erstelle eine `StatusMessage`-Komponente:**
+```tsx
+// Header.js
 
-   ```tsx
-   // src/StatusMessage.tsx
-   import React from "react";
+const Header = () => {
+  return (
+    <header
+      style={{ backgroundColor: "#282c34", padding: "20px", color: "white" }}
+    >
+      <h1>Meine Webseite</h1>
+    </header>
+  );
+};
 
-   type StatusMessageProps = {
-     currentPlayer: string;
-     winner: string;
-   };
+export default Header;
+```
 
-   function StatusMessage({ currentPlayer, winner }: StatusMessageProps) {
-     return (
-       <div className="status-message">
-         {winner ? (
-           <h3>🎉 Spieler {winner} hat gewonnen!</h3>
-         ) : (
-           <h3>Aktueller Spieler: {currentPlayer}</h3>
-         )}
-       </div>
-     );
-   }
+```tsx
+// MainContent.js
 
-   export default StatusMessage;
-   ```
+const MainContent = () => {
+  return (
+    <main style={{ padding: "20px" }}>
+      <p>
+        Willkommen auf meiner Webseite! Hier findest du viele interessante
+        Inhalte.
+      </p>
+    </main>
+  );
+};
 
-2. **Anpassen von `GameBoard.tsx`, um `StatusMessage` zu verwenden:**
+export default MainContent;
+```
 
-   ```tsx
-   // src/GameBoard.tsx
-   import React, { useState } from "react";
-   import Cell from "./Cell";
-   import StatusMessage from "./StatusMessage";
-   import "./GameBoard.css";
+```tsx
+// Footer.js
 
-   function GameBoard() {
-     const [cells, setCells] = useState(Array(9).fill(""));
-     const [currentPlayer, setCurrentPlayer] = useState("X");
-     const [winner, setWinner] = useState("");
+cosnt Footer = () => {
+  return (
+    <footer
+      style={{
+        backgroundColor: "#f1f1f1",
+        padding: "10px",
+        textAlign: "center",
+      }}
+    >
+      <p>&copy; 2023 Meine Webseite</p>
+    </footer>
+  );
+}
 
-     const checkWinner = (updatedCells: string[]) => {
-       const winningCombinations = [
-         [0, 1, 2],
-         [3, 4, 5],
-         [6, 7, 8],
-         [0, 3, 6],
-         [1, 4, 7],
-         [2, 5, 8],
-         [0, 4, 8],
-         [2, 4, 6],
-       ];
+export default Footer;
+```
 
-       for (let combination of winningCombinations) {
-         const [a, b, c] = combination;
-         if (
-           updatedCells[a] &&
-           updatedCells[a] === updatedCells[b] &&
-           updatedCells[a] === updatedCells[c]
-         ) {
-           return updatedCells[a];
-         }
-       }
-       return "";
-     };
+```tsx
+// App.js
+import Header from "./Header";
+import MainContent from "./MainContent";
+import Footer from "./Footer";
 
-     const handleCellClick = (index: number) => {
-       if (cells[index] === "" && winner === "") {
-         const newCells = [...cells];
-         newCells[index] = currentPlayer;
-         setCells(newCells);
-         const gameWinner = checkWinner(newCells);
-         if (gameWinner) {
-           setWinner(gameWinner);
-         } else {
-           setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-         }
-       }
-     };
+const App = () => {
+  return (
+    <div>
+      <Header />
+      <MainContent />
+      <Footer />
+    </div>
+  );
+};
 
-     return (
-       <div>
-         <h2>Tic Tac Toe</h2>
-         <StatusMessage currentPlayer={currentPlayer} winner={winner} />
-         <div className="board" role="grid">
-           {cells.map((cell, index) => (
-             <Cell
-               key={index}
-               value={cell}
-               onClick={() => handleCellClick(index)}
-             />
-           ))}
-         </div>
-       </div>
-     );
-   }
+export default App;
+```
 
-   export default GameBoard;
-   ```
+### Erklärung des Codes
 
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
+1. **Header.js, MainContent.js, Footer.js:**
 
-**Komponentenkomposition** ist ein grundlegendes Prinzip in React, das es uns ermöglicht, komplexe Benutzeroberflächen aus einfacheren, wiederverwendbaren Komponenten aufzubauen. Dadurch fördern wir die Modularität und Wartbarkeit unseres Codes.
+   - Jede dieser Dateien definiert eine einfache React-Komponente.
+   - Sie enthalten JSX-Code, der HTML-ähnliche Strukturen beschreibt.
+   - Jede Komponente ist individuell gestaltet und kann unabhängig verwendet werden.
 
-Im obigen Beispiel:
+2. **App.js:**
 
-- **`StatusMessage`-Komponente:**
-
-  - Diese Komponente ist verantwortlich für die Anzeige des aktuellen Spielstatus.
-  - Sie erhält `currentPlayer` und `winner` als Props.
-  - Sie entscheidet, basierend auf dem Wert von `winner`, ob sie die Siegesnachricht oder den aktuellen Spieler anzeigt.
-  - Durch das Auslagern dieser Logik in eine eigene Komponente halten wir `GameBoard` übersichtlich.
-
-- **Zusammensetzen der Komponenten in `GameBoard`:**
-  - Wir importieren `StatusMessage` und fügen sie in unser Render-Ergebnis ein.
-  - Indem wir Komponenten verschachteln, bauen wir unsere Benutzeroberfläche hierarchisch auf.
-
-**Vorteile der Komponentenkomposition:**
-
-- **Wiederverwendbarkeit:** Komponenten können in verschiedenen Teilen der Anwendung oder sogar in anderen Projekten wiederverwendet werden.
-- **Klarheit und Wartbarkeit:** Der Code ist sauberer und leichter zu verstehen, da jede Komponente eine spezifische Aufgabe hat.
-- **Testbarkeit:** Einzelne Komponenten können isoliert getestet werden, was die Fehlerbehebung erleichtert.
-
-Durch die Komposition von Komponenten erstellen wir eine übersichtliche und skalierbare Struktur für unsere Anwendung. Dies ist besonders wichtig in größeren Projekten, wo die Komplexität ohne klare Struktur schnell zunimmt.
+   - Importiert die drei Komponenten: `Header`, `MainContent` und `Footer`.
+   - Setzt diese Komponenten innerhalb eines `div`-Elements zusammen.
+   - Das Ergebnis ist eine vollständige Webseite, die aus den zusammengesetzten Komponenten besteht.
 
 ## Hands-on Aufgaben zum Selbstprobieren
 
@@ -389,8 +354,22 @@ test("zeigt die Siegesnachricht an, wenn ein Gewinner vorhanden ist", () => {
 
 ---
 
-**Fantastisch!** 🎉 Du hast gelernt, wie man Komponenten in React zusammensetzt, um eine modularere und besser strukturierte Anwendung zu erstellen.
+### Zusammenfassung:
 
-Durch das Erstellen einer separaten `StatusMessage`-Komponente und das Zusammensetzen mit `GameBoard` und `Cell` haben wir unser Tic-Tac-Toe-Spiel verbessert und unseren Code sauberer gestaltet. 🧼
+In React nutzen wir die Komponentenkomposition, um eine saubere und übersichtliche Struktur unserer Anwendung zu gewährleisten. Durch das Zusammenfügen kleiner, wiederverwendbarer Komponenten können wir komplexe Benutzeroberflächen effizient erstellen und pflegen.
 
-Die Komponentenkomposition ist ein wesentliches Konzept in React und wird dir dabei helfen, größere und komplexere Anwendungen zu bauen. Du machst großartige Fortschritte! 🚀
+---
+
+## Ergebnis veröffentlichen:
+
+```bash
+git add .
+git commit -m "update: step-7-component-composition"
+git push
+```
+
+## Nächstes Kapitel:
+
+```bash
+git checkout -b mustermann-max-step-8-component-rendering origin/step-8-component-rendering
+```
