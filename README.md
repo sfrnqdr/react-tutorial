@@ -1,70 +1,60 @@
-# Schritt 1: Willkommen zu React (App.tsx)
-
 ## Leitfrage
 
-**Wie funktioniert die grundlegende Struktur einer React-App, und wie können wir unsere Anwendung starten?**
+Wie funktioniert die grundlegende Struktur einer React-App, und wie können wir unsere Anwendung starten?
 
 ## Antwort
 
-Hey du! 👋 Willkommen zu unserem React-Tutorial für das Tic-Tac-Toe-Spiel. Bevor wir anfangen, das Spiel zu bauen, schauen wir uns an, wie eine React-App grundsätzlich aufgebaut ist.
+Willkommen zu unserem React-Tutorial! 👋 Gemeinsam erstellen wir in diesem Workshop ein Tic-Tac-Toe-Spiel. Bevor wir anfangen, das Spiel zu bauen, schauen wir uns an, wie eine React-App grundsätzlich aufgebaut ist.
 
-In React arbeiten wir mit Komponenten. Die Hauptkomponente unserer Anwendung ist die `App`-Komponente. Dort definieren wir, was auf dem Bildschirm angezeigt wird, wenn die App gestartet wird. Lass uns gemeinsam eine Begrüßungsnachricht einfügen und die App zum Laufen bringen! 🚀
+### Einführung in React und Komponenten
+
+**React** ist eine beliebte JavaScript-Bibliothek, die von Facebook entwickelt wurde. Sie hilft dabei, benutzerfreundliche und interaktive Webseiten zu erstellen. Ein fundamentaler Bestandteil von React sind **Komponenten**.
+
+#### Was sind Komponenten?
+
+Stell dir vor, eine Webseite besteht aus vielen kleinen Teilen – zum Beispiel ein Kopfbereich, ein Menü, Inhalte und ein Fußbereich. In React ist jeder dieser Teile eine **Komponente**. Komponenten sind wie Bausteine, die du zusammensetzen kannst, um komplexe Benutzeroberflächen zu erstellen.
+
+**Vorteile von Komponenten:**
+
+- **Wiederverwendbarkeit:** Einmal erstellte Komponenten können an verschiedenen Stellen wiederverwendet werden.
+- **Übersichtlichkeit:** Der Code wird strukturiert und leichter zu verstehen.
+- **Wartbarkeit:** Änderungen können in einzelnen Komponenten gemacht werden, ohne das gesamte Projekt zu beeinflussen.
+
+### Die Hauptkomponente: `App`
+
+In einer React-Anwendung gibt es eine zentrale Komponente, die oft als **Hauptkomponente** bezeichnet wird. Diese Hauptkomponente heißt meist `App` und ist der Ausgangspunkt deiner gesamten Anwendung. In der `App`-Komponente definierst du, was auf dem Bildschirm angezeigt wird, sobald die App gestartet wird.
 
 ## Codebeispiel
 
 ```tsx
-import React from "react";
-
-function App() {
+const App = () => {
   return (
     <div>
       <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
     </div>
   );
-}
+};
 
 export default App;
 ```
 
-## Hands-on Aufgaben zum Selbstprobieren
+## Hands-On Aufgabe: Begrüßungsnachricht anzeigen
 
-### Aufgabe: Begrüßungsnachricht anzeigen
+In dieser Übung lernst du, wie du mithilfe von **Testgetriebener Entwicklung (TDD)** eine einfache Begrüßungsnachricht in deiner Anwendung anzeigen kannst.
 
-**Anforderungen:**
+### Ziel der Aufgabe
 
-1. **App.tsx bearbeiten:**
+Am Ende dieser Übung soll deine Anwendung die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** im Browser anzeigen. Du wirst verstehen, wie Tests helfen können, sicherzustellen, dass dein Code korrekt funktioniert.
 
-   - Öffne die Datei `App.tsx` in deinem Projektordner.
-   - Ersetze den bestehenden Code mit dem obigen Codebeispiel.
+---
 
-2. **Abhängigkeiten installieren:**
+### Schritt 1: Den Test verstehen
 
-   - Öffne dein Terminal oder deine Eingabeaufforderung.
-   - Navigiere in das Projektverzeichnis.
-   - Führe den folgenden Befehl aus, um alle nötigen Pakete zu installieren:
+**Was ist ein Test?**
 
-     ```bash
-     npm install
-     ```
+Ein Test ist ein Stück Code, das überprüft, ob ein anderer Teil deines Codes das tut, was er soll. In der **Testgetriebenen Entwicklung** schreiben wir zuerst den Test, der natürlich zuerst fehlschlägt, und implementieren dann den Code, der den Test bestehen lässt.
 
-3. **Anwendung starten:**
-
-   - Starte die Entwicklungsumgebung mit:
-
-     ```bash
-     npm run dev
-     ```
-
-   - Öffne deinen Browser und rufe die angegebene lokale Adresse auf (z. B. `http://localhost:3000`).
-   - Du solltest die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** sehen.
-
-### Zugehöriger Vitest für TDD
-
-Um sicherzustellen, dass unsere Anwendung korrekt funktioniert, schreiben wir einen automatisierten Test.
-
-**Testdatei erstellen (`App.test.tsx`):**
-
-Erstelle eine neue Datei namens `App.test.tsx` im gleichen Verzeichnis wie `App.tsx` und füge folgenden Code ein:
+**Schau dir den folgenden Test an:**
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -79,16 +69,113 @@ test("zeigt die Begrüßungsnachricht an", () => {
 });
 ```
 
-**Test ausführen:**
+**Was macht dieser Test?**
 
-- Führe im Terminal den folgenden Befehl aus:
-
-  ```bash
-  npm run test
-  ```
-
-- Der Test sollte erfolgreich durchlaufen und bestätigen, dass die Begrüßungsnachricht angezeigt wird. ✅
+- Er rendert die `App`-Komponente.
+- Er sucht nach einem Element, das den Text **"Willkommen zum Tic-Tac-Toe-Spiel!"** enthält.
+- Er erwartet, dass dieses Element im Dokument vorhanden ist.
 
 ---
 
-**Herzlichen Glückwunsch!** 🎊 Du hast deine erste React-Komponente erstellt und verstanden, wie die grundlegende Struktur einer React-App aussieht. Außerdem hast du gelernt, wie man die Anwendung startet und Tests ausführt.
+### Schritt 2: Den Test ausführen
+
+Jetzt führen wir den Test aus, um zu sehen, ob er fehlschlägt (was wir erwarten, da wir die Begrüßungsnachricht noch nicht implementiert haben).
+
+**So führst du den Test aus:**
+
+1. **Öffne das Terminal** in deinem Projektordner.
+2. **Gib folgenden Befehl ein:**
+
+   bash
+
+   `npm run test:watch`
+
+   Dieser Befehl startet den Test im "Watch"-Modus, der die Tests automatisch erneut ausführt, wenn du Codeänderungen vornimmst.
+
+**Erwarte folgendes Ergebnis:**
+
+- Der Test sollte **fehlschlagen**. 🛑
+- Das ist beabsichtigt, da die Funktionalität noch nicht implementiert ist.
+
+---
+
+### Schritt 3: Den Code anpassen, um den Test zu bestehen
+
+Jetzt schreiben wir den notwendigen Code, damit der Test erfolgreich ist.
+
+**So geht's:**
+
+1. **Öffne die Datei `App.tsx`** in deinem Projektordner.
+2. **Ersetze den gesamten Inhalt der Datei mit folgendem Code:**
+
+   ```tsx
+   const App = () => {
+     return (
+       <div>
+         <h1>Willkommen zum Tic-Tac-Toe-Spiel! 🎉</h1>
+       </div>
+     );
+   };
+
+   export default App;
+   ```
+
+   **Was macht dieser Code?**
+
+   - Er definiert eine funktionale Komponente `App`, die ein `div` mit einer Überschrift `h1` enthält.
+   - Die Überschrift zeigt die Begrüßungsnachricht an.
+
+3. **Speichere die Datei.**
+
+---
+
+### Schritt 4: Den Test erneut ausführen
+
+Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sobald du die Datei gespeichert hast.
+
+**Erwarte folgendes Ergebnis:**
+
+- Der Test sollte jetzt **erfolgreich** sein. ✅
+- Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt und die Begrüßungsnachricht angezeigt wird.
+
+---
+
+### Schritt 5: Die Anwendung im Browser betrachten
+
+Nun wollen wir sehen, wie die Anwendung im Browser aussieht.
+
+**So gehst du vor:**
+
+1. **Starte die Entwicklungsumgebung:**
+
+   - Öffne ein neues Terminalfenster (oder benutze ein separates Terminal-Tab).
+   - Gib folgenden Befehl ein:
+     `npm run dev`
+   - Dies startet deinen Entwicklungsserver.
+
+2. **Öffne deinen Browser:**
+
+   - Im Terminal wird eine lokale Adresse angezeigt.
+   - Öffne diese Adresse in deinem Browser.
+
+3. **Überprüfe die Anzeige:**
+
+   - Du solltest die Nachricht **"Willkommen zum Tic-Tac-Toe-Spiel! 🎉"** auf der Seite sehen.
+
+### Zusammenfassung
+
+In diesem Workshop haben wir die Grundlagen von React und Komponenten kennengelernt. Wir haben die Hauptkomponente `App` erstellt und eine einfache Begrüßungsnachricht eingefügt. Durch diesen Prozess hast du einen ersten Einblick in die Struktur und Funktionsweise von React-Anwendungen gewonnen.
+
+## Ergebnis veröffentlichen:
+
+```bash
+git add .
+git commit -m "update: step-1-welcome"
+git push
+```
+
+## Nächstes Kapitel:
+
+```bash
+git checkout -b mustermann-max-step-1-welcome origin/step-1-welcome
+```
