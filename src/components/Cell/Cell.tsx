@@ -1,4 +1,4 @@
-// src/Cell.tsx
+// src/components/Cell/Cell.tsx
 import React from "react";
 
 type CellProps = {
@@ -7,6 +7,7 @@ type CellProps = {
 };
 
 const Cell = React.memo(({ value, onClick }: CellProps) => {
+  console.log(`Rendering Cell: ${value}`);
   return (
     <div className="cell" role="button" onClick={onClick}>
       {value}

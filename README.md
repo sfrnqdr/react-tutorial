@@ -64,22 +64,17 @@ const GameBoard = () => {
 
   return (
     <div>
-      <h2>Tic Tac Toe</h2>
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
-      <div className="board" role="grid">
-        {cells.map((cell, index) => (
-          <Cell
-            key={index}
-            value={cell}
-            onClick={() => handleCellClick(index)}
-          />
-        ))}
-      </div>
+      {/* Button mit onClick-Handler */}
+      <button onClick={handleClick}>Klick mich</button>
+
+      {/* Anzeige der Nachricht */}
+      {message && <p>{message}</p>}
     </div>
   );
 };
+};
 
-export default GameBoard;
+export default ClickButton;
 ```
 ````
 
@@ -176,6 +171,7 @@ Implementiere die Logik zum Aktualisieren des Spielstands, sobald ein Spieler ge
 // src/GameBoard.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
 import GameBoard from "./GameBoard";
+import { describe, it, expect } from "vitest";
 
 test("aktualisiert den Spielstand, wenn ein Spieler gewinnt", () => {
   render(<GameBoard />);
@@ -310,6 +306,10 @@ const GameBoard = () => {
 export default GameBoard;
 ```
 
+export default GameBoard;
+
+````
+
 ### Schritt 3: Styling der `ScoreBoard` Komponente
 
 ```css
@@ -320,7 +320,7 @@ export default GameBoard;
   font-size: 1.2rem;
   color: #333;
 }
-```
+````
 
 ### Schritt 4: Aktualisieren der Tests
 
