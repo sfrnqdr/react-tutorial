@@ -303,18 +303,18 @@ Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sob
   - Steuerung der Sichtbarkeit von Elementen
   - Reaktionen auf Benutzeraktionen
 
-## Ergebnis veröffentlichen
+---
 
-Zum Abschluss dieses Kapitels solltest du deine Änderungen im remote Repository sichern:
+## Ergebnis veröffentlichen:
 
 ```bash
 git add .
-git commit -m "Schritt 3: Interaktive Zellen mit JSX erstellt"
+git commit -m "update: step-6-conditional-rendering"
 git push
 ```
 
-## Nächstes Kapitel
+## Nächstes Kapitel:
 
-```
-git checkout -b mustermann-max-step-1-welcome origin/step-4-props-vs-state
+```bash
+git checkout -b mustermann-max-step-7-component-composition origin/step-7-component-composition
 ```
