@@ -105,252 +105,350 @@ export default App;
    - Setzt diese Komponenten innerhalb eines `div`-Elements zusammen.
    - Das Ergebnis ist eine vollständige Webseite, die aus den zusammengesetzten Komponenten besteht.
 
-## Hands-on Aufgaben zum Selbstprobieren
+---
 
-### Aufgabe: Komposition von Komponenten im Tic-Tac-Toe-Spiel
+## Hands-on Aufgaben: Komposition anwenden
 
-**Anforderungen:**
+### Ziel der Aufgabe
 
-1. **Erstelle die `StatusMessage`-Komponente:**
+Erweitere das Tic-Tac-Toe-Spiel zu einem vollständigen Zwei-Spieler-Spiel!
 
-   - Erstelle eine neue Datei `StatusMessage.tsx` im `src`-Verzeichnis.
-   - Die Komponente soll die Props `currentPlayer` (aktueller Spieler) und `winner` erhalten.
-   - Basierend auf dem Wert von `winner` soll sie entweder die Siegesnachricht oder den aktuellen Spieler anzeigen.
+- **Implementiere den Wechsel zwischen zwei Spielern**, die abwechselnd "X" und "O" setzen.
+- **Zeige an, welcher Spieler gerade am Zug ist.**
+- **Nutze Komponentenkomposition**, um die Anzeigelogik (z.B. aktueller Spieler, Gewinner) in eine eigene Komponente auszulagern.
+- **Verstehe die vorgegebenen Vitest-Tests** und entwickle den Code so, dass alle Tests erfolgreich sind.
 
-2. **Passe `GameBoard.tsx` an:**
+---
 
-   - Importiere die `StatusMessage`-Komponente.
-   - Implementiere die Zustände `currentPlayer` und `winner`.
-   - Aktualisiere die Funktion `handleCellClick`, um zwischen den Spielern zu wechseln und den Gewinner zu ermitteln.
-   - Füge `<StatusMessage />` in das Render-Ergebnis ein und übergib die erforderlichen Props.
+### Schritt 0: Clean Workspace herstellen
 
-3. **Teste das Spiel:**
-   - Starte die Anwendung:
-     ```bash
-     npm run dev
-     ```
-   - Spiele das Spiel und beobachte, wie die Anzeige zwischen den Spielern wechselt und die Siegesnachricht erscheint, wenn jemand gewinnt. 🎉
+Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzustellen, dass dein Arbeitsbereich sauber ist und mit dem Remote-Repository synchronisiert ist. Dies verhindert mögliche Konflikte und stellt sicher, dass du von einem stabilen Ausgangspunkt aus startest.
 
-### Zugehöriger Vitest für TDD
+**Warum ist das sinnvoll für das Tutorial?**
 
-**Erstelle eine Testdatei `StatusMessage.test.tsx` für die `StatusMessage`-Komponente:**
+- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
+- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
+- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
+
+**So gehst du vor:**
+
+1. **Überprüfe den aktuellen Status deines Arbeitsbereichs:**
+
+   ```bash
+   git status
+   ```
+
+   - Stelle sicher, dass keine ungespeicherten Änderungen oder nicht committeten Dateien vorhanden sind. Wenn es solche gibt, committe sie oder sichere sie anderweitig ab.
+
+2. **Hole die neuesten Änderungen vom Remote-Repository:**
+
+   ```bash
+   git fetch origin
+   ```
+
+3. **Setze deinen lokalen Branch auf den Stand des Remote-Branches zurück:**
+
+   ```bash
+   git reset --hard origin/main
+   ```
+
+   - **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
+
+4. **Bereinige nicht verfolgte Dateien und Verzeichnisse:**
+
+   ```bash
+   git clean -fd
+   ```
+
+   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
+
+---
+
+### Schritt 1: Den Test verstehen
+
+In diesem Schritt analysieren wir die vorgegebenen Vitest-Tests, die sicherstellen, dass der Spielerwechsel korrekt funktioniert, der Gewinner richtig erkannt wird und ein Unentschieden korrekt angezeigt wird.
+
+**Vorgegebene Vitest-Tests:**
 
 ```tsx
-// src/StatusMessage.test.tsx
-import { render, screen } from "@testing-library/react";
-import StatusMessage from "./StatusMessage";
+// src/GameBoard.test.tsx
+import { render, fireEvent, screen } from "@testing-library/react";
+import GameBoard from "./GameBoard";
+import { describe, it, expect } from "vitest";
 
-test("zeigt den aktuellen Spieler an, wenn kein Gewinner vorhanden ist", () => {
-  render(<StatusMessage currentPlayer="X" winner="" />);
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
-  expect(statusElement).toBeInTheDocument();
-});
+describe("GameBoard Component", () => {
+  it("Wechselt den Spieler nach jedem Zug", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
 
-test("zeigt die Siegesnachricht an, wenn ein Gewinner vorhanden ist", () => {
-  render(<StatusMessage currentPlayer="O" winner="X" />);
-  const winnerElement = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerElement).toBeInTheDocument();
+    // Spieler X klickt auf das erste Feld
+    fireEvent.click(cells[0]);
+    expect(cells[0]).toHaveTextContent("X");
+
+    // Überprüfe, ob Spieler O an der Reihe ist
+    expect(screen.getByText("Spieler O ist am Zug")).toBeInTheDocument();
+
+    // Spieler O klickt auf das zweite Feld
+    fireEvent.click(cells[1]);
+    expect(cells[1]).toHaveTextContent("O");
+
+    // Überprüfe, ob Spieler X an der Reihe ist
+    expect(screen.getByText("Spieler X ist am Zug")).toBeInTheDocument();
+  });
+
+  it("Erkennt den Gewinner korrekt", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
+
+    // Simuliere eine Gewinnsituation für Spieler X
+    fireEvent.click(cells[0]); // X
+    fireEvent.click(cells[3]); // O
+    fireEvent.click(cells[1]); // X
+    fireEvent.click(cells[4]); // O
+    fireEvent.click(cells[2]); // X
+
+    expect(screen.getByText("🎉 Spieler X hat gewonnen!")).toBeInTheDocument();
+  });
+
+  it("Erkennt ein Unentschieden korrekt", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
+
+    // Simuliere ein Unentschieden
+    const drawMoves = [0, 1, 2, 4, 3, 5, 7, 6, 8];
+    drawMoves.forEach((index) => {
+      fireEvent.click(cells[index]);
+    });
+
+    expect(
+      screen.getByText("Das Spiel endet unentschieden!")
+    ).toBeInTheDocument();
+  });
 });
 ```
 
-**Anforderungen aus dem Test abgeleitet:**
+**Was macht dieser Test?**
 
-- Die `StatusMessage`-Komponente soll:
-  - Den aktuellen Spieler anzeigen, wenn `winner` leer ist.
-  - Die Siegesnachricht anzeigen, wenn `winner` einen Wert hat.
+- **Spielerwechsel:**
+  - Überprüft, ob nach jedem Zug der aktuelle Spieler korrekt wechselt.
+  - Spieler "X" klickt zuerst und setzt sein Symbol.
+  - Anschließend sollte Spieler "O" am Zug sein, um sein Symbol zu setzen.
+- **Gewinnererkennung:**
+  - Simuliert Spielzüge, bei denen Spieler "X" eine Gewinnkombination erreicht.
+  - Überprüft, ob die Anwendung den Gewinner korrekt erkennt und anzeigt.
+- **Unentschieden:**
+  - Simuliert ein vollständiges Spiel ohne Sieger.
+  - Überprüft, ob die Anwendung ein Unentschieden korrekt erkennt und anzeigt.
 
-**Test ausführen:**
+---
 
-- Führe im Terminal aus:
+### Schritt 2: Den Test ausführen
 
-  ```bash
-  npm run test
-  ```
+Stelle sicher, dass der "Watch"-Modus der Tests läuft, um automatisch die Testergebnisse nach Änderungen zu sehen. Falls der "Watch"-Modus nicht bereits aktiv ist, starte ihn mit folgendem Befehl:
 
-- Stelle sicher, dass beide Tests erfolgreich sind. ✅
+```bash
+npm run test:watch
+```
 
-## Fertige Musterlösung dieses Kapitels
+**Erwarte folgendes Ergebnis:**
 
-1. **Erstellen der `StatusMessage`-Komponente:**
+- Alle Tests sollten **fehlschlagen**. ❌
+- Das ist beabsichtigt, da die erforderliche Funktionalität noch nicht implementiert ist.
 
-   ```tsx
-   // src/StatusMessage.tsx
-   import React from "react";
+---
 
-   type StatusMessageProps = {
-     currentPlayer: string;
-     winner: string;
-   };
+### Schritt 3: Den Code anpassen, um den Test zu bestehen
 
-   function StatusMessage({ currentPlayer, winner }: StatusMessageProps) {
-     return (
-       <div className="status-message">
-         {winner ? (
-           <h3>🎉 Spieler {winner} hat gewonnen!</h3>
-         ) : (
-           <h3>Aktueller Spieler: {currentPlayer}</h3>
-         )}
-       </div>
-     );
-   }
+Jetzt entwickeln wir den notwendigen Code, damit die vorgegebenen Tests erfolgreich sind.
 
-   export default StatusMessage;
-   ```
+**So geht's:**
 
-2. **Anpassen von `GameBoard.tsx`:**
+1. **Spielerwechsel implementieren:**
 
-   ```tsx
-   // src/GameBoard.tsx
-   import React, { useState } from "react";
-   import Cell from "./Cell";
-   import StatusMessage from "./StatusMessage";
-   import "./GameBoard.css";
+   - Füge in der `GameBoard`-Komponente einen neuen Zustand `currentPlayer`hinzu, der den aktuellen Spieler ("X" oder "O") speichert.
+   - Passe die Funktion `handleCellClick` an, sodass nach jedem Zug der Spieler wechselt.
+   - Aktualisiere die Anzeige, um den aktuellen Spieler zu zeigen.
 
-   function GameBoard() {
-     const [cells, setCells] = useState(Array(9).fill(""));
-     const [currentPlayer, setCurrentPlayer] = useState("X");
-     const [winner, setWinner] = useState("");
+2. **Komponentenkomposition anwenden:**
 
-     const checkWinner = (updatedCells: string[]) => {
-       const winningCombinations = [
-         [0, 1, 2],
-         [3, 4, 5],
-         [6, 7, 8],
-         [0, 3, 6],
-         [1, 4, 7],
-         [2, 5, 8],
-         [0, 4, 8],
-         [2, 4, 6],
-       ];
+   - Erstelle eine neue Komponente `GameStatus`, die Informationen über den Spielstatus (aktueller Spieler, Gewinner) anzeigt.
+   - Binde `GameStatus` in `GameBoard` ein und übergib die notwendigen Daten über Props.
 
-       for (let combination of winningCombinations) {
-         const [a, b, c] = combination;
-         if (
-           updatedCells[a] &&
-           updatedCells[a] === updatedCells[b] &&
-           updatedCells[a] === updatedCells[c]
-         ) {
-           return updatedCells[a];
-         }
-       }
-       return "";
-     };
+3. **Gewinnererkennung implementieren:**
 
-     const handleCellClick = (index: number) => {
-       if (cells[index] === "" && winner === "") {
-         const newCells = [...cells];
-         newCells[index] = currentPlayer;
-         setCells(newCells);
-         const gameWinner = checkWinner(newCells);
-         if (gameWinner) {
-           setWinner(gameWinner);
-         } else {
-           setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-         }
-       }
-     };
+   - Implementiere eine Funktion `checkWinner`, die prüft, ob ein Spieler gewonnen hat.
+   - Aktualisiere den Spielstatus entsprechend.
 
-     return (
-       <div>
-         <h2>Tic Tac Toe</h2>
-         <StatusMessage currentPlayer={currentPlayer} winner={winner} />
-         <div className="board" role="grid">
-           {cells.map((cell, index) => (
-             <Cell
-               key={index}
-               value={cell}
-               onClick={() => handleCellClick(index)}
-             />
-           ))}
-         </div>
-       </div>
-     );
-   }
+4. **Unentschieden erkennen:**
 
-   export default GameBoard;
-   ```
+   - Überprüfe, ob alle Felder gefüllt sind und kein Spieler gewonnen hat, um ein Unentschieden anzuzeigen.
 
-3. **Aktualisieren der `Cell`-Komponente (falls noch nicht geschehen):**
+---
 
-   ```tsx
-   // src/Cell.tsx
-   import React from "react";
+**Inspiration gefällig?**
 
-   type CellProps = {
-     value: string;
-     onClick: () => void;
-   };
+1. **Spielerwechsel und Gewinnererkennung implementieren**
 
-   function Cell({ value, onClick }: CellProps) {
-     return (
-       <div className="cell" role="button" onClick={onClick}>
-         {value}
-       </div>
-     );
-   }
+   Aktualisiere `GameBoard.tsx`:
 
-   export default Cell;
-   ```
+```tsx
+// src/components/GameBoard/GameBoard.tsx
 
-4. **Erstellen der Tests für `StatusMessage`:**
+import { useState } from "react";
+import Cell from "../Cell/Cell";
+import GameStatus from "../GameStatus/GameStatus"; // Neue Komponente importieren
+import "./GameBoard.css";
 
-   ```tsx
-   // src/StatusMessage.test.tsx
-   import { render, screen } from "@testing-library/react";
-   import StatusMessage from "./StatusMessage";
+const GameBoard = () => {
+  // Zustand für die Zellen des Spielfelds
+  const [cells, setCells] = useState(Array(9).fill(""));
 
-   test("zeigt den aktuellen Spieler an, wenn kein Gewinner vorhanden ist", () => {
-     render(<StatusMessage currentPlayer="X" winner="" />);
-     const statusElement = screen.getByText(/Aktueller Spieler: X/i);
-     expect(statusElement).toBeInTheDocument();
-   });
+  // TODO: Füge hier den Zustand für den aktuellen Spieler hinzu
+  // Beispiel:
+  // const [currentPlayer, setCurrentPlayer] = useState("X");
 
-   test("zeigt die Siegesnachricht an, wenn ein Gewinner vorhanden ist", () => {
-     render(<StatusMessage currentPlayer="O" winner="X" />);
-     const winnerElement = screen.getByText(/Spieler X hat gewonnen!/i);
-     expect(winnerElement).toBeInTheDocument();
-   });
-   ```
+  // TODO: Füge hier den Zustand für den Gewinner hinzu
+  // Beispiel:
+  // const [winner, setWinner] = useState("");
 
-5. **Anwendung starten und Tests ausführen:**
+  // Funktion zur Überprüfung des Gewinners
+  const checkWinner = (updatedCells: string[]) => {
+    // Definiere die Gewinnmuster
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
 
-   - **Anwendung starten:**
+    // TODO: Implementiere die Logik zur Überprüfung der Gewinnmuster
+    // Beispiel:
+    // for (let pattern of winPatterns) {
+    //   const [a, b, c] = pattern;
+    //   if (
+    //     updatedCells[a] &&
+    //     updatedCells[a] === updatedCells[b] &&
+    //     updatedCells[a] === updatedCells[c]
+    //   ) {
+    //     return updatedCells[a];
+    //   }
+    // }
+    // return null;
+  };
 
+  // Funktion zur Behandlung des Zell-Klicks
+  const handleCellClick = (index: number) => {
+    // TODO: Implementiere die Logik, die beim Klicken auf eine Zelle ausgeführt wird
+    // - Aktualisiere die Zelle mit dem aktuellen Spieler
+    // - Überprüfe auf einen Gewinner
+    // - Wechsle den Spieler, falls das Spiel fortgesetzt wird
+  };
+
+  return (
+    <div>
+      <h2>Tic Tac Toe</h2>
+      {/* TODO: Binde die GameStatus-Komponente ein und übergib die notwendigen Props */}
+      {/* Beispiel:
+          <GameStatus currentPlayer={currentPlayer} winner={winner} />
+      */}
+      <div className="board" role="grid">
+        {cells.map((cell, index) => (
+          <Cell
+            key={index}
+            value={cell}
+            onClick={() => handleCellClick(index)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default GameBoard;
+```
+
+2. **Komponentenkomposition anwenden**
+
+   Erstelle `GameStatus.tsx`:
+
+```tsx
+// src/components/GameStatus/GameStatus.tsx
+
+type GameStatusProps = {
+  // TODO: Definiere die Props, die diese Komponente benötigt
+  // Beispiel:
+  // currentPlayer: string;
+  // winner: string;
+};
+
+const GameStatus =
+  ({}: /* TODO: Destrukturiere die Props hier */ GameStatusProps) => {
+    return (
+      <div>
+        {/* TODO: Implementiere die Logik zur Anzeige des Spielstatus */}
+        {/* Beispiel:
+          {winner === "draw" ? (
+            <h3>Das Spiel endet unentschieden!</h3>
+          ) : winner ? (
+            <h3>🎉 Spieler {winner} hat gewonnen!</h3>
+          ) : (
+            <h3>Spieler {currentPlayer} ist am Zug</h3>
+          )}
+      */}
+      </div>
+    );
+  };
+
+export default GameStatus;
+```
+
+---
+
+### Schritt 4: Den Test erneut ausführen
+
+Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sobald du die Datei gespeichert hast.
+
+**Erwarte folgendes Ergebnis:**
+
+- Alle Tests sollten jetzt **erfolgreich** sein. ✅
+- Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt:
+  - Der Spielerwechsel funktioniert korrekt.
+  - Gewinner und Unentschieden werden korrekt erkannt und angezeigt.
+
+---
+
+### Schritt 5: Die Anwendung im Browser betrachten
+
+**So gehst du vor:**
+
+1. **Starte die Entwicklungsumgebung:**
+
+   - Falls der Entwicklungsserver nicht bereits läuft, starte ihn mit folgendem Befehl im Terminal:
      ```bash
      npm run dev
      ```
+   - Dies startet deinen Entwicklungsserver.
 
-     - Spiele das Spiel im Browser und beobachte, wie die Anzeige zwischen den Spielern wechselt und die Siegesnachricht erscheint, wenn jemand gewinnt. 🎉
+2. **Öffne deinen Browser:**
 
-   - **Tests ausführen:**
+   - Im Terminal wird eine lokale Adresse angezeigt, z.B. `http://localhost:3000`.
+   - Öffne diese Adresse in deinem Browser.
 
-     ```bash
-     npm run test
-     ```
+3. **Überprüfe die Anzeige:**
 
-     - Stelle sicher, dass alle Tests erfolgreich sind. ✅
+   - Du solltest das Tic-Tac-Toe-Spielfeld sehen.
+   - Die aktuelle Spielstatusanzeige zeigt an, welcher Spieler am Zug ist.
+   - Nach jedem Zug wechselt der Spieler, und bei einem Gewinn oder Unentschieden wird die entsprechende Nachricht angezeigt.
 
-6. **Optional: Styles hinzufügen:**
+---
 
-   - **Styles für `StatusMessage`:**
+### Zusammenfassung
 
-     ```css
-     /* src/GameBoard.css oder src/StatusMessage.css */
-     .status-message h3 {
-       text-align: center;
-       margin: 10px 0;
-     }
-     ```
-
-   - **Importieren der Styles (falls in `StatusMessage.css`):**
-
-     ```tsx
-     // src/StatusMessage.tsx
-     import React from "react";
-     import "./StatusMessage.css";
-
-     // Restlicher Code bleibt gleich
-     ```
+In diesem Kapitel haben wir das Tic-Tac-Toe-Spiel zu einem vollständigen Zwei-Spieler-Spiel erweitert. Wir haben den Spielerwechsel implementiert, eine separate Komponente für den Spielstatus erstellt und den Code so entwickelt, dass er die vorgegebenen Vitest-Tests erfolgreich besteht. Durch das Verstehen und Nutzen der vorgegebenen Tests konnten wir sicherstellen, dass unsere Anwendung die gewünschte Funktionalität zuverlässig erfüllt. Komponentenkomposition und testgetriebene Entwicklung haben die Wartbarkeit und Zuverlässigkeit unserer Anwendung verbessert.
 
 ---
 
