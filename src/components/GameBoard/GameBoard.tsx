@@ -1,16 +1,16 @@
-// src/GameBoard.tsx
+// src/components/GameBoard/GameBoard.tsx
 import { useState } from "react";
 import Cell from "../Cell/Cell";
+import GameStatus from "../GameStatus/GameStatus.tsx"; // Neue Komponente importieren
 import "./GameBoard.css";
-import StatusMessage from "../StatusMessage.tsx/StatusMessage";
 
 const GameBoard = () => {
   const [cells, setCells] = useState(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState("X");
+  const [currentPlayer, setCurrentPlayer] = useState("X"); // Zustand für aktuellen Spieler
   const [winner, setWinner] = useState("");
 
   const checkWinner = (updatedCells: string[]) => {
-    const winningCombinations = [
+    const winPatterns = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -21,8 +21,8 @@ const GameBoard = () => {
       [2, 4, 6],
     ];
 
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
       if (
         updatedCells[a] &&
         updatedCells[a] === updatedCells[b] &&
@@ -31,19 +31,22 @@ const GameBoard = () => {
         return updatedCells[a];
       }
     }
-    return "";
+    return null;
   };
 
   const handleCellClick = (index: number) => {
     if (cells[index] === "" && winner === "") {
       const newCells = [...cells];
-      newCells[index] = "X";
+      newCells[index] = currentPlayer;
       setCells(newCells);
+
       const gameWinner = checkWinner(newCells);
       if (gameWinner) {
         setWinner(gameWinner);
+      } else if (!newCells.includes("")) {
+        setWinner("draw"); // Unentschieden, wenn alle Felder gefüllt sind
       } else {
-        setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+        setCurrentPlayer(currentPlayer === "X" ? "O" : "X"); // Spielerwechsel
       }
     }
   };
@@ -51,7 +54,7 @@ const GameBoard = () => {
   return (
     <div>
       <h2>Tic Tac Toe</h2>
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
+      <GameStatus currentPlayer={currentPlayer} winner={winner} />
       <div className="board" role="grid">
         {cells.map((cell, index) => (
           <Cell
