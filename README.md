@@ -1,147 +1,87 @@
-# Kapitel 12: Erstellung und Nutzung von Custom Hooks in React
+# Schritt 12: Routing
 
 ## Leitfrage
 
-Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik zu implementieren?
+Wie nutzen wir in React Routing?
 
 ## Antwort
 
-In React ermöglichen uns Hooks, Zustands- und Logikfunktionen in Funktionskomponenten zu verwenden. Neben den eingebauten Hooks wie `useState`oder `useEffect` können wir auch **eigene Hooks**, sogenannte **Custom Hooks**, erstellen. Diese helfen uns dabei, wiederverwendbare Logik aus unseren Komponenten auszulagern und den Code sauberer und strukturierter zu gestalten.
+### Einführung in das Routing
 
-### Was ist ein Custom Hook?
+**Routing** in React ermöglicht es, unterschiedliche Komponenten basierend auf der URL anzuzeigen. Das heißt, je nachdem, welche Adresse der Benutzer im Browser eingibt oder auf Links klickt, zeigt die Anwendung verschiedene Seiten oder Inhalte an, ohne die gesamte Seite neu zu laden. Dies sorgt für eine flüssige und schnelle Benutzererfahrung.
 
-Ein **Custom Hook** ist eine JavaScript-Funktion, deren Name mit `use` beginnt und die selbst andere Hooks verwendet. Mit Custom Hooks können wir Funktionen schreiben, die Zustände und Effekte nutzen, und diese in mehreren Komponenten wiederverwenden.
+In React wird Routing häufig mit der Bibliothek **React Router** umgesetzt. React Router bietet Werkzeuge, um die Navigation innerhalb der Anwendung zu steuern und verschiedene Komponenten für unterschiedliche Pfade zu rendern.
 
-### Warum Custom Hooks verwenden?
+**Schritte zur Implementierung von Routing in React:**
 
-- **Wiederverwendbarkeit**: Vermeidung von doppeltem Code, indem gemeinsame Logik ausgelagert wird.
-- **Lesbarkeit**: Komponenten bleiben übersichtlich, da die Logik ausgelagert wird.
-- **Strukturierung**: Bessere Organisation des Codes durch Trennung von Logik und Darstellung.
+1. **Installation:** Zuerst musst du React Router in deinem Projekt installieren. Dies haben wir in diesem Tutorial bereits für dich erledigt.
+2. **BrowserRouter einrichten:** Um das Routing zu ermöglichen, umschließt du deine Anwendung mit dem `BrowserRouter`.
+3. **Routen definieren:** Mithilfe von `<Routes>` und `<Route>` definierst du, welche Komponenten für welche Pfade angezeigt werden sollen.
+4. **Navigation ermöglichen:** Mit dem `<Link>`-Komponent kannst du Links erstellen, die den Benutzer zu verschiedenen Routen führen, ohne die Seite neu zu laden.
 
-### Codebeispiel
-
-Stellen wir uns vor, wir möchten in mehreren Komponenten die aktuelle Fensterbreite verwenden, um die Darstellung entsprechend anzupassen. Anstatt in jeder Komponente denselben Code zu schreiben, können wir einen Custom Hook erstellen.
-
-#### Schritt 1: Erstellen des Custom Hooks
-
-Erstellen wir eine Datei namens `useWindowWidth.js` mit folgendem Inhalt:
+## Codebeispiel
 
 ```tsx
-// useWindowWidth.js
-import { useState, useEffect } from "react";
-
-function useWindowWidth() {
-  // Zustand für die Breite des Fensters
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    // Funktion, die aufgerufen wird, wenn das Fenster skaliert wird
-    function handleResize() {
-      setWindowWidth(window.innerWidth);
-    }
-
-    // Hinzufügen des Event Listeners
-    window.addEventListener("resize", handleResize);
-
-    // Aufräumfunktion, um den Event Listener zu entfernen
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  // Rückgabe der aktuellen Fensterbreite
-  return windowWidth;
-}
-
-export default useWindowWidth;
-```
-
-**Erklärung:**
-
-- Wir importieren `useState` und `useEffect` von React.
-- Wir erstellen die Funktion `useWindowWidth`, die den aktuellen Wert von `window.innerWidth` als Zustand speichert.
-- Mit `useEffect` fügen wir einen Event Listener hinzu, der bei jeder Fenstergrößenänderung die Breite aktualisiert.
-- Durch die Rückgabe von `windowWidth` können andere Komponenten diesen Wert nutzen.
-
-#### Schritt 2: Verwendung des Custom Hooks in einer Komponente
-
-Jetzt können wir diesen Custom Hook in einer Komponente verwenden:
-
-```tsx
-// FensterBreiteAnzeigen.js
 import React from "react";
-import useWindowWidth from "./useWindowWidth";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-function FensterBreiteAnzeigen() {
-  const windowWidth = useWindowWidth();
+// Komponenten für die Seiten
+const Home = () => <h2>Startseite</h2>;
+const About = () => <h2>Über uns</h2>;
 
+const App = () => {
   return (
-    <div>
-      <h2>Aktuelle Fensterbreite</h2>
-      <p>Die Fensterbreite beträgt {windowWidth} Pixel.</p>
-    </div>
-  );
-}
+    <Router>
+      <div>
+        {/* Navigationslinks */}
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Startseite</Link>
+            </li>
+            <li>
+              <Link to="/about">Über uns</Link>
+            </li>
+          </ul>
+        </nav>
 
-export default FensterBreiteAnzeigen;
+        {/* Routen definieren */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
 ```
 
-**Erklärung:**
+**Erklärung des Codes:**
 
-- Wir importieren unseren Custom Hook `useWindowWidth`.
-- Innerhalb der Komponente rufen wir `useWindowWidth()` auf, um die aktuelle Fensterbreite zu erhalten.
-- Wir zeigen den Wert in der Benutzeroberfläche an.
+1. **Installation:** Stelle sicher, dass du `react-router-dom` installiert hast, indem du `npm install react-router-dom` im Terminal ausführst.
+2. **Importe:** Wir importieren die notwendigen Komponenten aus `react-router-dom`.
+3. **Komponenten:** Es gibt zwei einfache Komponenten, `Home` und `About`, die jeweils eine Überschrift anzeigen.
+4. **Router einrichten:** Die gesamte Anwendung ist mit `<Router>` umschlossen.
+5. **Navigation:** Mit `<Link>` erstellen wir Links, die den Benutzer zu den definierten Routen führen.
+6. **Routen definieren:** Innerhalb von `<Routes>` legen wir fest, welche Komponente bei welchem Pfad gerendert wird. Der Pfad `/` zeigt die `Home`-Komponente und `/about` zeigt die `About`-Komponente.
 
-#### Schritt 3: Wiederverwendung in einer anderen Komponente
+Mit dieser Einrichtung kannst du zwischen der Startseite und der Über-uns-Seite navigieren, ohne die Seite neu zu laden. Dies ist die Grundlage für die meisten React-Anwendungen, die eine mehrseitige Struktur haben.
 
-Der Vorteil von Custom Hooks besteht darin, dass wir sie in mehreren Komponenten verwenden können:
+---
 
-```tsx
-// ResponsiveLayout.js
-import React from "react";
-import useWindowWidth from "./useWindowWidth";
-
-function ResponsiveLayout() {
-  const windowWidth = useWindowWidth();
-
-  return (
-    <div>
-      {windowWidth > 768 ? (
-        <p>Du benutzt eine große Ansicht.</p>
-      ) : (
-        <p>Du benutzt eine kleine Ansicht.</p>
-      )}
-    </div>
-  );
-}
-
-export default ResponsiveLayout;
-```
-
-**Erklärung:**
-
-- Wir verwenden erneut `useWindowWidth`, um die Fensterbreite zu erhalten.
-- Basierend auf der Breite entscheiden wir, welche Ansicht dem Benutzer angezeigt wird.
-
-### Was passiert hier genau?
-
-- **Zustand verwalten**: Der Custom Hook verwaltet den Zustand der Fensterbreite.
-- **Effekte nutzen**: Mit `useEffect` setzen wir einen Event Listener, der bei Änderungen reagiert.
-- **Wiederverwendung**: Mehrere Komponenten können dieselbe Logik nutzen, ohne sie zu duplizieren.
-
-### Wichtige Konzepte
-
-- **Benennung**: Ein Custom Hook sollte immer mit `use` beginnen, z.B. `useFetch`, damit React erkennt, dass es sich um einen Hook handelt.
-- **Regeln für Hooks**: Custom Hooks folgen denselben Regeln wie normale Hooks:
-  - Sie sollten nur in Funktionskomponenten oder anderen Hooks aufgerufen werden.
-  - Sie dürfen nicht innerhalb von Schleifen, Bedingungen oder verschachtelten Funktionen aufgerufen werden.
-- **Parameter und Rückgabewerte**: Custom Hooks können Parameter akzeptieren und Werte zurückgeben, genau wie normale Funktionen.
-
-## Hands-on Aufgaben: Custom Hooks
+## Hands-on Aufgaben: Routing
 
 ### Ziel der Aufgabe
 
-In dieser Aufgabe werden wir lernen, wie man in React eigene Custom Hooks erstellt und nutzt. Wir werden einen Custom Hook namens `useGameLogic` erstellen, der die Spielzustände und die Logik für unser Tic-Tac-Toe-Spiel kapselt. Durch die Auslagerung dieser Logik in einen eigenen Hook machen wir unseren Code sauberer, besser wiederverwendbar und leichter zu testen.
+In dieser Aufgabe erweitern wir unsere bestehende Tic Tac Toe Anwendung um eine **Routing-Funktionalität**. Wir integrieren `React Router`, um zwischen verschiedenen Seiten zu navigieren:
+
+- **Startseite**: Eine Begrüßungsseite mit Infos zum Spiel.
+- **Spielseite**: Hier findet das eigentliche Spiel statt.
+- **Ergebnisseite**: Anzeige der bisherigen Spielergebnisse.
+
+Durch diese Aufteilung verbessern wir die Benutzererfahrung und lernen gleichzeitig, wie Routing in React-Anwendungen implementiert wird.
 
 ---
 
@@ -151,9 +91,9 @@ Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzuste
 
 **Warum ist das sinnvoll für das Tutorial?**
 
-- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
-- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
-- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
+- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
+- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
+- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
 
 **So gehst du vor:**
 
@@ -177,7 +117,7 @@ Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzuste
    git reset --hard origin/main
    ```
 
-   - **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
+   - **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
 
 4. **Bereinige nicht verfolgte Dateien und Verzeichnisse:**
 
@@ -185,75 +125,56 @@ Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzuste
    git clean -fd
    ```
 
-   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
+   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
 
 ---
 
 ### Schritt 1: Den Test verstehen
 
-```typescript
-// src/hooks/useGameLogic.test.ts
-import { renderHook, act } from "@testing-library/react";
-import useGameLogic from "./useGameLogic";
+Wir beginnen mit einem Test, der erwartet, dass unsere Anwendung verschiedene Routen korrekt rendert. Dieser Test ist bereits geschrieben und hilft uns, die Anforderungen zu verstehen.
 
-describe("useGameLogic Hook", () => {
-  it("sollte den initialen Zustand zurückgeben", () => {
-    const { result } = renderHook(() => useGameLogic());
-    expect(result.current.cells).toEqual(Array(9).fill(""));
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-  });
+#### Testdatei: `src/App.test.tsx`
 
-  it("sollte den Spieler nach jedem Zug wechseln", () => {
-    const { result } = renderHook(() => useGameLogic());
+```tsx
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import App from "./App";
 
-    act(() => {
-      result.current.handleCellClick(0);
-    });
+test("rendert die Startseite bei '/'", () => {
+  render(
+    <MemoryRouter initialEntries={["/"]}>
+      <App />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/Willkommen bei Tic Tac Toe/i)).toBeInTheDocument();
+});
 
-    expect(result.current.cells[0]).toBe("X");
-    expect(result.current.currentPlayer).toBe("O");
-  });
+test("rendert das Spielbrett bei '/game'", () => {
+  render(
+    <MemoryRouter initialEntries={["/game"]}>
+      <App />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/Tic Tac Toe/i)).toBeInTheDocument();
+});
 
-  it("sollte den Gewinner korrekt erkennen", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(3); // O
-      result.current.handleCellClick(1); // X
-      result.current.handleCellClick(4); // O
-      result.current.handleCellClick(2); // X - gewinnt
-    });
-
-    expect(result.current.winner).toBe("X");
-  });
-
-  it("sollte das Spiel zurücksetzen können", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0);
-      result.current.handleReset();
-    });
-
-    expect(result.current.cells).toEqual(Array(9).fill(""));
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-  });
+test("rendert die Ergebnisseite bei '/results'", () => {
+  render(
+    <MemoryRouter initialEntries={["/results"]}>
+      <App />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/Frühere Spiele/i)).toBeInTheDocument();
 });
 ```
 
 **Was macht dieser Test?**
 
-- **Prüft den initialen Zustand:**
-  - Überprüft, ob der Hook beim ersten Aufruf die erwarteten Anfangswerte (`cells`, `currentPlayer`, `winner`) zurückgibt.
-- **Überprüft den Spielerwechsel:**
-  - Simuliert einen Spielzug und überprüft, ob der aktuelle Spieler wechselt und das entsprechende Feld gesetzt wird.
-- **Erkennt den Gewinner:**
-  - Simuliert eine Siegbedingung für Spieler "X" und überprüft, ob der Gewinner korrekt erkannt wird.
-- **Testet das Zurücksetzen des Spiels:**
-  - Überprüft, ob die `handleReset`-Funktion den Spielzustand auf die Anfangswerte zurücksetzt.
+- **Test 1:** Überprüft, ob bei Aufruf der Route `/` die Startseite gerendert wird, die den Text "Willkommen bei Tic Tac Toe" enthält.
+- **Test 2:** Überprüft, ob bei Aufruf der Route `/game` das Spielbrett gerendert wird, erkennbar am Text "Tic Tac Toe".
+- **Test 3:** Überprüft, ob bei Aufruf der Route `/results` die Ergebnisseite angezeigt wird, die den Text "Frühere Spiele" enthält.
+
+Dieser Test stellt sicher, dass unsere Routing-Konfiguration korrekt ist und die entsprechenden Komponenten für jede Route rendert.
 
 ---
 
@@ -263,55 +184,67 @@ Falls der "Watch"-Modus nicht bereits läuft, gebe den Befehl `npm run test:watc
 
 **Erwarte folgendes Ergebnis:**
 
-- Der Test sollte **fehlschlagen**. ❌
-- Das ist beabsichtigt, da die Funktionalität noch nicht implementiert ist.
+- Die Tests sollten **fehlschlagen**. ❌
+- Das ist beabsichtigt, da die Routing-Funktionalität noch nicht implementiert ist.
 
 ---
 
 ### Schritt 3: Den Code anpassen, um den Test zu bestehen
 
-Jetzt schreiben wir den notwendigen Code, damit der Test erfolgreich ist.
+Jetzt implementieren wir den notwendigen Code, damit die Tests erfolgreich sind.
 
 **So geht's:**
 
-1. **Erstelle den Custom Hook `useGameLogic`:**
+1. 1. **Erstelle die Seitenkomponenten:**
 
-   - Lege eine neue Datei unter `src/hooks/useGameLogic.ts` an.
-   - Implementiere die Logik, die bisher im `GameBoard`-Komponent verwendet wurde, innerhalb dieses Hooks.
+   - **Beschreibung Schritt 1:** Erstelle eine `Home` Komponente mit einer Willkommensnachricht und Links zur Spiel- und Statistikseite.
+   - **Beschreibung Schritt 2:** Erstelle eine `Game` Komponente, die das bestehende `GameBoard` rendert.
+   - **Beschreibung Schritt 3:** Erstelle eine `Statistics` Komponente, die die Spielstatistiken anzeigt.
 
-2. **Exportiere die benötigten Werte und Funktionen:**
+2. **Richte das Routing in der `App` Komponente ein:**
 
-   - Stelle sicher, dass der Hook die folgenden Werte und Funktionen zurückgibt:
-     - `cells`: Array der Spielfeldwerte.
-     - `currentPlayer`: Der Spieler, der gerade am Zug ist.
-     - `winner`: Der aktuelle Gewinner (oder leerer String, wenn es keinen gibt).
-     - `handleCellClick(index: number)`: Funktion, um auf Klicks auf die Zellen zu reagieren.
-     - `handleReset()`: Funktion, um das Spiel zurückzusetzen.
+   - **Beschreibung Schritt 1:** Importiere notwendige Komponenten und React Router Elemente.
+   - **Beschreibung Schritt 2:** Definiere die Routen für die verschiedenen Seiten.
 
-3. **Passen die `GameBoard`-Komponente an:**
+3. **Navigation hinzufügen**
 
-   - Importiere den neuen Hook `useGameLogic`.
-   - Entferne die Zustandsvariablen und Funktionen, die jetzt im Hook enthalten sind, aus der Komponente.
-   - Verwende die vom Hook zurückgegebenen Werte und Funktionen innerhalb der Komponente.
+   - Füge ein Navigationsmenü hinzu, damit der Benutzer zwischen den Seiten wechseln kann.
+   - Nutze dazu das `Link`-Element aus `react-router-dom`.
 
 ---
 
 **Inspiration gefällig?**
 
-```typescript
-// src/hooks/useGameLogic.ts
-import { useState } from "react";
+Hier ist ein Code-Snippet, das dir beim Implementieren helfen kann. Einige Teile sind absichtlich ausgelassen, damit du sie selbst ausfüllen kannst.
 
-const useGameLogic = () => {
-  // TODO: Initialisiere den Zustand für 'cells', 'currentPlayer' und 'winner'
-  // TODO: Implementiere die Funktion 'checkWinner', um den Gewinner zu ermitteln
-  // TODO: Implementiere 'handleCellClick', um auf Klicks auf die Zellen zu reagieren
-  // TODO: Implementiere 'handleReset', um das Spiel zurückzusetzen
-  // TODO: Gib die benötigten Werte und Funktionen zurück
+```tsx
+// src/components/App/App.tsx
+import { Link, Routes, Route } from "react-router-dom";
+import Welcome from "../Welcome/Welcome";
+import GameBoard from "../GameBoard/GameBoard";
+import GameResults from "../GameResults/GameResults";
+
+const App = () => {
+  return (
+    <div>
+      {/* TODO: Füge hier eine Navigation ein */}
+
+      {/* TODO: Definiere hier die Routen */}
+      <Routes>
+        {/* Die Route für die Startseite */}
+
+        {/* Die Route für das Spiel */}
+
+        {/* Die Route für die Ergebnisse */}
+      </Routes>
+    </div>
+  );
 };
 
-export default useGameLogic;
+export default App;
 ```
+
+_Hinweis:_ Achte darauf, dass du die korrekten Pfade und Komponenten verwendest. Überlege dir, wie die Komponenten miteinander interagieren und welche Komponenten gerendert werden sollen, wenn bestimmte Routen aufgerufen werden.
 
 ---
 
@@ -321,8 +254,8 @@ Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sob
 
 **Erwarte folgendes Ergebnis:**
 
-- Der Test sollte jetzt **erfolgreich** sein. ✅
-- Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt und der Custom Hook korrekt implementiert ist.
+- Die Tests sollten jetzt **erfolgreich** sein. ✅
+- Dies bedeutet, dass deine Routing-Konfiguration korrekt ist und die entsprechenden Seiten angezeigt werden.
 
 ---
 
@@ -334,42 +267,32 @@ Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sob
 
    - Falls der Entwicklungsserver nicht bereits läuft, gebe folgenden Befehl im Terminal ein:
 
-     `npm run dev`
+     ```bash
+     npm run dev
+     ```
 
    - Dies startet deinen Entwicklungsserver.
 
 2. **Öffne deinen Browser:**
 
-   - Im Terminal wird eine lokale Adresse angezeigt.
+   - Im Terminal wird eine lokale Adresse angezeigt, z. B. `http://localhost:3000`.
    - Öffne diese Adresse in deinem Browser.
 
 3. **Überprüfe die Anzeige:**
 
-   - Du solltest das Tic-Tac-Toe-Spiel sehen und es sollte wie zuvor funktionieren.
-
-4. **Teste die Funktionalität:**
-
-   - Spiele ein paar Runden und stelle sicher, dass alles wie erwartet funktioniert.
-   - Achte besonders darauf, ob der Spielverlauf korrekt gehandhabt wird.
+   - Du solltest die Startseite sehen, die eine Begrüßungsnachricht enthält.
+   - Nutze die Navigationslinks, um zum Spiel und zu den Ergebnissen zu gelangen.
+   - Beobachte, wie sich die URL in der Adressleiste ändert, wenn du zwischen den Seiten navigierst.
 
 ---
 
 ### Zusammenfassung
 
-In diesem Kapitel haben wir gelernt, wie man einen **Custom Hook** in React erstellt und verwendet. Wir haben die Spiel-Logik unseres Tic-Tac-Toe-Spiels in den Hook `useGameLogic` ausgelagert. Dies verbessert die **Wiederverwendbarkeit** und **Lesbarkeit** unseres Codes. Durch das Schreiben von Tests vor der Implementierung haben wir die **Testgetriebene Entwicklung (TDD)** angewandt und sichergestellt, dass unser Hook wie erwartet funktioniert.
+In diesem Kapitel haben wir:
 
----
+- Die **Routing-Funktionalität** mit `React Router` zu unserer Tic Tac Toe Anwendung hinzugefügt.
+- Gelernt, wie man Routen definiert und Komponenten basierend auf der aktuellen URL rendert.
+- Verstanden, wie man Tests schreibt, die das Routing überprüfen.
+- Eine Navigation erstellt, um zwischen verschiedenen Seiten zu wechseln.
 
-## Ergebnis veröffentlichen:
-
-```bash
-git add .
-git commit -m "update: step-11-custom-hooks"
-git push
-```
-
-## Nächstes Kapitel:
-
-```bash
-git checkout -b mustermann-max-step-12-routing origin/step-12-routing
-```
+Durch das Implementieren von Routing haben wir unsere Anwendung modularer und benutzerfreundlicher gestaltet. Nutzer können nun direkt zu spezifischen Teilen der Anwendung navigieren, und wir haben eine Grundlage geschaffen, die in größeren Anwendungen unerlässlich ist.
