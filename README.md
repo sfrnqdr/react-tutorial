@@ -1,201 +1,195 @@
-````markdown
 # Kapitel 12: Erstellung und Nutzung von Custom Hooks in React
 
 ## Leitfrage
 
-**Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik zu implementieren?**
+Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik zu implementieren?
 
 ## Antwort
 
-In React kannst du eigene Hooks erstellen, sogenannte **Custom Hooks**, um wiederverwendbare Logik in deinen Komponenten zu kapseln. Ein Custom Hook ist einfach eine JavaScript-Funktion, die interne Hooks wie `useState` oder `useEffect` verwendet und dabei hilft, bestimmte Funktionalitäten logisch zu gruppieren und mehrfach in verschiedenen Komponenten zu nutzen. In deinem Tic-Tac-Toe-Spiel kannst du beispielsweise einen Custom Hook erstellen, der die Spiel- und Gewinnerlogik verwaltet. Dadurch bleibt deine Hauptkomponente übersichtlich und die Logik ist leichter zu pflegen und wiederzuverwenden.
+In React ermöglichen uns Hooks, Zustands- und Logikfunktionen in Funktionskomponenten zu verwenden. Neben den eingebauten Hooks wie `useState`oder `useEffect` können wir auch **eigene Hooks**, sogenannte **Custom Hooks**, erstellen. Diese helfen uns dabei, wiederverwendbare Logik aus unseren Komponenten auszulagern und den Code sauberer und strukturierter zu gestalten.
 
-## Exemplarisches Codebeispiel
+### Was ist ein Custom Hook?
 
-Wir erstellen einen Custom Hook namens `useGameLogic`, der die gesamte Spiel- und Gewinnerlogik kapselt. Dadurch wird die `GameBoard`-Komponente sauberer und fokussiert sich nur noch auf die Darstellung.
+Ein **Custom Hook** ist eine JavaScript-Funktion, deren Name mit `use` beginnt und die selbst andere Hooks verwendet. Mit Custom Hooks können wir Funktionen schreiben, die Zustände und Effekte nutzen, und diese in mehreren Komponenten wiederverwenden.
 
-```typescript
-// src/hooks/useGameLogic.ts
-import { useState } from "react";
+### Warum Custom Hooks verwenden?
 
-type Score = {
-  X: number;
-  O: number;
-};
+- **Wiederverwendbarkeit**: Vermeidung von doppeltem Code, indem gemeinsame Logik ausgelagert wird.
+- **Lesbarkeit**: Komponenten bleiben übersichtlich, da die Logik ausgelagert wird.
+- **Strukturierung**: Bessere Organisation des Codes durch Trennung von Logik und Darstellung.
 
-const useGameLogic = () => {
-  const [cells, setCells] = useState<string[]>(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
-  const [winner, setWinner] = useState<string>("");
-  const [score, setScore] = useState<Score>({ X: 0, O: 0 });
+### Codebeispiel
 
-  const winningCombinations: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+Stellen wir uns vor, wir möchten in mehreren Komponenten die aktuelle Fensterbreite verwenden, um die Darstellung entsprechend anzupassen. Anstatt in jeder Komponente denselben Code zu schreiben, können wir einen Custom Hook erstellen.
 
-  const checkWinner = (updatedCells: string[]): string => {
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
-      if (
-        updatedCells[a] &&
-        updatedCells[a] === updatedCells[b] &&
-        updatedCells[a] === updatedCells[c]
-      ) {
-        return updatedCells[a];
-      }
+#### Schritt 1: Erstellen des Custom Hooks
+
+Erstellen wir eine Datei namens `useWindowWidth.js` mit folgendem Inhalt:
+
+```tsx
+// useWindowWidth.js
+import { useState, useEffect } from "react";
+
+function useWindowWidth() {
+  // Zustand für die Breite des Fensters
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    // Funktion, die aufgerufen wird, wenn das Fenster skaliert wird
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
     }
-    return "";
-  };
 
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
-  };
+    // Hinzufügen des Event Listeners
+    window.addEventListener("resize", handleResize);
 
-  const handleCellClick = (index: number) => {
-    if (cells[index] === "" && winner === "") {
-      const newCells = [...cells];
-      newCells[index] = currentPlayer;
-      setCells(newCells);
-      const gameWinner = checkWinner(newCells);
-      if (gameWinner) {
-        setWinner(gameWinner);
-        setScore((prevScore) => ({
-          ...prevScore,
-          [gameWinner]: prevScore[gameWinner] + 1,
-        }));
-        // Optional: Automatisches Zurücksetzen des Brettes nach dem Sieg
-        setTimeout(resetBoard, 2000);
-      } else {
-        setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-      }
-    }
-  };
+    // Aufräumfunktion, um den Event Listener zu entfernen
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
-  return {
-    cells,
-    currentPlayer,
-    winner,
-    score,
-    handleCellClick,
-    resetBoard,
-  };
-};
+  // Rückgabe der aktuellen Fensterbreite
+  return windowWidth;
+}
 
-export default useGameLogic;
+export default useWindowWidth;
 ```
-````
 
-```typescript
-// src/GameBoard.tsx
-import React, { useEffect, useRef } from "react";
-import useGameLogic from "../hooks/useGameLogic";
-import Cell from "../Cell/Cell";
-import StatusMessage from "../StatusMessage/StatusMessage";
-import ScoreBoard from "../ScoreBoard/ScoreBoard";
-import "./GameBoard.css";
+**Erklärung:**
 
-const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
-    useGameLogic();
-  const firstCellRef = useRef<HTMLDivElement>(null);
+- Wir importieren `useState` und `useEffect` von React.
+- Wir erstellen die Funktion `useWindowWidth`, die den aktuellen Wert von `window.innerWidth` als Zustand speichert.
+- Mit `useEffect` fügen wir einen Event Listener hinzu, der bei jeder Fenstergrößenänderung die Breite aktualisiert.
+- Durch die Rückgabe von `windowWidth` können andere Komponenten diesen Wert nutzen.
 
-  useEffect(() => {
-    if (winner) {
-      document.title = `Spieler ${winner} gewinnt!`;
-    } else {
-      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
-    }
-  }, [winner, currentPlayer]);
+#### Schritt 2: Verwendung des Custom Hooks in einer Komponente
 
-  useEffect(() => {
-    if (firstCellRef.current) {
-      firstCellRef.current.focus();
-    }
-  }, [cells]);
+Jetzt können wir diesen Custom Hook in einer Komponente verwenden:
+
+```tsx
+// FensterBreiteAnzeigen.js
+import React from "react";
+import useWindowWidth from "./useWindowWidth";
+
+function FensterBreiteAnzeigen() {
+  const windowWidth = useWindowWidth();
 
   return (
     <div>
-      <h2>Tic Tac Toe</h2>
-      <ScoreBoard score={score} />
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
-      <div className="board" role="grid">
-        {cells.map((cell, index) => (
-          <Cell
-            key={index}
-            value={cell}
-            onClick={() => handleCellClick(index)}
-            ref={index === 0 ? firstCellRef : null}
-          />
-        ))}
-      </div>
+      <h2>Aktuelle Fensterbreite</h2>
+      <p>Die Fensterbreite beträgt {windowWidth} Pixel.</p>
     </div>
   );
-};
+}
 
-export default ClickButton;
+export default FensterBreiteAnzeigen;
 ```
 
-## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
+**Erklärung:**
 
-### Was sind Custom Hooks?
+- Wir importieren unseren Custom Hook `useWindowWidth`.
+- Innerhalb der Komponente rufen wir `useWindowWidth()` auf, um die aktuelle Fensterbreite zu erhalten.
+- Wir zeigen den Wert in der Benutzeroberfläche an.
 
-Custom Hooks sind benutzerdefinierte Funktionen in React, die die Funktionalität von bestehenden Hooks kombinieren und wiederverwenden. Sie ermöglichen es dir, komplexe Logik in modulare und wiederverwendbare Teile zu zerlegen, wodurch deine Komponenten sauberer und leichter verständlich bleiben.
+#### Schritt 3: Wiederverwendung in einer anderen Komponente
 
-### Vorteile von Custom Hooks
+Der Vorteil von Custom Hooks besteht darin, dass wir sie in mehreren Komponenten verwenden können:
 
-1. **Wiederverwendbarkeit**: Du kannst die gleiche Logik in verschiedenen Komponenten nutzen, ohne sie duplizieren zu müssen.
-2. **Lesbarkeit**: Komponenten bleiben fokussiert auf die Darstellung und weniger auf die Geschäftslogik.
-3. **Testbarkeit**: Logik in Custom Hooks kann isoliert und einfacher getestet werden.
+```tsx
+// ResponsiveLayout.js
+import React from "react";
+import useWindowWidth from "./useWindowWidth";
 
-### Erstellung eines Custom Hooks
+function ResponsiveLayout() {
+  const windowWidth = useWindowWidth();
 
-Beim Erstellen eines Custom Hooks solltest du die folgenden Regeln beachten:
+  return (
+    <div>
+      {windowWidth > 768 ? (
+        <p>Du benutzt eine große Ansicht.</p>
+      ) : (
+        <p>Du benutzt eine kleine Ansicht.</p>
+      )}
+    </div>
+  );
+}
 
-- **Namenskonvention**: Custom Hooks müssen mit `use` beginnen, zum Beispiel `useGameLogic`.
-- **Nur Hooks innerhalb von Custom Hooks verwenden**: Du darfst nur andere Hooks (wie `useState`, `useEffect`) innerhalb von Custom Hooks oder Komponenten aufrufen.
+export default ResponsiveLayout;
+```
 
-### Anwendung im Tic-Tac-Toe-Spiel
+**Erklärung:**
 
-Im Tic-Tac-Toe-Spiel kapselt der `useGameLogic`-Hook die gesamte Logik für das Spiel, einschließlich des Spielstatus, der aktuellen Spieler, der Gewinnerermittlung und der Spielstandverfolgung. Dadurch bleibt die `GameBoard`-Komponente übersichtlich und konzentriert sich nur auf das Rendern der Benutzeroberfläche.
+- Wir verwenden erneut `useWindowWidth`, um die Fensterbreite zu erhalten.
+- Basierend auf der Breite entscheiden wir, welche Ansicht dem Benutzer angezeigt wird.
 
-### Tiefergehende Implementierung
+### Was passiert hier genau?
 
-Der `useGameLogic`-Hook verwaltet mehrere Zustände:
+- **Zustand verwalten**: Der Custom Hook verwaltet den Zustand der Fensterbreite.
+- **Effekte nutzen**: Mit `useEffect` setzen wir einen Event Listener, der bei Änderungen reagiert.
+- **Wiederverwendung**: Mehrere Komponenten können dieselbe Logik nutzen, ohne sie zu duplizieren.
 
-- **cells**: Ein Array, das den Inhalt jeder Zelle auf dem Spielbrett speichert.
-- **currentPlayer**: Gibt an, welcher Spieler gerade am Zug ist ("X" oder "O").
-- **winner**: Speichert den Gewinner des Spiels, falls vorhanden.
-- **score**: Ein Objekt, das die Anzahl der Siege für jeden Spieler verfolgt.
+### Wichtige Konzepte
 
-Der Hook bietet auch Funktionen zur Handhabung von Zellklicks (`handleCellClick`) und zum Zurücksetzen des Spielbretts (`resetBoard`).
+- **Benennung**: Ein Custom Hook sollte immer mit `use` beginnen, z.B. `useFetch`, damit React erkennt, dass es sich um einen Hook handelt.
+- **Regeln für Hooks**: Custom Hooks folgen denselben Regeln wie normale Hooks:
+  - Sie sollten nur in Funktionskomponenten oder anderen Hooks aufgerufen werden.
+  - Sie dürfen nicht innerhalb von Schleifen, Bedingungen oder verschachtelten Funktionen aufgerufen werden.
+- **Parameter und Rückgabewerte**: Custom Hooks können Parameter akzeptieren und Werte zurückgeben, genau wie normale Funktionen.
 
-Durch die Trennung dieser Logik in einen eigenen Hook wird die `GameBoard`-Komponente einfacher und fokussierter auf das Rendering.
+## Hands-on Aufgaben: Custom Hooks
 
-## Hands-on Aufgaben
+### Ziel der Aufgabe
 
-### Aufgabe 1: Erstellung eines Custom Hooks für die Spiellogik
+In dieser Aufgabe werden wir lernen, wie man in React eigene Custom Hooks erstellt und nutzt. Wir werden einen Custom Hook namens `useGameLogic` erstellen, der die Spielzustände und die Logik für unser Tic-Tac-Toe-Spiel kapselt. Durch die Auslagerung dieser Logik in einen eigenen Hook machen wir unseren Code sauberer, besser wiederverwendbar und leichter zu testen.
 
-**Aufgabenstellung:**
-Erstelle einen Custom Hook namens `useGameLogic`, der die gesamte Spiel- und Gewinnerlogik deines Tic-Tac-Toe-Spiels verwaltet. Dieser Hook sollte die Zustände und Funktionen kapseln, die zur Verwaltung des Spiels erforderlich sind.
+---
 
-**Anforderungen:**
+### Schritt 0: Clean Workspace herstellen
 
-- Verwende den `useState`-Hook innerhalb des Custom Hooks, um die Zustände `cells`, `currentPlayer`, `winner` und `score` zu verwalten.
-- Implementiere die `checkWinner`-Funktion innerhalb des Hooks.
-- Implementiere die `handleCellClick`-Funktion, die den Spielzustand aktualisiert, wenn eine Zelle angeklickt wird.
-- Implementiere die `resetBoard`-Funktion zum Zurücksetzen des Spielbretts.
-- Gib alle Zustände und Funktionen als Rückgabewerte des Hooks zurück.
-- Aktualisiere die `GameBoard`-Komponente, um den neuen Custom Hook zu verwenden.
+Bevor wir mit der eigentlichen Entwicklung beginnen, ist es wichtig, sicherzustellen, dass dein Arbeitsbereich sauber ist und mit dem Remote-Repository synchronisiert ist. Dies verhindert mögliche Konflikte und stellt sicher, dass du von einem stabilen Ausgangspunkt aus startest.
 
-**Vite-Test (`useGameLogic.test.ts`):**
+**Warum ist das sinnvoll für das Tutorial?**
+
+- **Vermeidung von Konflikten:** Ein sauberer Arbeitsbereich minimiert das Risiko von Merge-Konflikten, die den Lernprozess unterbrechen könnten.
+- **Konsistenz:** Durch das Zurücksetzen auf den Remote-Branch stellst du sicher, dass alle Beteiligten mit derselben Codebasis arbeiten.
+- **Stabilität:** Ein synchronisierter Arbeitsbereich sorgt dafür, dass alle notwendigen Abhängigkeiten und Konfigurationen aktuell sind.
+
+**So gehst du vor:**
+
+1. **Überprüfe den aktuellen Status deines Arbeitsbereichs:**
+
+   ```bash
+   git status
+   ```
+
+   - Stelle sicher, dass keine ungespeicherten Änderungen oder nicht committeten Dateien vorhanden sind. Wenn es solche gibt, committe sie oder sichere sie anderweitig ab.
+
+2. **Hole die neuesten Änderungen vom Remote-Repository:**
+
+   ```bash
+   git fetch origin
+   ```
+
+3. **Setze deinen lokalen Branch auf den Stand des Remote-Branches zurück:**
+
+   ```bash
+   git reset --hard origin/main
+   ```
+
+   - **Hinweis:** Ersetze `main` durch den entsprechenden Branch-Namen, falls du einen anderen Branch verwendest.
+
+4. **Bereinige nicht verfolgte Dateien und Verzeichnisse:**
+
+   ```bash
+   git clean -fd
+   ```
+
+   - **Vorsicht:** Dieser Befehl entfernt unwiderruflich alle nicht verfolgten Dateien und Verzeichnisse. Stelle sicher, dass keine wichtigen Dateien verloren gehen.
+
+---
+
+### Schritt 1: Den Test verstehen
 
 ```typescript
 // src/hooks/useGameLogic.test.ts
@@ -203,16 +197,14 @@ import { renderHook, act } from "@testing-library/react";
 import useGameLogic from "./useGameLogic";
 
 describe("useGameLogic Hook", () => {
-  test("initialisiert die Zustände korrekt", () => {
+  it("sollte den initialen Zustand zurückgeben", () => {
     const { result } = renderHook(() => useGameLogic());
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
+    expect(result.current.cells).toEqual(Array(9).fill(""));
     expect(result.current.currentPlayer).toBe("X");
     expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
   });
 
-  test("fügt einen Zug hinzu und wechselt den Spieler", () => {
+  it("sollte den Spieler nach jedem Zug wechseln", () => {
     const { result } = renderHook(() => useGameLogic());
 
     act(() => {
@@ -221,446 +213,163 @@ describe("useGameLogic Hook", () => {
 
     expect(result.current.cells[0]).toBe("X");
     expect(result.current.currentPlayer).toBe("O");
-    expect(result.current.winner).toBe("");
   });
 
-  test("ermittelt den Gewinner korrekt", () => {
+  it("sollte den Gewinner korrekt erkennen", () => {
     const { result } = renderHook(() => useGameLogic());
 
     act(() => {
-      // Spieler X gewinnt durch die Zellen 0, 1, 2
       result.current.handleCellClick(0); // X
       result.current.handleCellClick(3); // O
       result.current.handleCellClick(1); // X
       result.current.handleCellClick(4); // O
-      result.current.handleCellClick(2); // X
+      result.current.handleCellClick(2); // X - gewinnt
     });
 
     expect(result.current.winner).toBe("X");
-    expect(result.current.score).toEqual({ X: 1, O: 0 });
   });
 
-  test("kann das Spielbrett zurücksetzen", () => {
+  it("sollte das Spiel zurücksetzen können", () => {
     const { result } = renderHook(() => useGameLogic());
 
     act(() => {
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(1); // O
-      result.current.resetBoard();
+      result.current.handleCellClick(0);
+      result.current.handleReset();
     });
 
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
+    expect(result.current.cells).toEqual(Array(9).fill(""));
     expect(result.current.currentPlayer).toBe("X");
     expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
   });
 });
 ```
 
-### Aufgabe 2: Nutzung des Custom Hooks in der `GameBoard`-Komponente
+**Was macht dieser Test?**
 
-**Aufgabenstellung:**
-Integriere den neu erstellten `useGameLogic`-Hook in deine `GameBoard`-Komponente, um die Spiellogik aus der Komponente auszulagern. Stelle sicher, dass die `GameBoard`-Komponente nur noch für das Rendering zuständig ist.
+- **Prüft den initialen Zustand:**
+  - Überprüft, ob der Hook beim ersten Aufruf die erwarteten Anfangswerte (`cells`, `currentPlayer`, `winner`) zurückgibt.
+- **Überprüft den Spielerwechsel:**
+  - Simuliert einen Spielzug und überprüft, ob der aktuelle Spieler wechselt und das entsprechende Feld gesetzt wird.
+- **Erkennt den Gewinner:**
+  - Simuliert eine Siegbedingung für Spieler "X" und überprüft, ob der Gewinner korrekt erkannt wird.
+- **Testet das Zurücksetzen des Spiels:**
+  - Überprüft, ob die `handleReset`-Funktion den Spielzustand auf die Anfangswerte zurücksetzt.
 
-**Anforderungen:**
+---
 
-- Importiere den `useGameLogic`-Hook in die `GameBoard`-Komponente.
-- Verwende den Hook, um die Zustände und Funktionen zu erhalten.
-- Entferne die zuvor in der `GameBoard`-Komponente definierten Zustände und Funktionen.
-- Passe das JSX-Rendering entsprechend an.
+### Schritt 2: Den Test ausführen
 
-**Vite-Test (`GameBoard.test.tsx`):**
+Falls der "Watch"-Modus nicht bereits läuft, gebe den Befehl `npm run test:watch` im Terminal ein.
 
-Die bestehenden Tests sollten weiterhin funktionieren. Es sind keine zusätzlichen Tests erforderlich, aber du kannst sicherstellen, dass die Integration funktioniert.
+**Erwarte folgendes Ergebnis:**
 
-```typescript
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import GameBoard from "./GameBoard";
+- Der Test sollte **fehlschlagen**. ❌
+- Das ist beabsichtigt, da die Funktionalität noch nicht implementiert ist.
 
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
-});
+---
 
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
+### Schritt 3: Den Code anpassen, um den Test zu bestehen
 
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
+Jetzt schreiben wir den notwendigen Code, damit der Test erfolgreich ist.
 
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
+**So geht's:**
 
-test("klick auf eine Zelle trägt den Zug ein", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
+1. **Erstelle den Custom Hook `useGameLogic`:**
 
-  fireEvent.click(cells[0]); // Klick auf die erste Zelle
+   - Lege eine neue Datei unter `src/hooks/useGameLogic.ts` an.
+   - Implementiere die Logik, die bisher im `GameBoard`-Komponent verwendet wurde, innerhalb dieses Hooks.
 
-  expect(cells[0]).toHaveTextContent("X"); // Erster Spieler ist 'X'
-});
+2. **Exportiere die benötigten Werte und Funktionen:**
 
-test("Spieler wechseln nach jedem Zug", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
+   - Stelle sicher, dass der Hook die folgenden Werte und Funktionen zurückgibt:
+     - `cells`: Array der Spielfeldwerte.
+     - `currentPlayer`: Der Spieler, der gerade am Zug ist.
+     - `winner`: Der aktuelle Gewinner (oder leerer String, wenn es keinen gibt).
+     - `handleCellClick(index: number)`: Funktion, um auf Klicks auf die Zellen zu reagieren.
+     - `handleReset()`: Funktion, um das Spiel zurückzusetzen.
 
-  fireEvent.click(cells[0]); // 'X'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: O");
+3. **Passen die `GameBoard`-Komponente an:**
 
-  fireEvent.click(cells[1]); // 'O'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: X");
-});
+   - Importiere den neuen Hook `useGameLogic`.
+   - Entferne die Zustandsvariablen und Funktionen, die jetzt im Hook enthalten sind, aus der Komponente.
+   - Verwende die vom Hook zurückgegebenen Werte und Funktionen innerhalb der Komponente.
 
-test("Zelle kann nicht überschrieben werden", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
+---
 
-  fireEvent.click(cells[0]); // 'X'
-  fireEvent.click(cells[0]); // Versuch, erneut zu klicken
-
-  expect(cells[0]).toHaveTextContent("X"); // Wert bleibt 'X'
-});
-
-test("aktualisiert den Dokumenttitel beim Spielstart", () => {
-  render(<GameBoard />);
-  expect(document.title).toBe("Tic Tac Toe - Spieler X ist am Zug");
-});
-
-test("aktualisiert den Dokumenttitel, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  expect(document.title).toBe("Spieler X gewinnt!");
-});
-
-test("fokussiert die erste Zelle nach dem Zurücksetzen des Spielbretts", async () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' und das Zurücksetzen des Brettes
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  // Warte auf das automatische Zurücksetzen
-  await waitFor(
-    () => {
-      expect(document.activeElement).toBe(cells[0]);
-    },
-    { timeout: 2500 }
-  );
-});
-```
-
-## Musterlösung
-
-### Schritt 1: Erstellung des `useGameLogic`-Hooks
+**Inspiration gefällig?**
 
 ```typescript
 // src/hooks/useGameLogic.ts
 import { useState } from "react";
 
-type Score = {
-  X: number;
-  O: number;
-};
-
 const useGameLogic = () => {
-  const [cells, setCells] = useState<string[]>(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
-  const [winner, setWinner] = useState<string>("");
-  const [score, setScore] = useState<Score>({ X: 0, O: 0 });
-
-  const winningCombinations: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  const checkWinner = (updatedCells: string[]): string => {
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
-      if (
-        updatedCells[a] &&
-        updatedCells[a] === updatedCells[b] &&
-        updatedCells[a] === updatedCells[c]
-      ) {
-        return updatedCells[a];
-      }
-    }
-    return null;
-  };
-
-  const handleCellClick = (index: number) => {
-    if (cells[index] === "" && winner === "") {
-      const newCells = [...cells];
-      newCells[index] = currentPlayer;
-      setCells(newCells);
-
-      const gameWinner = checkWinner(newCells);
-      if (gameWinner) {
-        setWinner(gameWinner);
-      } else if (!newCells.includes("")) {
-        setWinner("draw");
-      } else {
-        setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-      }
-    }
-  };
-
-  return {
-    cells,
-    currentPlayer,
-    winner,
-    score,
-    handleCellClick,
-    resetBoard,
-  };
+  // TODO: Initialisiere den Zustand für 'cells', 'currentPlayer' und 'winner'
+  // TODO: Implementiere die Funktion 'checkWinner', um den Gewinner zu ermitteln
+  // TODO: Implementiere 'handleCellClick', um auf Klicks auf die Zellen zu reagieren
+  // TODO: Implementiere 'handleReset', um das Spiel zurückzusetzen
+  // TODO: Gib die benötigten Werte und Funktionen zurück
 };
 
 export default useGameLogic;
 ```
 
-### Schritt 2: Nutzung des `useGameLogic`-Hooks in der `GameBoard`-Komponente
+---
 
-```typescript
-// src/GameBoard.tsx
-import React, { useEffect, useRef } from "react";
-import useGameLogic from "../hooks/useGameLogic";
-import Cell from "../Cell/Cell";
-import StatusMessage from "../StatusMessage/StatusMessage";
-import ScoreBoard from "../ScoreBoard/ScoreBoard";
-import "./GameBoard.css";
+### Schritt 4: Den Test erneut ausführen
 
-const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
-    useGameLogic();
-  const firstCellRef = useRef<HTMLDivElement>(null);
+Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sobald du die Datei gespeichert hast.
 
-  useEffect(() => {
-    if (winner) {
-      document.title = `Spieler ${winner} gewinnt!`;
-    } else {
-      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
-    }
-  }, [winner, currentPlayer]);
+**Erwarte folgendes Ergebnis:**
 
-  useEffect(() => {
-    if (firstCellRef.current) {
-      firstCellRef.current.focus();
-    }
-  }, [cells]);
+- Der Test sollte jetzt **erfolgreich** sein. ✅
+- Dies bedeutet, dass dein Code die erwartete Funktionalität erfüllt und der Custom Hook korrekt implementiert ist.
 
-  return (
-    <div>
-      <h2>Tic Tac Toe</h2>
-      <GameStatus currentPlayer={currentPlayer} winner={winner} />
-      <div className="board" role="grid">
-        {cells.map((cell, index) => (
-          <Cell
-            key={index}
-            value={cell}
-            onClick={() => handleCellClick(index)}
-            ref={index === 0 ? firstCellRef : null}
-          />
-        ))}
-      </div>
-      {/* TODO: Füge den Reset-Button hinzu */}
-    </div>
-  );
-};
+---
 
-export default GameBoard;
+### Schritt 5: Die Anwendung im Browser betrachten
+
+**So gehst du vor:**
+
+1. **Starte die Entwicklungsumgebung:**
+
+   - Falls der Entwicklungsserver nicht bereits läuft, gebe folgenden Befehl im Terminal ein:
+
+     `npm run dev`
+
+   - Dies startet deinen Entwicklungsserver.
+
+2. **Öffne deinen Browser:**
+
+   - Im Terminal wird eine lokale Adresse angezeigt.
+   - Öffne diese Adresse in deinem Browser.
+
+3. **Überprüfe die Anzeige:**
+
+   - Du solltest das Tic-Tac-Toe-Spiel sehen und es sollte wie zuvor funktionieren.
+
+4. **Teste die Funktionalität:**
+
+   - Spiele ein paar Runden und stelle sicher, dass alles wie erwartet funktioniert.
+   - Achte besonders darauf, ob der Spielverlauf korrekt gehandhabt wird.
+
+---
+
+### Zusammenfassung
+
+In diesem Kapitel haben wir gelernt, wie man einen **Custom Hook** in React erstellt und verwendet. Wir haben die Spiel-Logik unseres Tic-Tac-Toe-Spiels in den Hook `useGameLogic` ausgelagert. Dies verbessert die **Wiederverwendbarkeit** und **Lesbarkeit** unseres Codes. Durch das Schreiben von Tests vor der Implementierung haben wir die **Testgetriebene Entwicklung (TDD)** angewandt und sichergestellt, dass unser Hook wie erwartet funktioniert.
+
+---
+
+## Ergebnis veröffentlichen:
+
+```bash
+git add .
+git commit -m "update: step-11-custom-hooks"
+git push
 ```
 
-### Schritt 3: Erstellung der Tests für den Custom Hook
+## Nächstes Kapitel:
 
-```typescript
-// src/hooks/useGameLogic.test.ts
-import { renderHook, act } from "@testing-library/react";
-import useGameLogic from "./useGameLogic";
-
-describe("useGameLogic Hook", () => {
-  test("initialisiert die Zustände korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
-  });
-
-  test("fügt einen Zug hinzu und wechselt den Spieler", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0);
-    });
-
-    expect(result.current.cells[0]).toBe("X");
-    expect(result.current.currentPlayer).toBe("O");
-    expect(result.current.winner).toBe("");
-  });
-
-  test("ermittelt den Gewinner korrekt", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      // Spieler X gewinnt durch die Zellen 0, 1, 2
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(3); // O
-      result.current.handleCellClick(1); // X
-      result.current.handleCellClick(4); // O
-      result.current.handleCellClick(2); // X
-    });
-
-    expect(result.current.winner).toBe("X");
-    expect(result.current.score).toEqual({ X: 1, O: 0 });
-  });
-
-  test("kann das Spielbrett zurücksetzen", () => {
-    const { result } = renderHook(() => useGameLogic());
-
-    act(() => {
-      result.current.handleCellClick(0); // X
-      result.current.handleCellClick(1); // O
-      result.current.resetBoard();
-    });
-
-    expect(result.current.cells).toEqual(["", "", "", "", "", "", "", "", ""]);
-    expect(result.current.currentPlayer).toBe("X");
-    expect(result.current.winner).toBe("");
-    expect(result.current.score).toEqual({ X: 0, O: 0 });
-  });
-});
+```bash
+git checkout -b mustermann-max-step-12-routing origin/step-12-routing
 ```
-
-### Schritt 4: Aktualisieren der `GameBoard`-Tests
-
-Da die gesamte Logik nun im `useGameLogic`-Hook enthalten ist, bleibt die `GameBoard`-Komponente für Rendering zuständig. Die bestehenden Tests bleiben größtenteils unverändert, stellen jedoch sicher, dass die Integration des Hooks korrekt funktioniert.
-
-```typescript
-// src/GameBoard.test.tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import GameBoard from "./GameBoard";
-
-test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
-  render(<GameBoard />);
-  const winnerMessage = screen.queryByText(/Spieler .* hat gewonnen!/i);
-  expect(winnerMessage).toBeNull();
-});
-
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
-});
-
-test("klick auf eine Zelle trägt den Zug ein", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // Klick auf die erste Zelle
-
-  expect(cells[0]).toHaveTextContent("X"); // Erster Spieler ist 'X'
-});
-
-test("Spieler wechseln nach jedem Zug", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
-
-  fireEvent.click(cells[0]); // 'X'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: O");
-
-  fireEvent.click(cells[1]); // 'O'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: X");
-});
-
-test("Zelle kann nicht überschrieben werden", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // 'X'
-  fireEvent.click(cells[0]); // Versuch, erneut zu klicken
-
-  expect(cells[0]).toHaveTextContent("X"); // Wert bleibt 'X'
-});
-
-test("aktualisiert den Dokumenttitel beim Spielstart", () => {
-  render(<GameBoard />);
-  expect(document.title).toBe("Tic Tac Toe - Spieler X ist am Zug");
-});
-
-test("aktualisiert den Dokumenttitel, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  expect(document.title).toBe("Spieler X gewinnt!");
-});
-
-test("fokussiert die erste Zelle nach dem Zurücksetzen des Spielbretts", async () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' und das Zurücksetzen des Brettes
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  // Warte auf das automatische Zurücksetzen
-  await waitFor(
-    () => {
-      expect(document.activeElement).toBe(cells[0]);
-    },
-    { timeout: 2500 }
-  );
-});
-```
-
-## Zusammenfassung
-
-In diesem Kapitel haben wir gelernt, wie man **Custom Hooks** in React erstellt und nutzt, um wiederverwendbare und modulare Logik in einem Tic-Tac-Toe-Spiel zu implementieren. Durch die Erstellung des `useGameLogic`-Hooks haben wir die Spiel- und Gewinnerlogik von der Präsentationskomponente `GameBoard` getrennt, was zu einer saubereren und besser wartbaren Codebasis führt.
-
-Custom Hooks sind ein mächtiges Werkzeug in React, das es Entwicklern ermöglicht, komplexe Logik zu abstrahieren und in wiederverwendbare Einheiten zu zerlegen. Dies fördert nicht nur die Wiederverwendbarkeit, sondern auch die Lesbarkeit und Testbarkeit des Codes. Indem du Custom Hooks meisterst, kannst du deine React-Anwendungen effizienter gestalten und skalierbarer machen.
