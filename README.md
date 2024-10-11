@@ -246,18 +246,16 @@ Da der Test im "Watch"-Modus läuft, wird er automatisch erneut ausgeführt, sob
 
 In diesem Kapitel haben wir eine `GameBoard`-Komponente für ein Tic-Tac-Toe-Spiel erstellt und in die bestehende Anwendung integriert. Wir haben einen Test geschrieben, der sicherstellt, dass das Spielfeld korrekt gerendert wird, und diesen Test erfolgreich bestanden. Zudem haben wir die visuelle Darstellung des Spielfelds mit CSS verbessert. Durch das Test-driven Development (TDD) Vorgehen haben wir sichergestellt, dass unsere Komponente den Anforderungen entspricht und zuverlässig funktioniert.
 
-## Ergebnis veröffentlichen
-
-Zum Abschluss dieses Kapitels solltest du deine Änderungen im remote Repository sichern:
+## Ergebnis veröffentlichen:
 
 ```bash
 git add .
-git commit -m "Schritt 3: Interaktive Zellen mit JSX erstellt"
+git commit -m "update: step-3-jsx-implementations"
 git push
 ```
 
-## Nächstes Kapitel
+## Nächstes Kapitel:
 
-```
-git checkout -b mustermann-max-step-1-welcome origin/step-4-props-vs-state
+```bash
+git checkout -b mustermann-max-step-4-props-vs-state origin/step-4-props-vs-state
 ```
