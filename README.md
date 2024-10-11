@@ -222,3 +222,17 @@ test("zeigt die Beschreibung des Spiels an", () => {
 - **Funktionale Komponenten** sind einfache Funktionen, die beschreiben, was auf dem Bildschirm angezeigt wird.
 - Sie helfen uns, unseren Code zu strukturieren und sauber zu halten.
 - **Klassenkomponenten** sind eine ältere Art, Komponenten zu schreiben, werden aber heute weniger verwendet.
+
+## Ergebnis veröffentlichen:
+
+```bash
+git add .
+git commit -m "update: step-2-functional-components"
+git push
+```
+
+## Nächstes Kapitel:
+
+```bash
+git checkout -b mustermann-max-step-3-jsx-implementation origin/step-3-jsx-implementation
+```
