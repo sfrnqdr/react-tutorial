@@ -15,8 +15,7 @@ Für unser Tic-Tac-Toe-Spiel bedeutet das, dass wir die Klicks auf die Zellen er
 **Implementierung der Ereignisbehandlung für die Zellen:**
 
 ```tsx
-// src/Cell.tsx
-import React from "react";
+import React, { useState } from "react";
 
 type CellProps = {
   value: string;
@@ -25,8 +24,10 @@ type CellProps = {
 
 const Cell = React.memo(({ value, onClick }: CellProps) => {
   return (
-    <div className="cell" role="button" onClick={onClick}>
-      {value}
+    <div>
+      <h1>Meine React App</h1>
+      <button onClick={() => setCount(count + 1)}>Klick mich: {count}</button>
+      <ChildComponent />
     </div>
   );
 });
@@ -203,25 +204,26 @@ npm run test
 
 1. **Anpassen der `Cell`-Komponente:**
 
-   ```tsx
-   // src/Cell.tsx
-   import React from "react";
+```tsx
+// src/components/Cell/Cell.tsx
 
-   type CellProps = {
-     value: string;
-     onClick: () => void;
-   };
+import React from "react";
 
-   const Cell = React.memo(({ value, onClick }: CellProps) => {
-     return (
-       <div className="cell" role="button" onClick={onClick}>
-         {value}
-       </div>
-     );
-   });
+type CellProps = {
+  value: string;
+  onClick: () => void;
+};
 
-   export default Cell;
-   ```
+const Cell = React.memo(({ value, onClick }: CellProps) => {
+  return (
+    <div className="cell" role="button" onClick={onClick}>
+      {value}
+    </div>
+  );
+});
+
+export default Cell;
+```
 
 2. **Anpassen von `GameBoard.tsx`:**
 
