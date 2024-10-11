@@ -16,23 +16,25 @@ describe("Cell Komponente", () => {
 
   it("rendert nicht neu, wenn sich die Props nicht ändern", () => {
     const consoleSpy = vi.spyOn(console, "log");
-    const { rerender } = render(<Cell value="X" onClick={() => {}} />);
+    const handleClick = () => {};
+    const { rerender } = render(<Cell value="X" onClick={handleClick} />);
     expect(consoleSpy).toHaveBeenCalledWith("Rendering Cell: X");
     consoleSpy.mockClear();
 
     // Erneutes Rendern mit gleichen Props
-    rerender(<Cell value="X" onClick={() => {}} />);
+    rerender(<Cell value="X" onClick={handleClick} />);
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 
   it("rendert neu, wenn sich die Props ändern", () => {
     const consoleSpy = vi.spyOn(console, "log");
-    const { rerender } = render(<Cell value="X" onClick={() => {}} />);
+    const handleClick = () => {};
+    const { rerender } = render(<Cell value="X" onClick={handleClick} />);
     expect(consoleSpy).toHaveBeenCalledWith("Rendering Cell: X");
     consoleSpy.mockClear();
 
     // Erneutes Rendern mit geänderten Props
-    rerender(<Cell value="O" onClick={() => {}} />);
+    rerender(<Cell value="O" onClick={handleClick} />);
     expect(consoleSpy).toHaveBeenCalledWith("Rendering Cell: O");
   });
 

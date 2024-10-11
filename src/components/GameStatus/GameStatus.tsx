@@ -1,10 +1,14 @@
-// src/GameStatus.tsx
+// src/components/GameStatus/GameStatus.tsx
+
+import React from "react";
+
 type GameStatusProps = {
   currentPlayer: string;
   winner: string;
 };
 
-const GameStatus = ({ currentPlayer, winner }: GameStatusProps) => {
+const GameStatus = React.memo(({ currentPlayer, winner }: GameStatusProps) => {
+  console.log("Rendering GameStatus");
   return (
     <div>
       {winner === "draw" ? (
@@ -16,6 +20,6 @@ const GameStatus = ({ currentPlayer, winner }: GameStatusProps) => {
       )}
     </div>
   );
-};
+});
 
 export default GameStatus;
