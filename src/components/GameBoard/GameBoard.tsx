@@ -1,45 +1,28 @@
-// src/GameBoard.tsx
-import { useEffect, useRef } from "react";
-import useGameLogic from "../../hooks/useGameLogic";
+// src/components/GameBoard/GameBoard.tsx
 import Cell from "../Cell/Cell";
-import StatusMessage from "../StatusMessage/StatusMessage";
+import GameStatus from "../GameStatus/GameStatus";
 import ScoreBoard from "../ScoreBoard/ScoreBoard";
+import useGameLogic from "../../hooks/useGameLogic";
 import "./GameBoard.css";
 
 const GameBoard = () => {
-  const { cells, currentPlayer, winner, score, handleCellClick, resetBoard } =
+  const { cells, currentPlayer, winner, handleCellClick, handleReset } =
     useGameLogic();
-  const firstCellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (winner) {
-      document.title = `Spieler ${winner} gewinnt!`;
-    } else {
-      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
-    }
-  }, [winner, currentPlayer]);
-
-  useEffect(() => {
-    if (firstCellRef.current) {
-      firstCellRef.current.focus();
-    }
-  }, [cells]);
 
   return (
     <div>
-      <h2>Tic Tac Toe</h2>
-      <ScoreBoard score={score} />
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
+      <ScoreBoard score={{ X: 0, O: 0 }} />
+      <GameStatus currentPlayer={currentPlayer} winner={winner} />
       <div className="board" role="grid">
         {cells.map((cell, index) => (
           <Cell
             key={index}
             value={cell}
             onClick={() => handleCellClick(index)}
-            ref={index === 0 ? firstCellRef : null}
           />
         ))}
       </div>
+      <button onClick={handleReset}>Spiel zurücksetzen</button>
     </div>
   );
 };

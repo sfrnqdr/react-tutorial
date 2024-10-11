@@ -1,31 +1,25 @@
-// src/hooks/useGameLogic.ts
-import { useState } from "react";
-
-type Score = {
-  X: number;
-  O: number;
-};
+import { useState, useEffect, useRef } from "react";
 
 const useGameLogic = () => {
-  const [cells, setCells] = useState<string[]>(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<string>("X");
-  const [winner, setWinner] = useState<string>("");
-  const [score, setScore] = useState<Score>({ X: 0, O: 0 });
+  const initialCells = Array(9).fill("");
+  const [cells, setCells] = useState(initialCells);
+  const [currentPlayer, setCurrentPlayer] = useState("X");
+  const [winner, setWinner] = useState("");
 
-  const winningCombinations: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+  const checkWinner = (updatedCells: string[]) => {
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
 
-  const checkWinner = (updatedCells: string[]): string => {
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
       if (
         updatedCells[a] &&
         updatedCells[a] === updatedCells[b] &&
@@ -37,46 +31,35 @@ const useGameLogic = () => {
     return "";
   };
 
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
-  };
-
   const handleCellClick = (index: number) => {
-    setCells((prevCells) => {
-      // Prevent overwriting a non-empty cell or if there's already a winner
-      if (prevCells[index] !== "" || winner !== "") {
-        return prevCells;
-      }
-
-      const newCells = [...prevCells];
+    if (cells[index] === "" && winner === "") {
+      const newCells = [...cells];
       newCells[index] = currentPlayer;
-      const gameWinner = checkWinner(newCells);
+      setCells(newCells);
 
+      const gameWinner = checkWinner(newCells);
       if (gameWinner) {
         setWinner(gameWinner);
-        setScore((prevScore) => ({
-          ...prevScore,
-          [gameWinner]: prevScore[gameWinner] + 1,
-        }));
-        // Optional: Automatically reset the board after a delay
-        setTimeout(resetBoard, 2000);
+      } else if (!newCells.includes("")) {
+        setWinner("draw"); // Unentschieden, wenn alle Felder gefüllt sind
       } else {
-        setCurrentPlayer((prevPlayer) => (prevPlayer === "X" ? "O" : "X"));
+        setCurrentPlayer(currentPlayer === "X" ? "O" : "X"); // Spielerwechsel
       }
+    }
+  };
 
-      return newCells;
-    });
+  const handleReset = () => {
+    setCells(initialCells);
+    setCurrentPlayer("X");
+    setWinner("");
   };
 
   return {
     cells,
     currentPlayer,
     winner,
-    score,
     handleCellClick,
-    resetBoard,
+    handleReset,
   };
 };
 

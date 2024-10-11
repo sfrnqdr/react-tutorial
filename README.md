@@ -518,7 +518,7 @@ const GameBoard = () => {
   );
 };
 
-export default GameBoard;
+export default App;
 ```
 
 ### 6. Styling der Spielergebnisse (optional)

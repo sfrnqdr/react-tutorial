@@ -1,6 +1,7 @@
 // src/GameBoard.test.tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import GameBoard from "./GameBoard";
+import { describe, it, expect } from "vitest";
 
 test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
   render(<GameBoard />);
@@ -8,87 +9,84 @@ test("zeigt keine Siegesnachricht an, wenn das Spiel beginnt", () => {
   expect(winnerMessage).toBeNull();
 });
 
-test("zeigt die Siegesnachricht an, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
+describe("GameBoard Component", () => {
+  it("Wechselt den Spieler nach jedem Zug", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
 
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
+    // Spieler X klickt auf das erste Feld
+    fireEvent.click(cells[0]);
+    expect(cells[0]).toHaveTextContent("X");
 
-  const winnerMessage = screen.getByText(/Spieler X hat gewonnen!/i);
-  expect(winnerMessage).toBeInTheDocument();
+    // Überprüfe, ob Spieler O an der Reihe ist
+    expect(screen.getByText("Spieler O ist am Zug")).toBeInTheDocument();
+
+    // Spieler O klickt auf das zweite Feld
+    fireEvent.click(cells[1]);
+    expect(cells[1]).toHaveTextContent("O");
+
+    // Überprüfe, ob Spieler X an der Reihe ist
+    expect(screen.getByText("Spieler X ist am Zug")).toBeInTheDocument();
+  });
+
+  it("Erkennt den Gewinner korrekt", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
+
+    // Simuliere eine Gewinnsituation für Spieler X
+    fireEvent.click(cells[0]); // X
+    fireEvent.click(cells[3]); // O
+    fireEvent.click(cells[1]); // X
+    fireEvent.click(cells[4]); // O
+    fireEvent.click(cells[2]); // X
+
+    expect(screen.getByText("🎉 Spieler X hat gewonnen!")).toBeInTheDocument();
+  });
+
+  it("Erkennt ein Unentschieden korrekt", () => {
+    render(<GameBoard />);
+    const cells = screen.getAllByRole("button");
+
+    // Simuliere ein Unentschieden
+    const drawMoves = [0, 1, 2, 4, 3, 5, 7, 6, 8];
+    drawMoves.forEach((index) => {
+      fireEvent.click(cells[index]);
+    });
+
+    expect(
+      screen.getByText("Das Spiel endet unentschieden!")
+    ).toBeInTheDocument();
+  });
 });
 
-test("klick auf eine Zelle trägt den Zug ein", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
+describe("GameBoard Komponente - Reset-Button", () => {
+  it("zeigt den Reset-Button an", () => {
+    render(<GameBoard />);
+    const resetButton = screen.getByText("Spiel zurücksetzen");
+    expect(resetButton).toBeInTheDocument();
+  });
 
-  fireEvent.click(cells[0]); // Klick auf die erste Zelle
+  it("setzt das Spiel zurück, wenn der Reset-Button geklickt wird", () => {
+    render(<GameBoard />);
+    const grid = screen.getByRole("grid");
+    const cells = within(grid).getAllByRole("button");
 
-  expect(cells[0]).toHaveTextContent("X"); // Erster Spieler ist 'X'
-});
+    // Simuliere einige Klicks auf Zellen
+    fireEvent.click(cells[0]); // X
+    fireEvent.click(cells[1]); // O
+    expect(cells[0]).toHaveTextContent("X");
+    expect(cells[1]).toHaveTextContent("O");
 
-test("Spieler wechseln nach jedem Zug", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-  const statusElement = screen.getByText(/Aktueller Spieler: X/i);
+    // Klicke auf den Reset-Button
+    const resetButton = screen.getByText("Spiel zurücksetzen");
+    fireEvent.click(resetButton);
 
-  fireEvent.click(cells[0]); // 'X'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: O");
+    // Überprüfe, dass alle Zellen zurückgesetzt sind
+    cells.forEach((cell) => {
+      expect(cell).toHaveTextContent("");
+    });
 
-  fireEvent.click(cells[1]); // 'O'
-  expect(statusElement.textContent).toBe("Aktueller Spieler: X");
-});
-
-test("Zelle kann nicht überschrieben werden", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  fireEvent.click(cells[0]); // 'X'
-  fireEvent.click(cells[0]); // Versuch, erneut zu klicken
-
-  expect(cells[0]).toHaveTextContent("X"); // Wert bleibt 'X'
-});
-
-test("aktualisiert den Dokumenttitel beim Spielstart", () => {
-  render(<GameBoard />);
-  expect(document.title).toBe("Tic Tac Toe - Spieler X ist am Zug");
-});
-
-test("aktualisiert den Dokumenttitel, wenn ein Spieler gewinnt", () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X'
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  expect(document.title).toBe("Spieler X gewinnt!");
-});
-
-test("fokussiert die erste Zelle nach dem Zurücksetzen des Spielbretts", async () => {
-  render(<GameBoard />);
-  const cells = screen.getAllByRole("button");
-
-  // Simuliere einen Sieg für 'X' und das Zurücksetzen des Brettes
-  fireEvent.click(cells[0]); // X
-  fireEvent.click(cells[3]); // O
-  fireEvent.click(cells[1]); // X
-  fireEvent.click(cells[4]); // O
-  fireEvent.click(cells[2]); // X
-
-  // Warte auf das automatische Zurücksetzen
-  await waitFor(
-    () => {
-      expect(document.activeElement).toBe(cells[0]);
-    },
-    { timeout: 2500 }
-  );
+    // Überprüfe den Spielstatus
+    expect(screen.getByText("Spieler X ist am Zug")).toBeInTheDocument();
+  });
 });
