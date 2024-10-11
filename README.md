@@ -3,9 +3,9 @@
 
 ## Leitfrage
 
-**Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik in meinem Tic-Tac-Toe-Spiel zu implementieren?**
+**Wie erstelle und verwende ich eigene Hooks (Custom Hooks) in React, um wiederverwendbare Logik zu implementieren?**
 
-## Verständliche Antwort für Anfänger
+## Antwort
 
 In React kannst du eigene Hooks erstellen, sogenannte **Custom Hooks**, um wiederverwendbare Logik in deinen Komponenten zu kapseln. Ein Custom Hook ist einfach eine JavaScript-Funktion, die interne Hooks wie `useState` oder `useEffect` verwendet und dabei hilft, bestimmte Funktionalitäten logisch zu gruppieren und mehrfach in verschiedenen Komponenten zu nutzen. In deinem Tic-Tac-Toe-Spiel kannst du beispielsweise einen Custom Hook erstellen, der die Spiel- und Gewinnerlogik verwaltet. Dadurch bleibt deine Hauptkomponente übersichtlich und die Logik ist leichter zu pflegen und wiederzuverwenden.
 
