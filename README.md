@@ -290,18 +290,18 @@ In diesem Kapitel haben wir gelernt, wie man ein Tic Tac Toe Spielfeld mit CSS s
 
 Mit diesen Grundlagen bist du nun in der Lage, weitere Styling-Anpassungen vorzunehmen und dein Tic Tac Toe Spiel optisch weiter zu verbessern.
 
-## Ergebnis veröffentlichen
+---
 
-Zum Abschluss dieses Kapitels solltest du deine Änderungen im remote Repository sichern:
+## Ergebnis veröffentlichen:
 
 ```bash
 git add .
-git commit -m "Schritt 3: Interaktive Zellen mit JSX erstellt"
+git commit -m "update: step-5-styling-components"
 git push
 ```
 
-## Nächstes Kapitel
+## Nächstes Kapitel:
 
-```
-git checkout -b mustermann-max-step-1-welcome origin/step-4-props-vs-state
+```bash
+git checkout -b mustermann-max-step-6-conditional-rendering origin/step-6-conditional-rendering
 ```
