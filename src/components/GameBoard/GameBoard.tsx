@@ -5,6 +5,7 @@ import GameStatus from "../GameStatus/GameStatus.tsx"; // Neue Komponente import
 import "./GameBoard.css";
 
 const GameBoard = () => {
+  const initialCells = Array(9).fill("");
   const [cells, setCells] = useState(Array(9).fill(""));
   const [currentPlayer, setCurrentPlayer] = useState("X"); // Zustand für aktuellen Spieler
   const [winner, setWinner] = useState("");
@@ -51,6 +52,12 @@ const GameBoard = () => {
     }
   };
 
+  const handleReset = () => {
+    setCells(initialCells);
+    setCurrentPlayer("X");
+    setWinner("");
+  };
+
   return (
     <div>
       <h2>Tic Tac Toe</h2>
@@ -64,6 +71,7 @@ const GameBoard = () => {
           />
         ))}
       </div>
+      <button onClick={handleReset}>Spiel zurücksetzen</button>
     </div>
   );
 };

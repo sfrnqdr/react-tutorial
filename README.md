@@ -306,22 +306,6 @@ const GameBoard = () => {
 export default GameBoard;
 ```
 
-export default GameBoard;
-
-````
-
-### Schritt 3: Styling der `ScoreBoard` Komponente
-
-```css
-/* src/ScoreBoard.css */
-.score-board {
-  text-align: center;
-  margin-bottom: 10px;
-  font-size: 1.2rem;
-  color: #333;
-}
-````
-
 ### Schritt 4: Aktualisieren der Tests
 
 #### `ScoreBoard.test.tsx`

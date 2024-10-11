@@ -1,5 +1,5 @@
 // src/GameBoard.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import GameBoard from "./GameBoard";
 import { describe, it, expect } from "vitest";
 
@@ -56,5 +56,37 @@ describe("GameBoard Component", () => {
     expect(
       screen.getByText("Das Spiel endet unentschieden!")
     ).toBeInTheDocument();
+  });
+});
+
+describe("GameBoard Komponente - Reset-Button", () => {
+  it("zeigt den Reset-Button an", () => {
+    render(<GameBoard />);
+    const resetButton = screen.getByText("Spiel zurücksetzen");
+    expect(resetButton).toBeInTheDocument();
+  });
+
+  it("setzt das Spiel zurück, wenn der Reset-Button geklickt wird", () => {
+    render(<GameBoard />);
+    const grid = screen.getByRole("grid");
+    const cells = within(grid).getAllByRole("button");
+
+    // Simuliere einige Klicks auf Zellen
+    fireEvent.click(cells[0]); // X
+    fireEvent.click(cells[1]); // O
+    expect(cells[0]).toHaveTextContent("X");
+    expect(cells[1]).toHaveTextContent("O");
+
+    // Klicke auf den Reset-Button
+    const resetButton = screen.getByText("Spiel zurücksetzen");
+    fireEvent.click(resetButton);
+
+    // Überprüfe, dass alle Zellen zurückgesetzt sind
+    cells.forEach((cell) => {
+      expect(cell).toHaveTextContent("");
+    });
+
+    // Überprüfe den Spielstatus
+    expect(screen.getByText("Spieler X ist am Zug")).toBeInTheDocument();
   });
 });
