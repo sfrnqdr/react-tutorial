@@ -1,31 +1,16 @@
 // src/components/GameBoard/GameBoard.tsx
 import { useState } from "react";
 import Cell from "../Cell/Cell";
-import GameStatus from "../GameStatus/GameStatus.tsx"; // Neue Komponente importieren
+import GameStatus from "../GameStatus/GameStatus.tsx";
 import ScoreBoard from "../ScoreBoard/ScoreBoard";
 import "./GameBoard.css";
 
 const GameBoard = () => {
   const initialCells = Array(9).fill("");
   const [cells, setCells] = useState(Array(9).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState("X"); // Zustand für aktuellen Spieler
+  const [currentPlayer, setCurrentPlayer] = useState("X");
   const [winner, setWinner] = useState("");
   const [score, setScore] = useState({ X: 0, O: 0 });
-  const firstCellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (winner) {
-      document.title = `Spieler ${winner} gewinnt!`;
-    } else {
-      document.title = `Tic Tac Toe - Spieler ${currentPlayer} ist am Zug`;
-    }
-  }, [winner, currentPlayer]);
-
-  useEffect(() => {
-    if (firstCellRef.current) {
-      firstCellRef.current.focus();
-    }
-  }, [cells]);
 
   const checkWinner = (updatedCells: string[]) => {
     const winPatterns = [
@@ -50,18 +35,6 @@ const GameBoard = () => {
       }
     }
     return "";
-  };
-
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
-  };
-
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
   };
 
   const handleCellClick = (index: number) => {
@@ -98,7 +71,6 @@ const GameBoard = () => {
             key={index}
             value={cell}
             onClick={() => handleCellClick(index)}
-            ref={index === 0 ? firstCellRef : null}
           />
         ))}
       </div>
