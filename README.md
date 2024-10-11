@@ -177,5 +177,5 @@ git push
 ## Nächstes Kapitel:
 
 ```bash
-git checkout -b mustermann-max-step-1-welcome origin/step-1-welcome
+git checkout -b mustermann-max-step-1-welcome origin/step-2-functional-components
 ```
