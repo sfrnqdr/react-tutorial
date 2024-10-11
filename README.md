@@ -140,7 +140,7 @@ const GameBoard = () => {
   );
 };
 
-export default GameBoard;
+export default ClickButton;
 ```
 
 ## Ausführliche vertiefende Erläuterung des Konzepts für Fortgeschrittene
@@ -411,13 +411,7 @@ const useGameLogic = () => {
         return updatedCells[a];
       }
     }
-    return "";
-  };
-
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
+    return null;
   };
 
   const handleCellClick = (index: number) => {
@@ -425,15 +419,12 @@ const useGameLogic = () => {
       const newCells = [...cells];
       newCells[index] = currentPlayer;
       setCells(newCells);
+
       const gameWinner = checkWinner(newCells);
       if (gameWinner) {
         setWinner(gameWinner);
-        setScore((prevScore) => ({
-          ...prevScore,
-          [gameWinner]: prevScore[gameWinner] + 1,
-        }));
-        // Optional: Automatisches Zurücksetzen des Brettes nach dem Sieg
-        setTimeout(resetBoard, 2000);
+      } else if (!newCells.includes("")) {
+        setWinner("draw");
       } else {
         setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
       }
@@ -486,8 +477,7 @@ const GameBoard = () => {
   return (
     <div>
       <h2>Tic Tac Toe</h2>
-      <ScoreBoard score={score} />
-      <StatusMessage currentPlayer={currentPlayer} winner={winner} />
+      <GameStatus currentPlayer={currentPlayer} winner={winner} />
       <div className="board" role="grid">
         {cells.map((cell, index) => (
           <Cell
@@ -498,6 +488,7 @@ const GameBoard = () => {
           />
         ))}
       </div>
+      {/* TODO: Füge den Reset-Button hinzu */}
     </div>
   );
 };
