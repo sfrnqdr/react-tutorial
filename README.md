@@ -452,12 +452,6 @@ In diesem Kapitel haben wir das Tic-Tac-Toe-Spiel zu einem vollständigen Zwei-S
 
 ---
 
-### Zusammenfassung:
-
-In React nutzen wir die Komponentenkomposition, um eine saubere und übersichtliche Struktur unserer Anwendung zu gewährleisten. Durch das Zusammenfügen kleiner, wiederverwendbarer Komponenten können wir komplexe Benutzeroberflächen effizient erstellen und pflegen.
-
----
-
 ## Ergebnis veröffentlichen:
 
 ```bash
