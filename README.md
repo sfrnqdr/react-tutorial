@@ -31,6 +31,9 @@ Das Designteam von MobileX entwickelte bereits umfassende Entwürfe für die Web
      - Möglichkeit, vergangene Spiele erneut anzusehen
      - Statistiken und Auswertungen der Spielerleistung über die Zeit
 
+  <div style="display: flex; gap: 10px;">
+    <img src="assets/use-case-2-0.png" alt="Alternativtext" title="Titel" height="320" />
+   </div>
 **Technischer Ansatz**
 
 Für die Umsetzung der Web-App haben wir uns für das JavaScript-Framework **React** entschieden. React ermöglicht uns:
