@@ -1,30 +1,18 @@
-// src/Cell.tsx
-import React, { forwardRef } from "react";
+// src/components/Cell/Cell.tsx
+import React from "react";
 
 type CellProps = {
   value: string;
   onClick: () => void;
 };
 
-const Cell = forwardRef<HTMLDivElement, CellProps>(
-  ({ value, onClick }, ref) => {
-    return (
-      <div
-        className="cell"
-        role="button"
-        onClick={onClick}
-        tabIndex={0}
-        ref={ref}
-        onKeyPress={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            onClick();
-          }
-        }}
-      >
-        {value}
-      </div>
-    );
-  }
-);
+const Cell = React.memo(({ value, onClick }: CellProps) => {
+  console.log(`Rendering Cell: ${value}`);
+  return (
+    <div className="cell" role="button" onClick={onClick}>
+      {value}
+    </div>
+  );
+});
 
 export default React.memo(Cell);

@@ -27,9 +27,8 @@ const useGameLogic = () => {
     [2, 4, 6],
   ];
 
-  const checkWinner = (updatedCells: string[]): string => {
-    for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
       if (
         updatedCells[a] &&
         updatedCells[a] === updatedCells[b] &&
@@ -41,12 +40,6 @@ const useGameLogic = () => {
     return "";
   };
 
-  const resetBoard = () => {
-    setCells(Array(9).fill(""));
-    setCurrentPlayer("X");
-    setWinner("");
-  };
-
   const handleCellClick = async (index: number) => {
     setCells((prevCells) => {
       if (prevCells[index] !== "" || winner !== "") {
@@ -55,8 +48,9 @@ const useGameLogic = () => {
 
       const newCells = [...prevCells];
       newCells[index] = currentPlayer;
-      const gameWinner = checkWinner(newCells);
+      setCells(newCells);
 
+      const gameWinner = checkWinner(newCells);
       if (gameWinner) {
         setWinner(gameWinner);
         setScore((prevScore) => ({
@@ -90,7 +84,6 @@ const useGameLogic = () => {
     cells,
     currentPlayer,
     winner,
-    score,
     handleCellClick,
     resetBoard,
     gameResults,
