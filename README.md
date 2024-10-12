@@ -36,11 +36,12 @@ Das Designteam von MobileX entwickelte bereits umfassende Entwürfe für die Web
    </div>
 
 **Komponenten**
-Das Designteam stellt usn folgende Entwürfe bereit:
 
-  <div style="display: flex; gap: 10px; background: #fff">
+Das Designteam stellt uns folgende Entwürfe bereit:
+
+  <div style="display: flex; gap: 10px; background-color: #ffffff">
     <img src="assets/component-1.png" alt="Alternativtext" title="Titel" height="100" />
-        <img src="assets/component-2.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-2.png" alt="Alternativtext" title="Titel" height="100" />
     <img src="assets/component-3.png" alt="Alternativtext" title="Titel" height="100" />
     <img src="assets/component-4.png" alt="Alternativtext" title="Titel" height="100" />
     <img src="assets/component-5.png" alt="Alternativtext" title="Titel" height="100" />
