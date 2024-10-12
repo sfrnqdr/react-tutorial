@@ -17,9 +17,9 @@ Hier sind die Themen, die wir gemeinsam durchgehen werden:
 9. **[step-9-event-handling](https://github.com/sfrnqdr/react-tutorial/tree/step-9-event-handling)**
 10. **[step-10-use-state-hook](https://github.com/sfrnqdr/react-tutorial/tree/step-10-use-state-hook)**
 11. **[step-11-common-hooks](https://github.com/sfrnqdr/react-tutorial/tree/step-11-common-hooks)**
-12. **[step-12-custom-hooks](https://github.com/sfrnqdr/react-tutorial/tree/step-12-custom-hooks)**
+12. **[step-12-routing](https://github.com/sfrnqdr/react-tutorial/tree/step-12-routing)**
 13. **[step-13-api-integration](https://github.com/sfrnqdr/react-tutorial/tree/step-13-api-integration)**
-14. **[step-14-final-thoughts](#)**
+14. **[step-14-case-study](https://github.com/sfrnqdr/react-tutorial/tree/step-14-case-study)**
 
 Jeder dieser Schritte enthält ausführliche Erklärungen, praktische Beispiele und weiterführende Links, die dir helfen, das Gelernte direkt anzuwenden.
 
@@ -78,13 +78,13 @@ Um die React-Anwendung im Terminal zu starten, gib einfach folgendes ein:
 npm run dev
 ```
 
-Dieser Befehl startet den Entwicklungsserver und öffnet die App in Deinem Standardbrowser. Änderungen im Code werden automatisch übernommen. 
+Dieser Befehl startet den Entwicklungsserver und öffnet die App in Deinem Standardbrowser. Änderungen im Code werden automatisch übernommen.
 
 ### Tests ausführen
 
 Für die Tests nutze diesen Befehl:
 
-  ```bash
+```bash
 npm run test:watch
 ```
 
@@ -92,9 +92,8 @@ Damit startest du den Testlauf, der deine Dateien überwacht und Tests bei jeder
 
 ## Let's go!
 
-Jetzt bist du bereit, mit dem ersten Schritt zu starten! Wechsle zum Branch `step-1-welcome` und starte die App mit `npm run dev`, sowie die Testumgebung  `npm run test:watch`. Folge den Anleitungen in den einzelnen Themenblöcken und baue dir Schritt für Schritt ein solides React-Know-how auf.
+Jetzt bist du bereit, mit dem ersten Schritt zu starten! Wechsle zum Branch `step-1-welcome` und starte die App mit `npm run dev`, sowie die Testumgebung `npm run test:watch`. Folge den Anleitungen in den einzelnen Themenblöcken und baue dir Schritt für Schritt ein solides React-Know-how auf.
 
 ```bash
 git checkout -b mustermann-max-step-1-welcome origin/step-1-welcome
 ```
-
