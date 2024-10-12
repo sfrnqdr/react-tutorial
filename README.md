@@ -34,6 +34,21 @@ Das Designteam von MobileX entwickelte bereits umfassende Entwürfe für die Web
   <div style="display: flex; gap: 10px;">
     <img src="assets/use-case-2-0.png" alt="Alternativtext" title="Titel" height="320" />
    </div>
+
+**Komponenten**
+Das Designteam stellt usn folgende Entwürfe bereit:
+
+  <div style="display: flex; gap: 10px; background: #fff">
+    <img src="assets/component-1.png" alt="Alternativtext" title="Titel" height="100" />
+        <img src="assets/component-2.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-3.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-4.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-5.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-6.png" alt="Alternativtext" title="Titel" height="100" />
+    <img src="assets/component-7.png" alt="Alternativtext" title="Titel" height="100" />
+
+   </div>
+
 **Technischer Ansatz**
 
 Für die Umsetzung der Web-App haben wir uns für das JavaScript-Framework **React** entschieden. React ermöglicht uns:
