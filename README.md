@@ -21,6 +21,8 @@ Das Designteam von MobileX entwickelte bereits umfassende Entwürfe für die Web
      - Interaktives Spielfeld mit visuellen Feedbacks bei Spielzügen
      - Anzeige von gewonnenen Runden oder Unentschieden
 
+<img src="assets/use-case-1-0.png" alt="Alternativtext" title="Titel" width="400" />
+
 1. **Screen: Game History**
 
    - **Funktionalität:** Übersicht über vergangene Spiele, inklusive Details wie Datum, beteiligte Spieler, Ergebnis und Dauer des Spiels.
