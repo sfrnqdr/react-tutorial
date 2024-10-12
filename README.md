@@ -16,12 +16,12 @@ Das Designteam von MobileX entwickelte bereits umfassende Entwürfe für die Web
 
    - **Funktionalität:** Hauptspielfenster, in dem zwei Spieler gegeneinander antreten können. Der Bildschirm zeigt das Tic Tac Toe-Raster, aktuelle Spielerinformationen, Spielstatus (z.B. welcher Spieler ist am Zug) und Optionen zum Zurücksetzen des Spiels oder zur Beendigung.
 
-   - **Features:**
-     - Responsive Design für verschiedene Bildschirmgrößen
-     - Interaktives Spielfeld mit visuellen Feedbacks bei Spielzügen
-     - Anzeige von gewonnenen Runden oder Unentschieden
-
-<img src="assets/use-case-1-0.png" alt="Alternativtext" title="Titel" height="240" />
+   - **Features:** - Responsive Design für verschiedene Bildschirmgrößen - Interaktives Spielfeld mit visuellen Feedbacks bei Spielzügen - Anzeige von gewonnenen Runden oder Unentschieden
+   <div style="display: flex; gap: 10px;">
+    <img src="assets/use-case-1-0.png" alt="Alternativtext" title="Titel" height="320" />
+    <img src="assets/use-case-1-1.png" alt="Alternativtext" title="Titel" height="320" />
+    <img src="assets/use-case-1-2.png" alt="Alternativtext" title="Titel" height="320" />
+   </div>
 
 1. **Screen: Game History**
 
